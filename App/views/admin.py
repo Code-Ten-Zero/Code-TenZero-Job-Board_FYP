@@ -26,10 +26,40 @@ from App.models import(
 admin_views = Blueprint('admin_views', __name__, template_folder='../templates')
 
 # handle publish
+@admin_views.route('/publish_job/<int:job_id>', methods=['POST'])
+@jwt_required()
+def publish_job(job_id):
+    try:
+        job = get_listing(job_id)  # Fetch the job by ID
+        if job:
+            job.isApproved = True  # Set the job as approved
+            db.session.commit()  # Commit the change to the database
+            flash('Job published successfully!', 'success')
+        else:
+            flash('Job not found', 'unsuccessful')
+    except Exception as e:
+        flash('Error publishing the job: ' + str(e), 'unsuccessful')
+        db.session.rollback()
 
+    return redirect(url_for('index_views.index_page'))
 
 # handle unpublish
+@admin_views.route('/unpublish_job/<int:job_id>', methods=['POST'])
+@jwt_required()
+def unpublish_job(job_id):
+    try:
+        job = get_listing(job_id)  # Fetch the job by ID
+        if job:
+            job.isApproved = False  # Set the job as unpublished (i.e., not approved)
+            db.session.commit()  # Commit the change to the database
+            flash('Job unpublished successfully!', 'success')
+        else:
+            flash('Job not found', 'unsuccessful')
+    except Exception as e:
+        flash('Error unpublishing the job: ' + str(e), 'unsuccessful')
+        db.session.rollback()
 
+    return redirect(url_for('index_views.index_page'))  # Redirect to the admin dashboard
 
 # handle deletion
 @admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
