@@ -165,7 +165,9 @@
                     <td class="actions">
                         <button onclick="editListing(0)">Edit</button>
                         <a href="/delete_listing/{{job.id}}">Delete</a>
-                        <button class="publish-button" onclick="togglePublish(0)">Publish</button>
+                        <button class="publish-button" onclick="togglePublish(this)">
+                            {{ 'Unpublish' if job.isApproved else 'Publish' }}
+                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -173,35 +175,48 @@
         </table>
     </div>
     <script>
-        function filterByStatus(status) {
-            const rows = document.querySelectorAll("#jobTable tbody tr");
-            rows.forEach(row => {
-                const isPublished = row.classList.contains('published'); // Check if the row has the class 'published'
-                if (status === 'published' && !isPublished) {
-                    row.style.display = 'none';
-                } else if (status === 'unpublished' && isPublished) {
-                    row.style.display = 'none';
-                } else {
-                    row.style.display = '';
-                }
-            });
-        }
-
-        function togglePublish(rowIndex) {
-            const row = document.querySelectorAll("#jobTable tbody tr")[rowIndex];
-            const publishButton = row.querySelector(".publish-button");
+        function togglePublish(button) {
+            const row = button.closest('tr'); // Find the row containing this button
             const isPublished = row.classList.contains('published');
 
             if (isPublished) {
-                row.classList.remove('published');
-                publishButton.textContent = "Publish";
+                row.classList.remove('published'); // Unpublish the job
+                button.textContent = "Publish";
                 alert("Job listing unpublished.");
             } else {
-                row.classList.add('published');
-                publishButton.textContent = "Unpublish";
+                row.classList.add('published'); // Publish the job
+                button.textContent = "Unpublish";
                 alert("Job listing published.");
             }
+
+            // Reapply the current filter
+            const activeFilter = document.querySelector('.button.active');
+            if (activeFilter) {
+                filterByStatus(activeFilter.getAttribute('data-status'));
+            }
         }
+
+        function filterByStatus(status) {
+            const rows = document.querySelectorAll("#jobTable tbody tr");
+
+            rows.forEach(row => {
+                const isPublished = row.classList.contains('published');
+
+                if (status === 'published' && !isPublished) {
+                    row.style.display = 'none'; // Hide unpublished rows
+                } else if (status === 'unpublished' && isPublished) {
+                    row.style.display = 'none'; // Hide published rows
+                } else {
+                    row.style.display = ''; // Show rows for "all" or matching criteria
+                }
+            });
+
+            // Update button active state
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => button.classList.remove('active'));
+            document.querySelector(`[data-status="${status}"]`).classList.add('active');
+        }
+
 
 
         function editListing(rowIndex) {
