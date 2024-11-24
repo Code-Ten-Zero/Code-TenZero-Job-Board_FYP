@@ -63,6 +63,23 @@ def delete_listing(listing_id):
 
     return None
 
+# approve a listing
+def approve_listing(listing_id):
+    from .listing import get_listing
+
+    listing = get_listing(listing_id)
+
+    if listing is not None:
+        listing.isApproved = True
+        try:
+            db.session.commit()
+            return listing
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+            return None
+    return None
+
 # def delete_exerciseSet(exerciseSet_id):
 
 #     exerciseSets = ExerciseSet.query.filter_by(id=exerciseSet_id).all()
