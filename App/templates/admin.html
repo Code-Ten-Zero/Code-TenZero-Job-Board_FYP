@@ -157,7 +157,7 @@
             </thead>
             {% for job in jobs %}
             <tbody>
-                <tr>
+                <tr class="{{ 'published' if job.isApproved else '' }}">
                     <td>{{ job.company_name }}</td>
                     <td>{{ job.title }}</td>
                     <td>{{ job.description }}</td>
