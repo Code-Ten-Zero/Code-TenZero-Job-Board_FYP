@@ -165,9 +165,11 @@
                     <td class="actions">
                         <button onclick="editListing(0)">Edit</button>
                         <a href="/delete_listing/{{job.id}}">Delete</a>
-                        <button class="publish-button" onclick="togglePublish(this)">
-                            {{ 'Unpublish' if job.isApproved else 'Publish' }}
-                        </button>
+                        {% if not job.isApproved %}
+                            <button class="publish-button" data-job-id="{{ job.id }}" onclick="publishJob(event, this)">Publish</button>
+                        {% else %}
+                            <button class="publish-button" data-job-id="{{ job.id }}" onclick="unpublishJob(event, this)">Unpublish</button>
+                        {% endif %} 
                     </td>
                 </tr>
             </tbody>
@@ -175,47 +177,85 @@
         </table>
     </div>
     <script>
-        function togglePublish(button) {
-            const row = button.closest('tr'); // Find the row containing this button
-            const isPublished = row.classList.contains('published');
+        function publishJob(event, button) {
+            event.preventDefault(); // Prevent page reload
 
-            if (isPublished) {
-                row.classList.remove('published'); // Unpublish the job
-                button.textContent = "Publish";
-                alert("Job listing unpublished.");
-            } else {
-                row.classList.add('published'); // Publish the job
-                button.textContent = "Unpublish";
-                alert("Job listing published.");
-            }
+            const jobId = button.getAttribute('data-job-id'); // Get job ID from data attribute
 
-            // Reapply the current filter
-            const activeFilter = document.querySelector('.button.active');
-            if (activeFilter) {
-                filterByStatus(activeFilter.getAttribute('data-status'));
-            }
+            fetch(`/publish_job/${jobId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Move job to published section (UI only)
+                    const row = button.closest('tr');
+                    row.classList.add('published');
+                    button.textContent = "Unpublish";
+                    button.setAttribute("onclick", `unpublishJob(event, this)`);
+
+                    // Apply filter to show the job in the "Published" section
+                    filterByStatus('published');
+                    alert('Job published successfully!');
+                } else {
+                    alert('Failed to publish the job.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while publishing the job.');
+            });
+        }
+
+        function unpublishJob(event, button) {
+            event.preventDefault(); // Prevent page reload
+
+            const jobId = button.getAttribute('data-job-id'); // Get job ID from data attribute
+
+            fetch(`/unpublish_job/${jobId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Move job to unpublished section (UI only)
+                    const row = button.closest('tr');
+                    row.classList.remove('published');
+                    button.textContent = "Publish";
+                    button.setAttribute("onclick", `publishJob(event, this)`);
+
+                    // Apply filter to show the job in the "Unpublished" section
+                    filterByStatus('unpublished');
+                    alert('Job unpublished successfully!');
+                } else {
+                    alert('Failed to unpublish the job.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while unpublishing the job.');
+            });
         }
 
         function filterByStatus(status) {
             const rows = document.querySelectorAll("#jobTable tbody tr");
-
             rows.forEach(row => {
-                const isPublished = row.classList.contains('published');
-
+                const isPublished = row.classList.contains('published'); // Check if the row has the class 'published'
                 if (status === 'published' && !isPublished) {
-                    row.style.display = 'none'; // Hide unpublished rows
+                    row.style.display = 'none';
                 } else if (status === 'unpublished' && isPublished) {
-                    row.style.display = 'none'; // Hide published rows
+                    row.style.display = 'none';
                 } else {
-                    row.style.display = ''; // Show rows for "all" or matching criteria
+                    row.style.display = '';  // Show the row
                 }
             });
-
-            // Update button active state
-            const buttons = document.querySelectorAll('.button');
-            buttons.forEach(button => button.classList.remove('active'));
-            document.querySelector(`[data-status="${status}"]`).classList.add('active');
         }
+
+
 
 
 
