@@ -71,3 +71,14 @@ def unsubscribe_action():
 # for unsubscribe route
 # get the user and their categories with user.get_categories
 # then call unsubscrive_action with user and their categores?
+
+@alumni_views.route('/update_modal_seen', methods=['POST'])
+@jwt_required()
+def update_modal_seen():
+    try:
+        alumni = current_user  
+        set_alumni_modal_seen(alumni.alumni_id)  
+        db.session.commit() 
+        
+    except Exception as e:
+        db.session.rollback()  
