@@ -36,6 +36,7 @@ def subscribe_action():
 
     try:
         alumni = subscribe(current_user.alumni_id, data['category'])
+        set_alumni_modal_seen(alumni.alumni_id)
         # print(alumni.get_json())
         response = redirect(url_for('index_views.index_page'))
         flash('Subscribed!', 'success')
