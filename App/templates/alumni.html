@@ -346,7 +346,7 @@
         {% endwith %}
     </div>
     <div class="container">
-        <div id="subpopup" class="popup-container">
+        <div id="subpopup" class="popup-container" data-show-modal="{{ show_modal }}">
             <div class="subpopup-content">
                 <h2>Wecome Alumni</h2>
  
@@ -537,6 +537,8 @@
             const subscribeButton = document.getElementById("subscribe-btn");
             const displayPopupButton = document.getElementById("displayPopup");
 
+            const showModal = popupContainer.dataset.showModal;
+
             // Function to show the popup
             function showPopup() {
                 popupContainer.style.display = "block";
@@ -547,8 +549,8 @@
                 popupContainer.style.display = "none";
             }
 
-            // Show the popup when the page loads
-            showPopup();
+            if (showModal === "True")
+                showPopup();
 
             closeButton.addEventListener("click", hidePopup);
 
