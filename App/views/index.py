@@ -34,7 +34,13 @@ def index_page():
     jobs = get_all_listings()
 
     if isinstance(current_user, Alumni):
-        return render_template('alumni.html', jobs=jobs )
+        show_modal = current_user.has_seen_modal
+        if not show_modal:
+            # Pass True to the template to show modal
+            return render_template('alumni.html', jobs=jobs, show_modal=True)
+        
+        # Pass False to the modal if already seen
+        return render_template('alumni.html', jobs=jobs, show_modal=False)
     
     if isinstance(current_user, Company):
         jobs = get_company_listings(current_user.username)
