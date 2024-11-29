@@ -552,7 +552,7 @@
             if (showModal === "True")
                 showPopup();
 
-            closeButton.addEventListener("click", hidePopup);
+            // closeButton.addEventListener("click", hidePopup);
 
             displayPopupButton.addEventListener("click", showPopup);
 
@@ -572,6 +572,24 @@
 
                 console.log("Subscribing email:", emailInput, "Category:", categoryInput);
                 hidePopup();
+            });
+
+            closeButton.addEventListener("click", function () {
+                fetch("/update_modal_seen", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}` 
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message); 
+                        hidePopup(); 
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             });
         });
 

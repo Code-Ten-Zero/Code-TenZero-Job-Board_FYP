@@ -11,7 +11,8 @@ from App.controllers import(
     get_user_by_username,
     is_alumni_subscribed,
     subscribe,
-    unsubscribe
+    unsubscribe,
+    set_alumni_modal_seen
 )
 
 from App.models import(
@@ -79,6 +80,8 @@ def update_modal_seen():
         alumni = current_user  
         set_alumni_modal_seen(alumni.alumni_id)  
         db.session.commit() 
+        return jsonify(message="Modal seen status updated successfully"), 200
         
     except Exception as e:
         db.session.rollback()  
+        return jsonify(message="Error updating modal status"), 500
