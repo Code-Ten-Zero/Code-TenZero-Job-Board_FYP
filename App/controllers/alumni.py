@@ -164,3 +164,7 @@ def apply_listing(alumni_id, listing_id):
     # add the alumni as an applicant to the company model object?
 
     return alumni
+
+# only view approved listings
+def get_approved_listings():
+    return Listing.query.filter_by(isApproved=True).all()

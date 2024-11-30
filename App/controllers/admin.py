@@ -1,6 +1,7 @@
 from App.models import User, Admin, Alumni, Company, Listing
 from App.database import db
 
+
 # create and add a new admin into the db
 def add_admin(username, password, email):
 
@@ -61,6 +62,25 @@ def delete_listing(listing_id):
         db.session.commit()
         return True
 
+    return None
+
+def toggle_listing_approval(listing_id):
+    from .listing import get_listing
+
+    listing = get_listing(listing_id)
+
+    if listing is not None:
+        current_state = listing.isApproved
+        listing.isApproved = not current_state
+        try:
+            db.session.commit()
+            if listing.isApproved:
+                return True
+            if not listing.isApproved: 
+                return False
+        except Exception as e:
+            db.session.rollback()
+            return None
     return None
 
 # def delete_exerciseSet(exerciseSet_id):

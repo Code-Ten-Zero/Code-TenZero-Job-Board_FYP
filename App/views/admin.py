@@ -14,7 +14,8 @@ from App.controllers import(
     add_listing,
     add_categories,
     get_listing,
-    delete_listing
+    delete_listing,
+    toggle_listing_approval
 )
 
 from App.models import(
@@ -26,10 +27,33 @@ from App.models import(
 admin_views = Blueprint('admin_views', __name__, template_folder='../templates')
 
 # handle publish
+@admin_views.route('/publish_job/<int:job_id>', methods=['POST'])
+@jwt_required()
+def publish_job(job_id):
+    toggled = toggle_listing_approval(job_id) # Set the job as approved
+
+    if toggled:
+        flash('Job published successfully!', 'success')
+        return redirect(url_for('index_views.index_page'))
+    else:
+        flash('Job not found', 'unsuccessful')
+        response = (redirect(url_for('index_views.login_page')))
 
 
 # handle unpublish
+@admin_views.route('/unpublish_job/<int:job_id>', methods=['POST'])
+@jwt_required()
+def unpublish_job(job_id):
+    toggled = toggle_listing_approval(job_id)
 
+    if not toggled:
+        flash('Job unpublished successfully!', 'success')
+        return redirect(url_for('index_views.index_page'))
+    else:
+        flash('Job not found', 'unsuccessful')
+        response = (redirect(url_for('index_views.login_page')))
+
+    return redirect(url_for('index_views.index_page'))  # Redirect to the admin dashboard
 
 # handle deletion
 @admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
