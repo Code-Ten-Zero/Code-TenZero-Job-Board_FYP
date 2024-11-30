@@ -54,6 +54,9 @@ class Listing(db.Model):
 
     # job area?
     area = db.Column(db.String(120), nullable=False)
+
+    # new field for approval status by admin
+    isApproved = db.Column(db.Boolean, default=False)
     
     # - 
     # use this to ensure that values are within a certain range/ appropriate values only

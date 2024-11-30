@@ -13,7 +13,8 @@ from App.controllers import(
     add_alumni,
     add_admin,
     add_company,
-    get_listing
+    get_listing,
+    get_approved_listings
 )
 
 from App.models import(
@@ -32,15 +33,17 @@ index_views = Blueprint('index_views', __name__, template_folder='../templates')
 def index_page():
     # return render_template('index.html')
     jobs = get_all_listings()
+    approved_jobs = get_approved_listings() # retrieve approved jobs
 
     if isinstance(current_user, Alumni):
         show_modal = current_user.has_seen_modal
         if not show_modal:
             # Pass True to the template to show modal
-            return render_template('alumni.html', jobs=jobs, show_modal=True)
+            return render_template('alumni.html', jobs=approved_jobs, show_modal=True)
         
         # Pass False to the modal if already seen
-        return render_template('alumni.html', jobs=jobs, show_modal=False)
+        return render_template('alumni.html', jobs=approved_jobs, show_modal=False)
+
     
     if isinstance(current_user, Company):
         jobs = get_company_listings(current_user.username)

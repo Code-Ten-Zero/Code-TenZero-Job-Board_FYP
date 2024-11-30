@@ -10,7 +10,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, set_alumni_modal_seen)
+     login, set_alumni_modal_seen, toggle_listing_approval)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -144,6 +144,16 @@ def add_admin_command(username, password, email):
         print('Error creating admin')
     else:
         print(f'{admin} created')
+
+@admin_cli.command("toggle", help="Approve or disapprove a job listing")
+@click.argument("listing_id", default='1')
+def toggle_approval_command(listing_id):
+    result = toggle_listing_approval(listing_id)
+
+    if result is None:
+        print(f"Listing with ID {listing_id} not found or could not be approved.")
+    else:
+        print(f"Listing with ID {listing_id} has been {'approved' if result else 'disapproved'}.")
 
 
 app.cli.add_command(admin_cli)
