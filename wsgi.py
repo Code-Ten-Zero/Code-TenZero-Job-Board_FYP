@@ -10,7 +10,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, toggle_listing_approval)
+     login, set_alumni_modal_seen, toggle_listing_approval)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -225,6 +225,15 @@ def apply_listing_command(alumni_id, listing_title):
         print(f'Error applying to listing {listing_title}')
     else:
         print(f'{alumni} applied to listing {listing_title}')
+
+@alumni_cli.command("set_modal_seen", help="Sets the 'has_seen_modal' field for an alumni")
+@click.argument('alumni_id', default='123456789')
+def set_modal_seen_command(alumni_id):
+    try:
+        set_alumni_modal_seen(alumni_id)
+        print(f'Alumni {alumni_id} has seen the modal.')
+    except Exception as e:
+        print(f'Error setting modal seen for alumni {alumni_id}: {e}')
 
 app.cli.add_command(alumni_cli)
 

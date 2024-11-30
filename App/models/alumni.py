@@ -11,6 +11,8 @@ class Alumni(User):
     alumni_id = db.Column(db.Integer, nullable = False, unique = True)
     # insert other personal info later
 
+    has_seen_modal = db.Column(db.Boolean, default=False)
+
 
     # relationship to companies 
     # company_name = db.Column(db.String(), db.ForeignKey('company.company_name'), nullable=False)
@@ -45,6 +47,7 @@ class Alumni(User):
         self.contact = contact
         self.firstname = firstname
         self.lastname = lastname
+        self.has_seen_modal = False
 
         # if job_categories is None:
         #     self.job_category = 'N/A'

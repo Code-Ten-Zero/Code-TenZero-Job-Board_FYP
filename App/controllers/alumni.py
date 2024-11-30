@@ -165,6 +165,12 @@ def apply_listing(alumni_id, listing_id):
 
     return alumni
 
+
+def set_alumni_modal_seen(alumni_id):
+    alumni = get_alumni(alumni_id)
+    alumni.has_seen_modal = True
+    db.session.commit()
+    
 # only view approved listings
 def get_approved_listings():
     return Listing.query.filter_by(isApproved=True).all()
