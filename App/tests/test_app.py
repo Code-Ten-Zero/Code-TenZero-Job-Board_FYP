@@ -21,6 +21,9 @@ from App.controllers import (
     apply_listing,
     get_all_applicants,
     get_alumni,
+    toggle_listing_approval,
+    get_listing,
+    get_approved_listings
 )
 
 
@@ -156,4 +159,25 @@ class UsersIntegrationTests(unittest.TestCase):
     #     user = get_user(1)
     #     assert user.username == "ronnie"
         
+    def test_initial_isapproved(self):
+        job = add_listing("Test Job", "Test Description", "company1", 8000, "Full-time", True, True, "bruzz", "Test Area")
+        assert job.isApproved == False
 
+    def test_toggle_listing_approval(self):
+        job = add_listing("Test Job2", "Test Description", "company1", 8000, "Full-time", True, True, "huzz", "Test Area")
+
+        result = toggle_listing_approval(job.id)
+
+        listing = get_listing(job.id)
+        assert result is True
+        assert job.isApproved is True
+
+    def test_get_approved_listings(self):
+        job1 = add_listing("Approved Job", "Approved Job Description", "company1", 9000, "Full-time", True, True, "zach", "Approved Area")
+        job2 = add_listing("Unapproved Job", "Unapproved Job Description", "company1", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
+
+        job1.isApproved = True
+
+        approved_listings = get_approved_listings()
+        assert len(approved_listings) == 1
+        assert approved_listings[0].id == job1.id
