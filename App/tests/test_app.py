@@ -21,6 +21,7 @@ from App.controllers import (
     apply_listing,
     get_all_applicants,
     get_alumni,
+    set_alumni_modal_seen
 )
 
 
@@ -141,6 +142,16 @@ class UsersIntegrationTests(unittest.TestCase):
             {"id":1, "company_name":"company1", "email":"company@mail", 'company_address':'company_address','contact':'contact',
             'company_website':'company_website.com'}
             ], users_json)
+
+    def test_initial_has_seen_modal(self):
+        alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
+        assert alumni.has_seen_modal == False
+
+    def test_set_modal_seen(self):
+        alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
+        set_alumni_modal_seen(alumni.alumni_id)
+        assert alumni.has_seen_modal == True
+
 
     # def test_create_user(self):
     #     user = create_user("rick", "bobpass")
