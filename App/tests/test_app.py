@@ -24,7 +24,8 @@ from App.controllers import (
     set_alumni_modal_seen,
     toggle_listing_approval,
     get_listing,
-    get_approved_listings
+    get_approved_listings,
+    get_company_by_name
 )
 
 
@@ -185,10 +186,26 @@ class UsersIntegrationTests(unittest.TestCase):
 
     def test_get_approved_listings(self):
         job1 = add_listing("Approved Job", "Approved Job Description", "company1", 9000, "Full-time", True, True, "zach", "Approved Area")
-        job2 = add_listing("Unapproved Job", "Unapproved Job Description", "company1", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
+        # job2 = add_listing("Unapproved Job", "Unapproved Job Description", "company1", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
 
         job1.isApproved = True
 
         approved_listings = get_approved_listings()
         assert len(approved_listings) == 1
         assert approved_listings[0].id == job1.id
+
+    def test_notify_observers(self):
+        company = add_company('compaknee', 'compaknee', 'compassknee', 'compaknee@mail',  'compaknee_address', 'contactee', 'compaknee_website.com')
+       
+        alumni = add_alumni('alutest4', 'alupass4', 'alu4@email.com', '9114', '1800-274-8255', 'alufname4', 'alulname4')
+
+        job2 = add_listing("Unapproved Job", "Unapproved Job Description", "compaknee", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
+
+        apply_listing(alumni.alumni_id, job2.id)
+
+        company = get_company_by_name(job2.company_name)
+
+        # Check if the notification was created
+        notifications = company.notifications
+        assert len(notifications) == 1
+        assert notifications[0].message == f"Alumni {alumni.username} applied to your listing '{job2.title}'."
