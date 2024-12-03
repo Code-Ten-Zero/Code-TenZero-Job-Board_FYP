@@ -101,10 +101,27 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .notifications {
+        position: absolute;
+        top: 20px;
+        right: 200px; /* Adjust spacing as needed */
+        padding: 10px;
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        }
+
+        .notifications:hover {
+            background-color: rgb(98, 127, 191);
+        }
     </style>
 </head>
 <header>
     <h2>Job Listings</h2>
+    <a href="/notifications" class="notifications">Notifications</a>
     <a href="/add_listing" class="addJob"> Add Job</a>
     <a href="/logout" class="logout">Logout</a>
 </header>

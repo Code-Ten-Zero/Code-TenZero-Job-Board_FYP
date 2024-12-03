@@ -10,7 +10,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
      get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, set_alumni_modal_seen, toggle_listing_approval)
+     login, set_alumni_modal_seen, toggle_listing_approval, get_listing_title)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -219,7 +219,9 @@ def add_categories_command(alumni_id, job_categories):
 @click.argument('alumni_id', default='123456789')
 @click.argument('listing_title', default='listing1')
 def apply_listing_command(alumni_id, listing_title):
-    alumni = apply_listing(alumni_id, listing_title)
+    listing = get_listing_title(listing_title)
+    
+    alumni = apply_listing(alumni_id, listing.id)
 
     if alumni is None:
         print(f'Error applying to listing {listing_title}')
@@ -263,6 +265,21 @@ def add_company_command(username, company_name, password, email):
         print('Error creating company')
     else:
         print(f'{company} created!')
+
+@company_cli.command("notifications", help="Show all notifications for a company")
+@click.argument("company_name", default="company1")
+def show_notifications(company_name):
+    listings = get_company_listings(company_name)
+    notifications = []
+    
+    for listing in listings:
+        notifications.extend(listing.get_notifications())
+    
+    if notifications:
+        for notification in notifications:
+            print(f"Notification: {notification.message} (Timestamp: {notification.created_at})")
+    else:
+        print(f"No notifications found for {company_name}.")
 
 
 app.cli.add_command(company_cli)

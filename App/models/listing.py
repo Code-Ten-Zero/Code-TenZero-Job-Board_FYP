@@ -1,8 +1,8 @@
 from App.database import db
 from .company import Company
 # from .alumni import Alumni
-from .subject import Subject
 from .notification import Notification
+from .subject import Subject
 
 from sqlalchemy import CheckConstraint
 
@@ -25,7 +25,6 @@ class Listing(db.Model, Subject):
 
     # One-to-many relationship with Notification
     notifications = db.relationship('Notification', backref='listing', lazy=True)
-
 
     job_category = db.Column(db.String(120))
 

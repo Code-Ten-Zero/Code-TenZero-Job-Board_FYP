@@ -105,19 +105,35 @@ def request_delete_listing_action(job_id):
 
     return response
 
-@company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+# @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+# @jwt_required()
+# def request_edit_listing_action(job_id):
+
+#     listing = set_request(job_id, 'Edit')
+#     response = None
+#     print(listing.request)
+
+#     if listing is not None:
+#         flash('Request for edit sent!', 'success')
+#         response = redirect(url_for('index_views.index_page'))
+#     else:
+#         flash('Error sending request', 'unsuccessful')
+#         response = redirect(url_for('index_views.login_page'))
+
+#     return response
+
+@company_views.route('/notifications', methods=['GET'])
 @jwt_required()
-def request_edit_listing_action(job_id):
+def view_notifications_page():
+    # Assuming current_user is the logged-in company
+    if not isinstance(current_user, Company):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
-    listing = set_request(job_id, 'Edit')
-    response = None
-    print(listing.request)
-
-    if listing is not None:
-        flash('Request for edit sent!', 'success')
-        response = redirect(url_for('index_views.index_page'))
-    else:
-        flash('Error sending request', 'unsuccessful')
-        response = redirect(url_for('index_views.login_page'))
-
-    return response
+    try:
+        # Fetch notifications for the company
+        notifications = current_user.notifications  # Assuming the Company model has a notifications relationship
+        return render_template('company_notifications.html', notifications=notifications, company=current_user)
+    except Exception as e:
+        flash('Error retrieving notifications', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))

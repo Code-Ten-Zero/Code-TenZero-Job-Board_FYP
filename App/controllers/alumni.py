@@ -138,7 +138,7 @@ def remove_categories(alumni_id, job_categories):
 # apply to an application
 # def apply_listing(alumni_id, listing_title):
 def apply_listing(alumni_id, listing_id):
-    from App.controllers import get_listing_title, get_listing
+    from App.controllers import get_listing_title, get_listing, get_company_by_name
 
     alumni = get_alumni(alumni_id)
 
@@ -158,8 +158,12 @@ def apply_listing(alumni_id, listing_id):
     listing.applicant.append(alumni)
     alumni.listing.append(listing)
 
+    company = get_company_by_name(listing.company_name)
+
     #commit changes to the database
     db.session.commit()
+
+    listing.notify_observers(alumni, company)
 
     # add the alumni as an applicant to the company model object?
 
