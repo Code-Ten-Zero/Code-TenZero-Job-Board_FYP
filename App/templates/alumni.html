@@ -235,7 +235,6 @@
             position: relative;
         }
         .popup-form{
-            position: fixed;
             display: none;
             position: fixed;
             top: 50%;
@@ -509,8 +508,6 @@
 
     // Function to toggle form popup visibility
     function toggleFormPopup(popupId) {
-        const formPopup = document.getElementById(popupId);
-        formPopup.classList.toggle('hidden'); 
         const popup = document.getElementById(popupId);
         if (popup.classList.contains("hidden")) {
             popup.classList.remove("hidden");
