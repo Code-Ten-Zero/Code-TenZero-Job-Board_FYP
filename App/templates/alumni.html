@@ -517,7 +517,15 @@
     // Function to toggle form popup visibility
     function toggleFormPopup(popupId) {
         const formPopup = document.getElementById(popupId);
-        formPopup.classList.toggle('hidden'); // Toggle the 'hidden' class
+        formPopup.classList.toggle('hidden'); 
+        const popup = document.getElementById(popupId);
+        if (popup.classList.contains("hidden")) {
+            popup.classList.remove("hidden");
+            popup.style.display = "flex"; 
+        } else {
+            popup.classList.add("hidden");
+            popup.style.display = "none"; 
+        }
     }
 });
 
