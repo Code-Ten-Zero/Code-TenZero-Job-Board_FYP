@@ -1,6 +1,8 @@
 from App.database import db
 from .company import Company
 # from .alumni import Alumni
+from .subject import Subject
+from .notification import Notification
 
 from sqlalchemy import CheckConstraint
 
@@ -16,10 +18,14 @@ alumni_listings_association = db.Table(
     db.Column('listing_id', db.Integer, db.ForeignKey('listing.id'))
 )
 
-class Listing(db.Model):
+class Listing(db.Model, Subject):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(120), nullable = False, unique=True)
     description = db.Column(db.String(500))
+
+    # One-to-many relationship with Notification
+    notifications = db.relationship('Notification', backref='listing', lazy=True)
+
 
     job_category = db.Column(db.String(120))
 
@@ -157,3 +163,17 @@ class Listing(db.Model):
             'desiredcandidate':self.desiredcandidate,
             'area':self.area,
         }
+
+    def notify_observers(self, alumni, company):
+        """Notify the company (observer) about an alumni applying."""
+        if company:
+            # Create a notification message
+            message = f"Alumni {alumni.username} applied to your listing '{self.title}'."
+
+            # Save the notification in the database
+            notification = Notification(message=message, company_id=company.id, listing_id=self.id)
+            db.session.add(notification)
+            db.session.commit()
+
+    def get_notifications(self):
+        return Notification.query.filter_by(listing_id=self.id).all()

@@ -1,12 +1,17 @@
 from App.database import db
 from .user import User
+from .observer import Observer
 
-class Company(User):
+class Company(User, Observer):
     # id = db.Column(db.Integer, primary_key = True)
     # id = db.Column(db.Integer)
 
     # company_name = db.Column(db.String, primary_key = True)
     company_name = db.Column(db.String, unique=True, nullable=False)
+
+    # Relationship with notifications
+    # One-to-many relationship with Notification
+    notifications = db.relationship('Notification', backref='company', lazy=True)
 
     # insert other company information here later
     # hrname = db.Column(db.String(120))
@@ -47,4 +52,8 @@ class Company(User):
     
     def get_name(self):
         return self.company_name
+
+    def update(self, alumni, listing):
+        """Handle notification when an alumni applies to a listing."""
+        print(f"Alumni {alumni.username} applied to your listing '{listing.title}'.")
     
