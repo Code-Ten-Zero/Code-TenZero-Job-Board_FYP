@@ -1,7 +1,8 @@
 from App.database import db
 from .user import User
+from .observer import Observer
 
-class Company(User):
+class Company(User, Observer):
     # id = db.Column(db.Integer, primary_key = True)
     # id = db.Column(db.Integer)
 
@@ -47,4 +48,8 @@ class Company(User):
     
     def get_name(self):
         return self.company_name
+
+    def update(self, alumni, listing):
+        """Handle notification when an alumni applies to a listing."""
+        print(f"Alumni {alumni.username} applied to your listing '{listing.title}'.")
     
