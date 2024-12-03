@@ -9,6 +9,10 @@ class Company(User, Observer):
     # company_name = db.Column(db.String, primary_key = True)
     company_name = db.Column(db.String, unique=True, nullable=False)
 
+    # Relationship with notifications
+    # One-to-many relationship with Notification
+    notifications = db.relationship('Notification', backref='company', lazy=True)
+
     # insert other company information here later
     # hrname = db.Column(db.String(120))
     # hremail = db.column(db.String(120))
