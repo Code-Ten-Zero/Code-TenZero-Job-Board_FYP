@@ -573,13 +573,13 @@
 
             subscribeButton.addEventListener("click", function(event) {
                 event.preventDefault(); // Prevent form submission
-                const emailInput = document.getElementById("email").value;
+                //const emailInput = document.getElementById("email").value;
                 const categoryInput = document.getElementById("category").value;
 
                 const form = document.getElementById("subscription-form");
                 form.submit();
 
-                console.log("Subscribing email:", emailInput, "Category:", categoryInput);
+                //console.log("Subscribing email:", emailInput, "Category:", categoryInput);
                 hidePopup();
             });
 

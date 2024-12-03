@@ -163,7 +163,7 @@
                     <td>{{ job.description }}</td>
                     <td>{{ job.request }}</td>
                     <td class="actions">
-                        <button onclick="editListing(0)">Edit</button>
+                        <!-- <button onclick="editListing(0)">Edit</button> -->
                         <a href="/delete_listing/{{job.id}}">Delete</a>
                         {% if not job.isApproved %}
                             <button class="publish-button" data-job-id="{{ job.id }}" onclick="publishJob(event, this)">Publish</button>
