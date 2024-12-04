@@ -89,11 +89,15 @@ def empty_db():
     db.drop_all()
 
 
-def test_authenticate():
-    user = add_admin("bob", "bobpass", 'bob@mail')
-    assert login("bob", "bobpass") != None
+# def test_authenticate():
+#     user = add_admin("bob", "bobpass", 'bob@mail')
+#     assert login("bob", "bobpass") != None
 
-class UsersIntegrationTests(unittest.TestCase):
+class UserIntegrationTests(unittest.TestCase):
+
+    def test_authenticate(self):
+        user = add_admin("bob", "bobpass", 'bob@mail')
+        assert login("bob", "bobpass") != None
 
     def test_create_admin(self):
         add_admin("bob", "bobpass", 'bob@mail')
