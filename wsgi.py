@@ -177,9 +177,12 @@ def list_alumni_command(format):
 @click.argument("password", default="robpass")
 @click.argument("email", default="rob@mail2")
 @click.argument("alumni_id", default="987654321")
+@click.argument("contact", default="8686861000")
+@click.argument("firstname", default="rob2fname")
+@click.argument("lastname", default="rob2lname")
 # @click.argument("job_categories", default='Database')
-def add_alumni_command(username, password, email, alumni_id):
-    alumni = add_alumni(username, password, email, alumni_id)
+def add_alumni_command(username, password, email, alumni_id, contact, firstname, lastname):
+    alumni = add_alumni(username, password, email, alumni_id, contact, firstname, lastname)
 
     if alumni is None:
         print('Error creating alumni')
@@ -191,7 +194,7 @@ def add_alumni_command(username, password, email, alumni_id):
 @alumni_cli.command("subscribe", help="Subscribe an alumni object")
 @click.argument("alumni_id", default="123456789")
 def subscribe_alumni_command(alumni_id):
-    alumni = subscribe_action(alumni_id)
+    alumni = subscribe(alumni_id)
 
     if alumni is None:
         print('Error subscribing alumni')
@@ -228,6 +231,7 @@ def apply_listing_command(alumni_id, listing_title):
     else:
         print(f'{alumni} applied to listing {listing_title}')
 
+#flask alumni set_modal_seen
 @alumni_cli.command("set_modal_seen", help="Sets the 'has_seen_modal' field for an alumni")
 @click.argument('alumni_id', default='123456789')
 def set_modal_seen_command(alumni_id):
@@ -257,15 +261,19 @@ def list_company_command(format):
 @click.argument("company_name", default="aah pull")
 @click.argument("password", default="password")
 @click.argument("email", default="aahpull@mail")
+@click.argument("company_address", default="aahpull address")
+@click.argument("contact", default="8689009000")
+@click.argument("company_website", default="https://www.aahpull.com")
 # @click.argument("job_categories", default='Database')
-def add_company_command(username, company_name, password, email):
-    company = add_company(username, company_name, password, email)
+def add_company_command(username, company_name, password, email, company_address, contact, company_website):
+    company = add_company(username, company_name, password, email, company_address, contact, company_website)
 
     if company is None:
         print('Error creating company')
     else:
         print(f'{company} created!')
 
+#flask company notifications 
 @company_cli.command("notifications", help="Show all notifications for a company")
 @click.argument("company_name", default="company1")
 def show_notifications(company_name):
@@ -302,9 +310,15 @@ def list_listing_command(format):
 @click.argument("title", default="Job offer 1")
 @click.argument("description", default="very good job :)")
 @click.argument("company_name", default="company1")
+@click.argument("salary", default="10000")
+@click.argument("position", default="Full-time")
+@click.argument("remote", default="True")
+@click.argument("ttnational", default="True")
+@click.argument("desiredcandidate", default="Technical Skills")
+@click.argument("area", default="Laventille")
 @click.argument("job_categories", nargs=-1, type=str)
-def add_listing_command(title, description, company_name, job_categories):
-    listing = add_listing(title, description, company_name, job_categories)
+def add_listing_command(title, description, company_name, salary, position, remote, ttnational, desiredcandidate, area, job_categories):
+    listing = add_listing(title, description, company_name, salary, position, remote, ttnational, desiredcandidate, area, job_categories)
 
     if listing is None:
         print(f'Error adding categories')
