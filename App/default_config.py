@@ -1,3 +1,3 @@
 # SQLALCHEMY_DATABASE_URI = "sqlite:///temp-database.db"
-SQLALCHEMY_DATABASE_URI = "postgresql://comp3613_project_user:r0S2zoKTmfzCUqvHDGjFtaDFnrVoJDkL@dpg-ct875mggph6c73d34uv0-a.oregon-postgres.render.com/comp3613_project"
+SQLALCHEMY_DATABASE_URI = "postgresql://mydb_lvc4_user:KFSL8i0Xdx3o32pyqb6Pw2cRwxh30Qs7@dpg-ct869u68ii6s73cdeqag-a.oregon-postgres.render.com/mydb_lvc4"
 SECRET_KEY = "secret key"
