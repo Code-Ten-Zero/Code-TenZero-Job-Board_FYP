@@ -189,7 +189,12 @@ def init():
     
 
     # subscribe rob
-    # subscribe_action('123456789')
+    # subscribe_action('123456789', ['Software Engineer'])
+
+    # subscribe('123456789', 'Database Manager')
+    # unsubscribe('123456789')
+
+    
 
     # add in companies
     add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
@@ -199,10 +204,11 @@ def init():
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
     add_listing('listing1', 'job description1', 'company1',
-                8000, 'Part-time', True, 'employmentTerm!', True, 'desiredCandidate?', 'Curepe', ['Database', 'Programming', 'butt'])
+                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
 
     add_listing('listing2', 'job description', 'company2',
-                4000, 'Full-time', True, 'employmentTerm?', True, 'desiredCandidate?', 'Curepe', ['Database', 'Programming', 'butt'])
+                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+
 
     return jsonify(message='db initialized!')
 
