@@ -59,33 +59,118 @@ in configuration information via environment tab of your render project's dashbo
 
 ![perms](./images/fig1.png)
 
-# Flask Commands
+# User CLI Commands
 
-wsgi.py is a utility script for performing various tasks related to the project. You can use it to import and test any code in the project. 
-You just need create a manager command function, for example:
-
-```python
-# inside wsgi.py
-
-user_cli = AppGroup('user', help='User object commands')
-
-@user_cli.cli.command("create-user")
-@click.argument("username")
-@click.argument("password")
-def create_user_command(username, password):
-    create_user(username, password)
-    print(f'{username} created!')
-
-app.cli.add_command(user_cli) # add the group to the cli
-
-```
-
-Then execute the command invoking with flask cli with command name and the relevant parameters
+### 1. List users in the database
 
 ```bash
-$ flask user create bob bobpass
+$ flask user list
 ```
 
+
+# Admin CLI Commands
+
+### 1. Lists admins in the database
+
+```bash
+$ flask admin list
+```
+
+### 2. Adds an admin
+
+```bash
+$ flask admin add <username> <password> <email>
+```
+
+### 3. Approve or disapprove a job listing
+
+```bash
+$ flask admin toggle <listing_id>
+```
+
+# Alumni CLI Commands
+
+### 1. Lists alumnis in the database
+
+```bash
+$ flask alumni list
+```
+
+### 2. Add an alumni object to the database
+
+```bash
+$ flask alumni add <username> <password> <email> <alumni_id> <contact> <firstname> <lastname> 
+```
+
+### 3. Subscribe an alumni object
+
+```bash
+$ flask alumni subscribe <alumni_id>
+```
+
+### 4. Add job categories for the user
+
+```bash
+$ flask alumni add_categories <alumni_id> <job_categories>
+```
+
+### 5. Applies an alumni to a job listing
+
+```bash
+$ flask alumni apply <alumni_id> <listing_title>
+```
+
+### 6. Sets the 'has_seen_modal' field for an alumni
+
+```bash
+$ flask alumni set_modal_seen <alumni_id>
+```
+
+# Company CLI Commands
+
+### 1. Lists company in the database
+
+```bash
+$ flask company list
+```
+
+### 2. Add a company object to the database
+
+```bash
+$ flask company add <username> <company_name> <password> <email> <company_address> <contact> <company_website>
+```
+
+### 3. Show all notifications for a company
+
+```bash
+$ flask company notifications <company_name>
+```
+
+# Listing CLI Commands
+
+### 1. Lists listings in the database
+
+```bash
+$ flask listing list
+```
+
+### 2. Add listing object to the database
+
+```bash
+$ flask listing add <title> <description> <company_name> <salary> <position> <remote> <ttnational> <desiredcandidate> <area> <job_categories>
+```
+
+### 3. Delete listing object from the database
+
+```bash
+$ flask listing delete <id>
+```
+
+### 4. Get all applicants for the listing
+
+```bash
+$ flask listing applicants <listing_id>
+```
 
 # Running the Project
 
