@@ -121,14 +121,16 @@
             color: #007bff;
         }
 
-
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        display: grid; 
+        grid-template-columns: 1fr 1fr 1fr; 
+        gap: 20px; 
         }
 
         .form-group {
@@ -460,8 +462,12 @@
                     </div>
                 </div>
                 {% endfor%}
+
+                <aside>
+                    <h1>Saved Listings</h1>
+                </aside>
             </div>
-        </div>       
+        </div>
     </div>
     <script>
   document.addEventListener("DOMContentLoaded", function() {
