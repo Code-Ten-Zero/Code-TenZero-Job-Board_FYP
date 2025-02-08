@@ -23,7 +23,7 @@ class Alumni(User):
 
 
     def __init__(self, password, email, phone_number, firstname, lastname):
-        super().__init__(username, password, email)
+        super().__init__(password, email)
         self.subscribed = False
         self.phone_number = phone_number
         self.firstname = firstname

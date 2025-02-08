@@ -21,7 +21,6 @@ from App.controllers import (
     apply_listing,
     get_all_applicants,
     get_alumni,
-    set_alumni_modal_seen,
     toggle_listing_approval,
     get_listing,
     get_approved_listings,
