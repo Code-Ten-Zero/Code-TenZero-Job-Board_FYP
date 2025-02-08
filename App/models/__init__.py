@@ -1,4 +1,4 @@
-from .user import *
+from .base_user_account import *
 from .observer import *
 from .subject import *
 
