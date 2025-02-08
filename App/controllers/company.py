@@ -4,21 +4,17 @@ from App.controllers import get_all_subscribed_alumni
 
 
 
-def add_company(username, company_name, password, email, company_address, contact, company_website):
+def add_company(company_name, password, email, mailing_address, public_email, phone_number, website_url):
+    
     # Check if there are no other users with the same username or email values in any other subclass
         if (
-            Alumni.query.filter_by(username=username).first() is not None or
-            Admin.query.filter_by(username=username).first() is not None or
-            # Company.query.filter_by(username=username).first() is not None or
-
             # Company.query.filter_by(email=email).first() is not None or
             Admin.query.filter_by(email=email).first() is not None or
-            Alumni.query.filter_by(email=email).first() is not None
-            
+            Alumni.query.filter_by(email=email).first() is not None  
         ):
             return None  # Return None to indicate duplicates
 
-        newCompany= Company(username,company_name, password, email, company_address, contact, company_website)
+        newCompany= Company(company_name, password, email, mailing_address, public_email, phone_number, website_url)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database

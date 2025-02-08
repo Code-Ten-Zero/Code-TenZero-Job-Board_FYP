@@ -96,16 +96,16 @@ def empty_db():
 class UserIntegrationTests(unittest.TestCase):
 
     def test_authenticate(self):
-        user = add_admin("bob", "bobpass", 'bob@mail')
-        assert login("bob", "bobpass") != None
+        user = add_admin("bobpass", 'bob@mail')
+        assert login ("bobpass", 'bob@mail')!= None
 
     def test_create_admin(self):
-        add_admin("bob", "bobpass", 'bob@mail')
-        admin = add_admin("rick", "bobpass", 'rick@mail')
+        add_admin("bobpass", 'bob@mail')
+        admin = add_admin("bobpass", 'rick@mail')
         assert admin.username == "rick"
 
     def test_create_alumni(self):
-        alumni = add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
+        alumni = add_alumni('robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
         assert alumni.username == 'rob'
 
     def test_create_company(self):
@@ -144,9 +144,9 @@ class UserIntegrationTests(unittest.TestCase):
     def test_get_all_users_json(self):
         users_json = get_all_users_json()
         self.assertListEqual([
-            {"id":1, "username":"bob", 'email':'bob@mail'},
-            {"id":2, "username":"rick", 'email':'rick@mail'},
-            {"id":1, "username":"rob", "email":"rob@mail", "alumni_id":123456789, "subscribed":True, "job_category":'Database Manager', 'contact':'1868-333-4444', 'firstname':'robfname', 'lastname':'roblname'},
+            {"id":1,'email':'bob@mail'},
+            {"id":2,'email':'rick@mail'},
+            {"id":1,"email":"rob@mail", "alumni_id":123456789, "subscribed":True, "job_category":'Database Manager', 'contact':'1868-333-4444', 'firstname':'robfname', 'lastname':'roblname'},
             {"id":1, "company_name":"company1", "email":"company@mail", 'company_address':'company_address','contact':'contact',
             'company_website':'company_website.com'}
             ], users_json)

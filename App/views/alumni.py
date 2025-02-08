@@ -8,7 +8,7 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     is_alumni_subscribed,
     subscribe,
     unsubscribe,

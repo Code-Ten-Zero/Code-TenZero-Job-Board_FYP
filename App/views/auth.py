@@ -6,7 +6,7 @@ from.index import index_views
 from App.controllers import (
     login,
     login_user,
-    get_user_by_username,
+    get_user_by_email,
     get_all_users,
     add_alumni,
     add_company
@@ -43,7 +43,7 @@ def signup_page():
 @auth_views.route('/login', methods=['POST'])
 def login_action():
   data = request.form
-  token = login(data['username'], data['password'])
+  token = login(data['email'], data['password'])
   
   print(token)
   response = redirect(request.referrer)
@@ -83,7 +83,7 @@ def alumni_signup_action():
     newAlumni = add_alumni(data['username'], data['password'], data['email'],
                           data['alumni_id'], data['contact'], data['firstname'], data['lastname'])
 
-    token = login(data['username'], data['password'])
+    token = login(data['email'], data['password'])
 
     print(token)
 
@@ -113,7 +113,7 @@ def company_signup_action():
     newCompany = add_company(data['username'], data['company_name'], data['password'], data['email'],
                              data['company_address'], data['contact'], data['company_website'])
 
-    token = login(data['username'], data['password'])
+    token = login(data['email'], data['password'])
 
     print(token)
 
@@ -145,7 +145,7 @@ API Routes
 @auth_views.route('/api/login', methods=['POST'])
 def user_login_api():
   data = request.json
-  token = login(data['username'], data['password'])
+  token = login(data['email'], data['password'])
   if not token:
     return jsonify(message='bad username or password given'), 401
   response = jsonify(access_token=token) 

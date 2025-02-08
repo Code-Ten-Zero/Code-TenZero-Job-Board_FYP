@@ -8,11 +8,10 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     get_all_listings,
     get_company_listings,
     add_listing,
-    add_categories,
     get_listing,
     delete_listing,
     toggle_listing_approval
