@@ -15,8 +15,8 @@ class BaseUserAccount(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(120), nullable=False)
-    type = db.Column(db.String(50))
 
+    type = db.Column(db.String(50))
     __mapper_args__ = {
         'polymorphic_identity': 'user',
         'polymorphic_on': type
@@ -40,7 +40,7 @@ class BaseUserAccount(db.Model):
         Returns:
             str: A formatted string with user details (excluding password hash).
         """
-        return f"""BaseUserAccount Info:
+        return f"""{self.__class__.__name__} Info:
     - ID: {self.id}
     - Email: {self.email}
     - Password Hash: [HIDDEN]"""
