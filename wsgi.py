@@ -4,13 +4,15 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users, get_all_admins, get_all_admins_json,
-     add_admin, add_alumni, add_company, add_listing,
-     get_all_companies, get_all_companies_json,
-     get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
-     is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
-     get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, toggle_listing_approval, get_listing_title)
+from App.controllers import *
+
+# #( create_user, get_all_users_json, get_all_users, get_all_admins, get_all_admins_json,
+#      add_admin, add_alumni, add_company, add_listing,
+#      get_all_companies, get_all_companies_json,
+#      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
+#      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
+#      get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
+#      login, toggle_listing_approval, get_listing_title)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
