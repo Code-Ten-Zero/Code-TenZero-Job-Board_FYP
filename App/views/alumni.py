@@ -8,11 +8,10 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     is_alumni_subscribed,
     subscribe,
     unsubscribe,
-    set_alumni_modal_seen
 )
 
 from App.models import(
@@ -36,7 +35,6 @@ def subscribe_action():
 
     try:
         alumni = subscribe(current_user.alumni_id, data['category'])
-        set_alumni_modal_seen(alumni.alumni_id)
         # print(alumni.get_json())
         response = redirect(url_for('index_views.index_page'))
         flash('Subscribed!', 'success')
@@ -74,15 +72,3 @@ def unsubscribe_action():
 # get the user and their categories with user.get_categories
 # then call unsubscrive_action with user and their categores?
 
-@alumni_views.route('/update_modal_seen', methods=['POST'])
-@jwt_required()
-def update_modal_seen():
-    try:
-        alumni = current_user  
-        set_alumni_modal_seen(alumni.alumni_id)  
-        db.session.commit() 
-        return jsonify(message="Modal seen status updated successfully"), 200
-        
-    except Exception as e:
-        db.session.rollback()  
-        return jsonify(message="Error updating modal status"), 500

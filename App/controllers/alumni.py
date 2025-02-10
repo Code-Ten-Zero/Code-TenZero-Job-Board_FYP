@@ -2,13 +2,10 @@ from App.models import User, Alumni, Admin, Company, Listing
 from App.database import db
 
 
-def add_alumni(username, password, email, alumni_id, contact, firstname, lastname):
+def add_alumni(password, email, phone_number, firstname, lastname):
 
         # Check if there are no other users with the same username or email values in any other subclass
         if (
-            # Alumni.query.filter_by(username=username).first() is not None or
-            Admin.query.filter_by(username=username).first() is not None or
-            Company.query.filter_by(username=username).first() is not None or
 
             Company.query.filter_by(email=email).first() is not None or
             Admin.query.filter_by(email=email).first() is not None
@@ -17,7 +14,7 @@ def add_alumni(username, password, email, alumni_id, contact, firstname, lastnam
         ):
             return None  # Return None to indicate duplicates
 
-        newAlumni= Alumni(username, password, email, alumni_id, contact, firstname, lastname)
+        newAlumni= Alumni(password, email, phone_number, firstname, lastname)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAlumni)
             db.session.commit()  # Commit to save the new  to the database
@@ -62,8 +59,9 @@ def subscribe(alumni_id, job_category=None):
     alumni.subscribed = True
 
     if job_category is not None:
-        # add_categories(alumni_id, job_category)
-        alumni.add_category(job_category)
+        print('bob')
+        #add_categories(alumni_id, job_category)
+        #alumni.add_category(job_category)
 
     db.session.add(alumni)
     db.session.commit()
@@ -82,58 +80,6 @@ def unsubscribe(alumni_id):
     db.session.add(alumni)
     db.session.commit()
     return alumni
-
-    
-
-
-
-# def subscribe_action(alumni_id, job_category=None):
-#     alumni = get_alumni(alumni_id)
-
-#     if not alumni:
-#         # print('nah')
-#         return None
-    
-#     # if they are already susbcribed then unsubscribe them
-#     if is_alumni_subscribed(alumni_id):
-#         alumni.subscribed = False
-#         remove_categories(alumni_id, alumni.get_categories())
-    
-#     else:
-#         alumni.subscribed = True
-
-#         if job_category is not None:
-#             add_categories(alumni_id, job_category)
-#         # set their jobs list to job_category ?
-
-#     db.session.add(alumni)
-#     db.session.commit()
-#     return alumni
-        
-# adding and removing job categories 
-def add_categories(alumni_id, job_categories):
-    alumni = get_alumni(alumni_id)
-    try:
-        for category in job_categories:
-            # print(category)
-            alumni.add_category(category)
-            # print(alumni.get_categories())
-            db.session.commit()
-        return alumni
-    except:
-        db.session.rollback()
-        return None   
-
-def remove_categories(alumni_id, job_categories):
-    alumni = get_alumni(alumni_id)
-    try:
-        for category in job_categories:
-            alumni.remove_category(category)
-            db.session.commit()
-        return alumni
-    except:
-        db.session.rollback()
-        return None
 
 # apply to an application
 # def apply_listing(alumni_id, listing_title):
@@ -169,11 +115,6 @@ def apply_listing(alumni_id, listing_id):
 
     return alumni
 
-
-def set_alumni_modal_seen(alumni_id):
-    alumni = get_alumni(alumni_id)
-    alumni.has_seen_modal = True
-    db.session.commit()
     
 # only view approved listings
 def get_approved_listings():

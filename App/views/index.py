@@ -36,17 +36,18 @@ def index_page():
     approved_jobs = get_approved_listings() # retrieve approved jobs
 
     if isinstance(current_user, Alumni):
-        show_modal = current_user.has_seen_modal
-        if not show_modal:
+        #show_modal = current_user.has_seen_modal
+        #if not show_modal:
             # Pass True to the template to show modal
-            return render_template('alumni.html', jobs=approved_jobs, show_modal=True)
+            return render_template('alumni.html', jobs=approved_jobs)
         
         # Pass False to the modal if already seen
-        return render_template('alumni.html', jobs=approved_jobs, show_modal=False)
+        #return render_template('alumni.html', jobs=approved_jobs, show_modal=False)
 
     
     if isinstance(current_user, Company):
-        jobs = get_company_listings(current_user.username)
+        #jobs = get_company_listings(current_user.username)
+        jobs = 1
         return render_template('company-view.html', jobs=jobs)
 
     if isinstance(current_user, Admin):

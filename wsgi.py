@@ -4,13 +4,15 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.controllers import ( create_user, get_all_users_json, get_all_users, get_all_admins, get_all_admins_json,
-     add_admin, add_alumni, add_company, add_listing, add_categories, remove_categories,
-     get_all_companies, get_all_companies_json,
-     get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
-     is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
-     get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
-     login, set_alumni_modal_seen, toggle_listing_approval, get_listing_title)
+from App.controllers import *
+
+# #( create_user, get_all_users_json, get_all_users, get_all_admins, get_all_admins_json,
+#      add_admin, add_alumni, add_company, add_listing,
+#      get_all_companies, get_all_companies_json,
+#      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
+#      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
+#      get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
+#      login, toggle_listing_approval, get_listing_title)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
 
@@ -32,10 +34,10 @@ def initialize():
     # create_user('bob', 'bobpass')
 
     # add in the first admin
-    add_admin('bob', 'bobpass', 'bob@mail')
+    add_admin('bobpass', 'bob@mail')
 
     # add in alumni
-    add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
+    add_alumni('robpass', 'rob@mail', '1868-333-4444', 'robfname', 'roblname')
 
     # add_alumni('rooooob', 'robpass', 'roooooob@mail', '123456089')
 
@@ -137,8 +139,8 @@ def list_admin_command(format):
 @click.argument("username", default='bob2')
 @click.argument("password", default='bobpass')
 @click.argument("email", default="bob@mail2")
-def add_admin_command(username, password, email):
-    admin = add_admin(username, password, email)
+def add_admin_command( password, email):
+    admin = add_admin(password, email)
     
     if admin is None:
         print('Error creating admin')
@@ -173,16 +175,16 @@ def list_alumni_command(format):
 
 # flask alumni add
 @alumni_cli.command("add", help = "Add an alumni object to the database")
-@click.argument("username", default="rob2")
+#@click.argument("username", default="rob2")
 @click.argument("password", default="robpass")
 @click.argument("email", default="rob@mail2")
 @click.argument("alumni_id", default="987654321")
-@click.argument("contact", default="8686861000")
+@click.argument("phone_number", default="8686861000")
 @click.argument("firstname", default="rob2fname")
 @click.argument("lastname", default="rob2lname")
 # @click.argument("job_categories", default='Database')
-def add_alumni_command(username, password, email, alumni_id, contact, firstname, lastname):
-    alumni = add_alumni(username, password, email, alumni_id, contact, firstname, lastname)
+def add_alumni_command(password, email, alumni_id, phone_number, firstname, lastname):
+    alumni = add_alumni(password, email, alumni_id, phone_number, firstname, lastname)
 
     if alumni is None:
         print('Error creating alumni')
@@ -210,7 +212,7 @@ def subscribe_alumni_command(alumni_id):
 @click.argument("alumni_id", default="123456789")
 @click.argument("job_categories", nargs=-1, type=str)
 def add_categories_command(alumni_id, job_categories):
-    alumni = add_categories(alumni_id, job_categories)
+    #alumni = add_categories(alumni_id, job_categories)
 
     if alumni is None:
         print(f'Error adding categories')
@@ -236,7 +238,6 @@ def apply_listing_command(alumni_id, listing_title):
 @click.argument('alumni_id', default='123456789')
 def set_modal_seen_command(alumni_id):
     try:
-        set_alumni_modal_seen(alumni_id)
         print(f'Alumni {alumni_id} has seen the modal.')
     except Exception as e:
         print(f'Error setting modal seen for alumni {alumni_id}: {e}')
@@ -257,7 +258,7 @@ def list_company_command(format):
 
 # flask company add
 @company_cli.command("add", help = "Add an copmany object to the database")
-@click.argument("username", default="representative name")
+#@click.argument("username", default="representative name")
 @click.argument("company_name", default="aah pull")
 @click.argument("password", default="password")
 @click.argument("email", default="aahpull@mail")
@@ -265,8 +266,8 @@ def list_company_command(format):
 @click.argument("contact", default="8689009000")
 @click.argument("company_website", default="https://www.aahpull.com")
 # @click.argument("job_categories", default='Database')
-def add_company_command(username, company_name, password, email, company_address, contact, company_website):
-    company = add_company(username, company_name, password, email, company_address, contact, company_website)
+def add_company_command(company_name, password, email, mailing_address, public_email, phone_number, website_url):
+    company = add_company(company_name, password, email, mailing_address, public_email, phone_number, website_url)
 
     if company is None:
         print('Error creating company')

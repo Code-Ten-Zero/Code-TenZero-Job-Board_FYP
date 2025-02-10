@@ -3,23 +3,18 @@ from App.database import db
 
 
 # create and add a new admin into the db
-def add_admin(username, password, email):
+def add_admin(password, email):
 
     # Check if there are no other users with the same username or email values in any other subclass
         if (
-            Alumni.query.filter_by(username=username).first() is not None or
-            # Admin.query.filter_by(username=username).first() is not None or
-            Company.query.filter_by(username=username).first() is not None or
-
             Company.query.filter_by(email=email).first() is not None or
-            # Admin.query.filter_by(email=email).first() is not None
+            #Admin.query.filter_by(email=email).first() is not None
             Alumni.query.filter_by(email=email).first() is not None
-            
         ):
             return None  # Return None to indicate duplicates
 
-        newAdmin= Admin(username, password, email)
-        try: # safetey measure for trying to add duplicate 
+        newAdmin= Admin(password, email)
+        try: # safety measure for trying to add duplicate 
             db.session.add(newAdmin)
             db.session.commit()  # Commit to save the new to the database
             return newAdmin
