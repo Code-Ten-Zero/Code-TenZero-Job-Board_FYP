@@ -84,11 +84,8 @@ def get_company_listings(company_name):
     #return Listing.query.filter_by(company_name=company_name)
     company = get_company_by_name(company_name)
     if not company or not company.listings: 
-        return []  # Return empty list
-    
+        return []  # Return empty list 
     return company.listings 
-
-    return None
 
 def get_all_companies():
     return Company.query.all()
