@@ -60,7 +60,7 @@ def subscribe(alumni_id, job_category=None):
 
     if job_category is not None:
         # add_categories(alumni_id, job_category)
-        alumni.add_category(job_category)
+        #alumni.add_category(job_category)
 
     db.session.add(alumni)
     db.session.commit()
