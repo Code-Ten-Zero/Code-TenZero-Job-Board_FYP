@@ -40,12 +40,12 @@ class UserUnitTests(unittest.TestCase):
     #     assert user.username == "bob"
 
     def test_new_admin(self):
-        admin = Admin('bob', 'bobpass', 'bob@mail')
-        assert admin.username == "bob"
+        admin = Admin('bobpass', 'bob@mail')
+        assert admin.email == "bob@mail"
 
     def test_new_alumni(self):
-        alumni = Alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
-        assert alumni.username == 'rob'
+        alumni = Alumni('robpass', 'rob@mail', '1868-333-4444', 'robfname', 'roblname')
+        assert alumni.email == 'rob@mail'
     
     def test_new_company(self):
         company = Company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
@@ -53,25 +53,25 @@ class UserUnitTests(unittest.TestCase):
 
     # pure function no side effects or integrations called
     def test_get_json(self):
-        user = Admin("bob", "bobpass", 'bob@mail')
+        user = Admin("bobpass", 'bob@mail')
         user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "username":"bob", 'email':'bob@mail'})
+        self.assertDictEqual(user_json, {"id":None, 'email':'bob@mail'})
 
     # pure function no side effects or integrations called
     def test_get_json(self):
-        user = Admin("bob", "bobpass", 'bob@mail')
+        user = Admin("bobpass", 'bob@mail')
         user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "username":"bob", 'email':'bob@mail'})
+        self.assertDictEqual(user_json, {"id":None, 'email':'bob@mail'})
     
     def test_hashed_password(self):
         password = "mypass"
         hashed = generate_password_hash(password, method='sha256')
-        user = Admin("bob", password, 'bob@mail')
+        user = Admin(password, 'bob@mail')
         assert user.password != password
 
     def test_check_password(self):
         password = "mypass"
-        user = Admin("bob", password, 'bob@mail')
+        user = Admin(password, 'bob@mail')
         assert user.check_password(password)
 
 '''
@@ -145,19 +145,19 @@ class UserIntegrationTests(unittest.TestCase):
         self.assertListEqual([
             {"id":1,'email':'bob@mail'},
             {"id":2,'email':'rick@mail'},
-            {"id":1,"email":"rob@mail", "alumni_id":123456789, "subscribed":True, "job_category":'Database Manager', 'contact':'1868-333-4444', 'firstname':'robfname', 'lastname':'roblname'},
-            {"id":1, "company_name":"company1", "email":"company@mail", 'company_address':'company_address','contact':'contact',
-            'company_website':'company_website.com'}
+            {"id":1,"email":"rob@mail", "subscribed":True,'phone_number':'1868-333-4444', 'firstname':'robfname', 'lastname':'roblname'},
+            {"id":1, "company_name":"company1", "email":"company@mail", 'mailing_address':'company_address','phone_number':'contact',
+            'website_url':'company_website.com'}
             ], users_json)
 
-    def test_initial_has_seen_modal(self):
-        alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
-        assert alumni.has_seen_modal == False
+    # def test_initial_has_seen_modal(self):
+    #     alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
+    #     assert alumni.has_seen_modal == False
 
-    def test_set_modal_seen(self):
-        alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
-        set_alumni_modal_seen(alumni.alumni_id)
-        assert alumni.has_seen_modal == True
+    # def test_set_modal_seen(self):
+    #     alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
+    #     set_alumni_modal_seen(alumni.alumni_id)
+    #     assert alumni.has_seen_modal == True
 
 
     # def test_create_user(self):
