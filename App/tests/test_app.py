@@ -101,11 +101,11 @@ class UserIntegrationTests(unittest.TestCase):
     def test_create_admin(self):
         add_admin("bobpass", 'bob@mail')
         admin = add_admin("bobpass", 'rick@mail')
-        assert admin.username == "rick"
+        assert admin.email == "rick@mail"
 
     def test_create_alumni(self):
         alumni = add_alumni('robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
-        assert alumni.username == 'rob'
+        assert alumni.email == 'rob@mail'
 
     def test_create_company(self):
         company = add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')

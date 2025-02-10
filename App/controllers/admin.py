@@ -8,7 +8,7 @@ def add_admin(password, email):
     # Check if there are no other users with the same username or email values in any other subclass
         if (
             Company.query.filter_by(email=email).first() is not None or
-            # Admin.query.filter_by(email=email).first() is not None
+            #Admin.query.filter_by(email=email).first() is not None
             Alumni.query.filter_by(email=email).first() is not None
         ):
             return None  # Return None to indicate duplicates
