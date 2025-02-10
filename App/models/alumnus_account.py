@@ -2,17 +2,17 @@ from App.database import db
 from .base_user_account import BaseUserAccount
 
 
-class AlumniAccount(BaseUserAccount):
+class AlumnusAccount(BaseUserAccount):
     """
-    Represents an alumni account, inheriting from the base user class.
+    Represents an alumnus account, inheriting from the base user class.
 
-    Alumni accounts store additional personal details, including name and phone number.
+    Alumnus accounts store additional personal details, including name and phone number.
     """
 
-    __tablename__ = "alumni_accounts"
+    __tablename__ = "alumnus_accounts"
 
     __mapper_args__ = {
-        "polymorphic_identity": "alumni"
+        "polymorphic_identity": "alumnus"
     }
 
     first_name = db.Column(db.String(50), nullable=False)
@@ -25,14 +25,14 @@ class AlumniAccount(BaseUserAccount):
 
     def __init__(self, email: str, password: str, first_name: str, last_name: str, phone_number: str = None) -> None:
         """
-        Initializes a new Alumni account.
+        Initializes a new alumnus account.
 
         Args:
-            email (str): The alumni's email address (must be given and must be unique).
-            password (str): The alumni's plaintext password (hashed internally before storage, must be given).
-            first_name (str): The alumni's first name (must be given).
-            last_name (str): The alumni's last name (must be given).
-            phone_number (str, optional): The alumni's phone number (can be null). Example: "+1-(868)-123-4567 ext. 8910"
+            email (str): The alumnus' email address (must be given and must be unique).
+            password (str): The alumnus' plaintext password (hashed internally before storage, must be given).
+            first_name (str): The alumnus' first name (must be given).
+            last_name (str): The alumnus' last name (must be given).
+            phone_number (str, optional): The alumnus' phone number (can be null). Example: "+1-(868)-123-4567 ext. 8910"
         """
         super().__init__(email, password)
         self.first_name = first_name
@@ -41,10 +41,10 @@ class AlumniAccount(BaseUserAccount):
 
     def __str__(self) -> str:
         """
-        Returns a human-readable string representation of the alumni account.
+        Returns a human-readable string representation of the alumnus account.
 
         Returns:
-            str: A formatted string displaying alumni account details (excluding password hash).
+            str: A formatted string displaying alumnus account details (excluding password hash).
         """
         return f"""{self.__class__.__name__} Info:
     - ID: {self.id}
@@ -57,10 +57,10 @@ class AlumniAccount(BaseUserAccount):
 
     def __repr__(self) -> str:
         """
-        Returns a developer-friendly representation of the alumni account.
+        Returns a developer-friendly representation of the alumnus account.
 
         Returns:
-            str: A string containing the alumni account details (excluding password hash).
+            str: A string containing the alumnus account details (excluding password hash).
         """
         return (f"<{self.__class__.__name__} (id={self.id}, email='{self.email}', "
                 f"password_hash='[HIDDEN]', first_name='{self.first_name}', "
@@ -69,10 +69,10 @@ class AlumniAccount(BaseUserAccount):
 
     def __json__(self) -> dict:
         """
-        Returns a JSON-serializable representation of the alumni account.
+        Returns a JSON-serializable representation of the alumnus account.
 
         Returns:
-            dict: A dictionary containing alumni account details (excluding password hash).
+            dict: A dictionary containing alumnus account details (excluding password hash).
         """
         return {
             'id': self.id,
