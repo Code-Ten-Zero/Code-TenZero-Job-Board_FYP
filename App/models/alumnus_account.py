@@ -6,7 +6,17 @@ class AlumnusAccount(BaseUserAccount):
     """
     Represents an alumnus account, inheriting from the base user class.
 
-    Alumnus accounts store additional personal details, including name and phone number.
+    
+    Attributes:
+        id (int): A unique identifier for the alumnus account.
+        email (str): The alumnus' email address, used for authentication.
+        password_hash (str): The hashed version of the alumnus' password.
+        first_name (str): The alumnus' first name.
+        last_name (str): The alumnus' last name.
+        phone_number (str, optional): The alumnus' phone number, which may include country codes and extensions.
+
+    Relationships:
+        This model extends BaseUserAccount and does not define additional relationships directly.
     """
 
     __tablename__ = "alumnus_accounts"
@@ -18,26 +28,24 @@ class AlumnusAccount(BaseUserAccount):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
 
-    # String-type used to account for leading '0' and/or '+' in country codes, as well as separators '(e.g., '-') and extensions (e.g., "+1-(800)-555-1234 ext. 7890")
-    # Phone numbers are not used for arithmetic, and their size can exceed that of int variables easily
-    # Persons can share the same phone number (e.g., house number)
-    phone_number = db.Column(db.String, nullable=True, unique=False)
+    # String-type used to account for leading '0' and/or '+' in country codes, as well as format separators and extensions (e.g., "+1-(800)-555-1234 ext. 7890")
+    phone_number = db.Column(db.String, nullable=True)
 
     def __init__(self, email: str, password: str, first_name: str, last_name: str, phone_number: str = None) -> None:
         """
         Initializes a new alumnus account.
 
         Args:
-            email (str): The alumnus' email address (must be given and must be unique).
-            password (str): The alumnus' plaintext password (hashed internally before storage, must be given).
-            first_name (str): The alumnus' first name (must be given).
-            last_name (str): The alumnus' last name (must be given).
-            phone_number (str, optional): The alumnus' phone number (can be null). Example: "+1-(868)-123-4567 ext. 8910"
+            email (str): The alumnus' email address (must be unique).
+            password (str): The alumnus' plaintext password (hashed internally before storage).
+            first_name (str): The alumnus' first name.
+            last_name (str): The alumnus' last name.
+            phone_number (str, optional): The alumnus' phone number. Example: "+1-(868)-123-4567 ext. 8910"
         """
         super().__init__(email, password)
         self.first_name = first_name
         self.last_name = last_name
-        self.phone_number = phone_number
+        self.phone_number = phone_number if phone_number else "N/A"
 
     def __str__(self) -> str:
         """
@@ -52,7 +60,7 @@ class AlumnusAccount(BaseUserAccount):
     - Password Hash: [HIDDEN]
     - First Name: {self.first_name}
     - Last Name: {self.last_name}
-    - Phone Number: {self.phone_number if self.phone_number else '[N/A]'}
+    - Phone Number: {self.phone_number if self.phone_number else 'N/A'}
     """
 
     def __repr__(self) -> str:
@@ -65,7 +73,7 @@ class AlumnusAccount(BaseUserAccount):
         return (f"<{self.__class__.__name__} (id={self.id}, email='{self.email}', "
                 f"password_hash='[HIDDEN]', first_name='{self.first_name}', "
                 f"last_name='{self.last_name}', "
-                f"phone_number={self.phone_number if self.phone_number else '[N/A]'})>")
+                f"phone_number={self.phone_number if self.phone_number else 'N/A'})>")
 
     def __json__(self) -> dict:
         """

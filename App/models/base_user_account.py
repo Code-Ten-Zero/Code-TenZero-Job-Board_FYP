@@ -16,6 +16,8 @@ class BaseUserAccount(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(120), nullable=False)
 
+    notifications = db.relationship('Notification', back_populates='users', lazy="dynamic", cascade="all, delete-orphan")
+
     type = db.Column(db.String(50))
     __mapper_args__ = {
         'polymorphic_identity': 'user',
