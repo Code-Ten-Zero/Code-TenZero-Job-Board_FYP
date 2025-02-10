@@ -86,7 +86,8 @@ def get_company_listings(company_name):
     
     # for listing in company.listings:
     #     print(listing.get_json())
-    return company.listings
+    #return company.listings
+    return None
 
 def get_all_companies():
     return Company.query.all()

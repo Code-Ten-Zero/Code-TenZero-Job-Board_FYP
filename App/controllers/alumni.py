@@ -59,7 +59,8 @@ def subscribe(alumni_id, job_category=None):
     alumni.subscribed = True
 
     if job_category is not None:
-        # add_categories(alumni_id, job_category)
+        print('bob')
+        #add_categories(alumni_id, job_category)
         #alumni.add_category(job_category)
 
     db.session.add(alumni)
