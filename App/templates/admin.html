@@ -15,10 +15,15 @@
         header {
             background-color: rgb(57, 97, 185);
             color: #fff;
-            padding: 10px 20px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center; 
+            padding-left: 5%;
+        }
+
+        nav a {
+        margin-left: 20px;
+        font-size: large;
         }
 
         .logout{
@@ -27,12 +32,18 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: large;
             cursor: pointer;
         }
 
         .logout:hover{
             background-color: rgb(98, 127, 191);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 35px;     
         }
         
         .button {
@@ -42,7 +53,7 @@
             color: white;
             cursor: pointer;
             border-radius: 4px;
-            margin-right: 10px;
+            margin-left: 10px;
         }
 
         .button:hover {
@@ -53,6 +64,7 @@
             width: 80%;
             margin: 20px auto;
         }
+        
         h1 {
             text-align: center;
         }
@@ -126,8 +138,12 @@
 </head>
 <body>
     <header>
-        <h2>Welcome Admin!</h2>
+        <h2>DCIT Job Board</h2>
+        <nav>
+        <a href="#" class="">Notifications</a>
+        <a href="#" class="">My Account</a>
         <a href="/logout" class="logout">Logout</a>
+        </nav>
     </header>
     <div id="flash-messages">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -141,7 +157,8 @@
         {% endwith %}
     </div>
     <div class="container">
-        <div>
+        <h2>Welcome Admin!</h2>
+        <div class="button-container">
             <button class="button" onclick="filterByStatus('published')">Published</button>
             <button class="button" onclick="filterByStatus('unpublished')">Unpublished</button>
         </div>
@@ -169,7 +186,7 @@
                             <button class="publish-button" data-job-id="{{ job.id }}" onclick="publishJob(event, this)">Publish</button>
                         {% else %}
                             <button class="publish-button" data-job-id="{{ job.id }}" onclick="unpublishJob(event, this)">Unpublish</button>
-                        {% endif %} 
+                        {% endif %}
                     </td>
                 </tr>
             </tbody>
