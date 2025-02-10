@@ -17,7 +17,7 @@ from App.controllers import (
     add_listing,
     subscribe,
     unsubscribe,
-    add_categories,
+    #add_categories,
     apply_listing,
     get_all_applicants,
     get_alumni,

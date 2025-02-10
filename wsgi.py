@@ -212,7 +212,7 @@ def subscribe_alumni_command(alumni_id):
 @click.argument("alumni_id", default="123456789")
 @click.argument("job_categories", nargs=-1, type=str)
 def add_categories_command(alumni_id, job_categories):
-    alumni = add_categories(alumni_id, job_categories)
+    #alumni = add_categories(alumni_id, job_categories)
 
     if alumni is None:
         print(f'Error adding categories')
