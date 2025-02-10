@@ -57,7 +57,7 @@ class JobListing(db.Model):
             f"admin_approval_status IN ({', '.join(repr(s) for s in current_app.config['APPROVAL_STATUSES'])})", name="valid_approval_status"),
     )
 
-    def __init__(self, company_id, title, position_type, description, monthly_salary_ttd, is_remote, job_site):
+    def __init__(self, company_id: int, title: str, position_type: str, description: str, monthly_salary_ttd: int, is_remote: bool, job_site: str) -> None:
         """
         Initializes a JobListing instance.
 
