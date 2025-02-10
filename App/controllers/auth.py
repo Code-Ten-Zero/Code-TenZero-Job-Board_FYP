@@ -84,8 +84,8 @@ def add_auth_context(app):
           verify_jwt_in_request()
           # user_id = get_jwt_identity()
           # current_user = User.query.get(user_id)
-          username = get_jwt_identity()
-          current_user = get_user_by_username(username)
+          email = get_jwt_identity()
+          current_user = get_user_by_email(email)
           is_authenticated = True
       except Exception as e:
           print(e)

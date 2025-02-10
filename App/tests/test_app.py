@@ -9,7 +9,7 @@ from App.controllers import (
     get_all_users_json,
     login,
     get_user,
-    get_user_by_username,
+    get_user_by_email,
     update_user,
     add_admin,
     add_alumni,
