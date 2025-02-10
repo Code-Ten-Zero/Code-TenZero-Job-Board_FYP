@@ -43,7 +43,8 @@
         .button-container {
             display: flex;
             justify-content: flex-end;
-            gap: 35px;     
+            gap: 35px;
+            margin: 10px;     
         }
         
         .button {
@@ -61,33 +62,50 @@
         }
 
         .container {
-            width: 80%;
+            width: 90%;
             margin: 20px auto;
         }
-        
-        h1 {
-            text-align: center;
+
+        .table-container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: white;
         }
+
+        h2 {
+            font-size:xx-large;
+            font-family:Arial, Helvetica, sans-serif;
+            font-weight: 100;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
             border: 1px solid #333;
         }
+
         th, td {
-            padding: 10px;
+            padding: 18px;
             border-bottom: 1px solid #ddd;
             text-align: left;
             border-bottom: 1px solid #333;
             border-right: 1px solid #333;
         }
 
-        th, tr{
+        thead {
+        background-color: rgb(74, 74, 192);
+        color: white;
+        }
+
+        /* th,tr{
             background-color: #f2f2f2;
-        }
+        } */
+         
         tr:hover {
-            background-color: #f5f5f5;
+            background-color: #ced4ea;
         }
+
         .actions button{
             margin-right: 10px;
             padding: 5px 10px;
@@ -114,6 +132,7 @@
         .actions button:hover, a:hover {
             background-color: rgb(98, 127, 191);
         }
+
         .alert {
             padding: 15px;
             margin-bottom: 20px;
@@ -138,7 +157,7 @@
 </head>
 <body>
     <header>
-        <h2>DCIT Job Board</h2>
+        <h1>DCIT Job Board</h1>
         <nav>
         <a href="#" class="">Notifications</a>
         <a href="#" class="">My Account</a>
@@ -157,11 +176,13 @@
         {% endwith %}
     </div>
     <div class="container">
-        <h2>Welcome Admin!</h2>
-        <div class="button-container">
-            <button class="button" onclick="filterByStatus('published')">Published</button>
-            <button class="button" onclick="filterByStatus('unpublished')">Unpublished</button>
-        </div>
+    <h2>Welcome Admin!</h2>
+    <div class="button-container">
+        <button class="button" onclick="filterByStatus('published')">Published</button>
+        <button class="button" onclick="filterByStatus('unpublished')">Unpublished</button>
+    </div>
+    </div>
+    <div class="table-container">
         <table id="jobTable">
             <thead>
                 <tr>

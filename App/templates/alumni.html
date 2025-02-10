@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>DCIT Job Board</title>
+    <title>DCIT Job Board-Alumni</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -321,6 +321,26 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+    .btn-group .button {
+    background-color: white; /* Green */
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    }
+
+    .btn-group .button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+    }
+
+    .btn-group .button:hover {
+    background-color: #CFCEE3;
+    }
     </style>
 </head>
 <body>
@@ -350,15 +370,22 @@
             {% endif %}
         {% endwith %}
     </div>
+    <div>
+        <h1>Latest Listings</h1>
+    </div>
+    <div class="btn-group">
+        <button class="button">Submiited Applications</button>
+        <button class="button">Browse Jobs</button>
+        <button class="button">Browse Companies</button>
+      </div>
     <div class="container">
         <div id="subpopup" class="popup-container" data-show-modal="{{ show_modal }}">
             <div class="subpopup-content">
                 <h2>Wecome Alumni</h2>
- 
+
                 <p>Welcome to the DCIT Job Board! Explore our curated job listings directly below. 
                 Whether you're a recent graduate or seasoned professional, find your perfect opportunity here. 
                 Stay updated by subscribing to our mailing list for the latest job postings. Start your journey to career success today!</p>
-                    
 
                 <section class="subscription">
                     <div class="box">
