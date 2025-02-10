@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Listings</title>
+    <title>DCIT Job Board-Company</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,33 +15,48 @@
         header {
             background-color: rgb(57, 97, 185);
             color: #fff;
-            padding: 10px 20px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center; 
+            padding-left: 5%;
+        }
+
+        nav a {
+        margin-left: 20px;
+        font-size: large;
         }
 
         button, a {
-            padding: 10px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            text-decoration: none;
+        padding: 10px;
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-right: 20px;
+        margin-bottom: 5px;
         }
+
         button:hover, a:hover {
             background-color: rgb(98, 127, 191);
         }
+
         .container {
-            max-width: 800px;
+            max-width: 100%;
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9;
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            display: grid; 
+            overflow-y: scroll;
         }
+
         .job-listing {
+            max-width: 100%;
             margin-bottom: 20px;
             padding: 20px;
             border: 1px solid #ddd;
@@ -53,6 +68,7 @@
             position: absolute;
             bottom: 10px; 
             right: 10px;
+            padding-bottom: 20px;
         }
 
         .logout{
@@ -78,6 +94,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .addjob:hover, .logout:hover {
             background-color: rgb(98, 127, 191);
         }
@@ -119,13 +136,16 @@
         }
     </style>
 </head>
-<header>
-    <h2>Job Listings</h2>
-    <a href="/notifications" class="notifications">Notifications</a>
-    <a href="/add_listing" class="addJob"> Add Job</a>
-    <a href="/logout" class="logout">Logout</a>
-</header>
 <body>
+    <header>
+        <h2>DCIT Job Board</h2>
+        <nav>
+        <a href="/add_listing"> Add Listing</a>
+        <a href="#" >My Account</a>
+        <a href="/notifications">Notifications</a>
+        <a href="/logout">Logout</a>
+        </nav>
+    </header>
     <div id="flash-messages">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -151,7 +171,7 @@
             <p>Desired Candidate Type: {{ job.desiredcandidate }}</p>
             <!-- <p>Test for job request: {{ job.request }}</p> -->
             <div class="job-actions">
-                    <a href="/view_applications/{{job.id}}">View Applicants</a>
+                    <a href="/view_applications/{{job.id}}">View Applicantion</a>
                     <!-- <input type="hidden" name="job_id" value="{{ job.id }}"> -->
                     <!-- <a href="/request_edit_listing/{{job.id}}">Request Edits</a> -->
                     <a href="/request_delete_listing/{{job.id}}">Request Deletion</a>
