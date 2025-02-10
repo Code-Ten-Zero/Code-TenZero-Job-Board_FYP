@@ -37,15 +37,14 @@ def get_user_by_email(email):
     user = None
     alumni = Alumni.query.filter_by(email=email).first()
     if alumni:
-        user = alumni
-        return user
+        return alumni
+
     admin = Admin.query.filter_by(email=email).first()
     if admin:
-        user = admin
-        return user
+        return admin
+
     company = Company.query.filter_by(email=email).first()
     if company:
-        user = company
-        return user
+        return company
     
-    return user
+    return None

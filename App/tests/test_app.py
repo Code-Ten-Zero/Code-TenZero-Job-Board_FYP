@@ -48,7 +48,7 @@ class UserUnitTests(unittest.TestCase):
         assert alumni.email == 'rob@mail'
     
     def test_new_company(self):
-        company = Company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
+        company = Company('company1', 'compass', 'company@mail',  'company_address', 'public@mail', 'contact', 'company_website.com')
         assert company.company_name == 'company1'
 
     # pure function no side effects or integrations called
