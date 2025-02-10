@@ -130,13 +130,13 @@ class Listing(db.Model, Subject):
     def get_applicants(self):
         return self.applicant
 
-    def add_category(self, category):
-        categories = self.get_categories()
-        if category not in categories:
-            categories.append(category)
-            self.job_category = '|'.join(categories)
-        else:
-            print(f"Category '{category}' already exists.")
+    #def add_category(self, category):
+        #categories = self.get_categories()
+        #if category not in categories:
+            #categories.append(category)
+            #self.job_category = '|'.join(categories)
+        #else:
+            #print(f"Category '{category}' already exists.")
 
     def remove_category(self, category):
         categories = self.get_categories()

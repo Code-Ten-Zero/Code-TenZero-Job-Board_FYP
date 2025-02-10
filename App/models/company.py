@@ -3,51 +3,37 @@ from .user import User
 from .observer import Observer
 
 class Company(User, Observer):
-    # id = db.Column(db.Integer, primary_key = True)
-    # id = db.Column(db.Integer)
 
-    # company_name = db.Column(db.String, primary_key = True)
     company_name = db.Column(db.String, unique=True, nullable=False)
+    phone_number = db.Column(db.String(30), nullable=True)
+    mailing_address = db.Column(db.String(120), nullable=True)
+    public_email = db.Column(db.String(120), nullable=True)
+    website_url = db.Column(db.String(120), nullable=True)
 
     # Relationship with notifications
     # One-to-many relationship with Notification
     notifications = db.relationship('Notification', backref='company', lazy=True)
 
-    # insert other company information here later
-    # hrname = db.Column(db.String(120))
-    # hremail = db.column(db.String(120))
-    company_address = db.Column(db.String(120))
-
-    contact = db.Column(db.String())
-
-    company_website = db.Column(db.String(120))
-
-
-
-     
-
     # set up relationship with Listing object (1-M)
     listings = db.relationship('Listing', backref='company', lazy=True)
 
-    # maybe relationship with alumni? list of alumni as subscribers?
-    # applicants?
-    # applicants = db.relationship('Alumni', backref='company', lazy=True)
-
-    def __init__(self, username, company_name, password, email, company_address, contact, company_website):
-        super().__init__(username, password, email)
+    def __init__(self, company_name, password, email, mailing_address, public_email, phone_number, website_url):
+        super().__init__(password, email)
         self.company_name = company_name
-        self.company_address = company_address
-        self.contact = contact
-        self.company_website = company_website
+        self.mailing_address = mailing_address
+        self.public_email = public_email
+        self.phone_number = phone_number
+        self.website_url = website_url
         
     def get_json(self):
         return{
             'id': self.id,
             'company_name': self.company_name,
             'email': self.email,
-            'company_address':self.company_address,
-            'contact':self.contact,
-            'company_website':self.company_website
+            'public_email': self.public_email,
+            'mailing_address':self.mailing_address,
+            'phone_number':self.phone_number,
+            'website_url':self.website_url
         }
     
     def get_name(self):

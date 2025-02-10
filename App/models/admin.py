@@ -10,5 +10,5 @@ class Admin(User):
   #     'polymorphic_identity': 'admin',
   # }
 
-    def __init__(self, username, password, email):
-        super().__init__(username, password, email)
+    def __init__(self, password, email):
+        super().__init__( password, email)
