@@ -57,8 +57,8 @@ def initialize():
     
 
     # add in companies
-    add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
-    add_company('company2', 'company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'company_website2.com')
+    add_company('company1', 'compass', 'company@mail',  'company_address', 'public@mail', 'contact', 'company_website.com')
+    add_company('company2', 'compass', 'company2@mail',  'company_address2', 'public2@mail', 'contact2', 'company_website.com')
 
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')

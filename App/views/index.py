@@ -46,8 +46,7 @@ def index_page():
 
     
     if isinstance(current_user, Company):
-        #jobs = get_company_listings(current_user.username)
-        jobs = 1
+        jobs = get_company_listings(current_user.email)
         return render_template('company-view.html', jobs=jobs)
 
     if isinstance(current_user, Admin):
