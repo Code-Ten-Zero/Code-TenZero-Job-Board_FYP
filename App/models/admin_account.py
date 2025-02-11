@@ -4,15 +4,13 @@ from .base_user_account import BaseUserAccount
 
 class AdminAccount(BaseUserAccount):
     """
-    Represents an admin account in the system.
-
-    This class is a subclass of `BaseUserAccount` and provides specific 
-    functionality for admin users. It supports authentication features, 
-    including password hashing and verification.
+    Represents an admin account in the system, inherting from the base user class.
 
     Attributes:
-        email (str): The admin's email address.
+        login_email (str): The unique email used to log into the admin's account.
         password_hash (str): The hashed password for authentication.
+
+        notifications (relationship): One-to-many relationship with the 'Notification' model (inherited from base user class).
     """
 
     __tablename__ = "admin_accounts"
@@ -21,16 +19,12 @@ class AdminAccount(BaseUserAccount):
         'polymorphic_identity': 'admin',
     }
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, login_email: str, password: str) -> None:
         """
         Initialize a new AdminAccount instance.
 
-        Inherited from `BaseUserAccount`, this constructor initializes the
-        email and sets the password by hashing it.
-
         Args:
-            email (str): The admin's email address.
-            password (str): The plaintext password provided by the admin
-                            (will be hashed for storage).
+            login_email (str): The unique email used to log into the admin's account.
+            password (str): The admin's plaintext password (hashed internally before storage).
         """
-        super().__init__(email, password)
+        super().__init__(login_email, password)
