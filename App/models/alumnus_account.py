@@ -13,6 +13,7 @@ class AlumnusAccount(BaseUserAccount):
         first_name (str): The alumnus' first name.
         last_name (str): The alumnus' last name.
         phone_number (str, optional): The alumnus' unique phone number, which may include country codes and extensions.
+        profile_photo_file_path (str, optional): The file path to the admin's profile photo.
 
         notifications (relationship): One-to-many relationship with the 'Notification' model (inherited from base user class).
         job_applications (relationship): One-to-many relationship with the 'JobApplications' model.
@@ -34,13 +35,13 @@ class AlumnusAccount(BaseUserAccount):
     phone_number = db.Column(db.String, unique=True)
 
     job_applications = db.relationship(
-        'JobApplications', back_populates='alumni', lazy="dynamic", cascade="all, delete-orphan")
+        'JobApplications', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     saved_job_listings = db.relationship(
-        'SavedJobListings', back_populates='alumni', lazy="dynamic", cascade="all, delete-orphan")
+        'SavedJobListings', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     company_subscriptions = db.relationship(
-        'CompanySubscriptions', back_populates='alumni', lazy="dynamic", cascade="all, delete-orphan")
+        'CompanySubscriptions', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
 
-    def __init__(self, login_email: str, password: str, first_name: str, last_name: str, phone_number: str = None) -> None:
+    def __init__(self, login_email: str, password: str, first_name: str, last_name: str, phone_number: str = None, profile_photo_file_path: str = None) -> None:
         """
         Initializes a new alumnus account.
 
@@ -50,11 +51,12 @@ class AlumnusAccount(BaseUserAccount):
             first_name (str): The alumnus' first name.
             last_name (str): The alumnus' last name.
             phone_number (str, optional): The alumnus' unique phone number. Example: "+1-(868)-123-4567 ext. 8910"
+            profile_photo_file_path (str, optional): The file path to the alumnus' profile photo.
         """
-        super().__init__(login_email, password)
+        super().__init__(login_email, password, profile_photo_file_path)
         self.first_name = first_name
         self.last_name = last_name
-        self.phone_number = phone_number if phone_number else "N/A"
+        self.phone_number = phone_number
 
     def __str__(self) -> str:
         """
@@ -70,6 +72,7 @@ class AlumnusAccount(BaseUserAccount):
     - First Name: {self.first_name}
     - Last Name: {self.last_name}
     - Phone Number: {self.phone_number if self.phone_number else 'N/A'}
+    - Profile Photo File Path: {self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'} 
     """
 
     def __repr__(self) -> str:
@@ -82,7 +85,8 @@ class AlumnusAccount(BaseUserAccount):
         return (f"<{self.__class__.__name__} (id={self.id}, login_email='{self.login_email}', "
                 f"password_hash='[HIDDEN]', first_name='{self.first_name}', "
                 f"last_name='{self.last_name}', "
-                f"phone_number={self.phone_number if self.phone_number else 'N/A'})>")
+                f"phone_number='{self.phone_number if self.phone_number else 'N/A'}', "
+                f"profile_photo_file_path='{self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'}')>")
 
     def __json__(self) -> dict:
         """
@@ -97,5 +101,6 @@ class AlumnusAccount(BaseUserAccount):
             'password_hash': "[HIDDEN]",
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'phone_number': self.phone_number if self.phone_number else None
+            'phone_number': self.phone_number if self.phone_number else None,
+            'profile_photo_file_path': self.profile_photo_file_path if self.profile_photo_file_path else None
         }

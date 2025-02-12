@@ -23,9 +23,10 @@ class BaseUserAccount(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login_email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(120), nullable=False)
+    profile_photo_file_path = db.Column(db.String, default=None)
 
     notifications = db.relationship(
-        'Notification', back_populates='users', lazy="dynamic", cascade="all, delete-orphan")
+        'Notification', back_populates='user', lazy="dynamic", cascade="all, delete-orphan")
 
     type = db.Column(db.String(50))
     __mapper_args__ = {
@@ -44,7 +45,7 @@ class BaseUserAccount(db.Model):
         """
         self.login_email = login_email
         self.set_password(password)
-        self.profile_photo_file_path = profile_photo_file_path if profile_photo_file_path else None
+        self.profile_photo_file_path = profile_photo_file_path
 
     def __str__(self) -> str:
         """
@@ -67,7 +68,8 @@ class BaseUserAccount(db.Model):
         Returns:
             str: A string containing the class name, ID, and email.
         """
-        return f"<{self.__class__.__name__} (id={self.id}, email='{self.email}', password_hash='[HIDDEN]', profile_photo_file_path='{self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'}')>"
+        return (f"<{self.__class__.__name__} (id={self.id}, email='{self.email}', password_hash='[HIDDEN]', "
+                f"profile_photo_file_path='{self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'}')>")
 
     def __json__(self) -> dict:
         """
