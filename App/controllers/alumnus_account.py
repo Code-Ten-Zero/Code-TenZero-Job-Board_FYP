@@ -1,23 +1,18 @@
-from App.models import User, Alumni, Admin, Company, Listing
+from App.models import BaseUserAccount, AlumnusAccount, AdminAccount, CompanyAccount, JobListing
 from App.database import db
 
 
-def add_alumni(username, password, email, alumni_id, contact, firstname, lastname):
+def add_alumni(password_hash, login_email, alumni_id, firstname, lastname, phone_number, profile_photo_file_path):
 
-        # Check if there are no other users with the same username or email values in any other subclass
+        # Check if there are no other users with the same email values in any other subclass
         if (
             # Alumni.query.filter_by(username=username).first() is not None or
-            Admin.query.filter_by(username=username).first() is not None or
-            Company.query.filter_by(username=username).first() is not None or
-
-            Company.query.filter_by(email=email).first() is not None or
-            Admin.query.filter_by(email=email).first() is not None
-            # Alumni.query.filter_by(email=email).first() is not None
-            
+            AdminAccount.query.filter_by(login_email=login_email).first() is not None or
+            CompanyAccount.query.filter_by(login_email=login_email).first() is not None 
         ):
             return None  # Return None to indicate duplicates
 
-        newAlumni= Alumni(username, password, email, alumni_id, contact, firstname, lastname)
+        newAlumni= AlumnusAccount(password_hash, login_email, alumni_id, firstname, lastname, phone_number, profile_photo_file_path)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAlumni)
             db.session.commit()  # Commit to save the new  to the database
@@ -27,7 +22,7 @@ def add_alumni(username, password, email, alumni_id, contact, firstname, lastnam
             return None
 
 def get_all_alumni():
-    return db.session.query(Alumni).all()
+    return db.session.query(AlumnusAccount).all()
 
 def get_all_alumni_json():
     alumnis = get_all_alumni()
@@ -37,7 +32,7 @@ def get_all_alumni_json():
     return alumnis
 
 def get_alumni(alumni_id):
-    return Alumni.query.filter_by(alumni_id=alumni_id).first()
+    return AlumnusAccount.query.filter_by(alumni_id=alumni_id).first()
 
 def is_alumni_subscribed(alumni_id):
     alumni = get_alumni(alumni_id)
@@ -48,10 +43,10 @@ def is_alumni_subscribed(alumni_id):
         return False
 
 def get_all_subscribed_alumni():
-    all_alumni = Alumni.query.filter_by(subscribed=True).all()
+    all_alumni = AlumnusAccount.query.filter_by(subscribed=True).all()
     return all_alumni
 
-# handle subscribing and unsubscribing
+# handle subscribing and unsubscribing, this needs to be changed to handle subscribing to companies
 def subscribe(alumni_id, job_category=None):
     alumni = get_alumni(alumni_id)
 
@@ -82,10 +77,6 @@ def unsubscribe(alumni_id):
     db.session.add(alumni)
     db.session.commit()
     return alumni
-
-    
-
-
 
 # def subscribe_action(alumni_id, job_category=None):
 #     alumni = get_alumni(alumni_id)
@@ -137,8 +128,8 @@ def remove_categories(alumni_id, job_categories):
 
 # apply to an application
 # def apply_listing(alumni_id, listing_title):
-def apply_listing(alumni_id, listing_id):
-    from App.controllers import get_listing_title, get_listing, get_company_by_name
+def apply_listing(alumni_id, joblisting_id):
+    from App.controllers import get_listing, get_company_by_name
 
     alumni = get_alumni(alumni_id)
 
@@ -148,8 +139,7 @@ def apply_listing(alumni_id, listing_id):
         return None
 
     # get the listing and then company that made the listing
-    # listing = get_listing_title(listing_title)
-    listing = get_listing(listing_id)
+    listing = get_listing(joblisting_id)
 
     if listing is None:
         return None
@@ -177,4 +167,4 @@ def set_alumni_modal_seen(alumni_id):
     
 # only view approved listings
 def get_approved_listings():
-    return Listing.query.filter_by(isApproved=True).all()
+    return JobListing.query.filter_by(isApproved=True).all()
