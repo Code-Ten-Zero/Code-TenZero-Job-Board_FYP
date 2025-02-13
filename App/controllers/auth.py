@@ -11,9 +11,9 @@ from flask import jsonify
 #     return create_access_token(identity=username)
 #   return None
 
-def login_user(login_email, password):
+def login_user(login_email, password_hash):
     user = get_user_by_email(login_email)
-    if user and user.check_password(password):
+    if user and user.check_password(password_hash):
     # if user is not None:
       token = create_access_token(identity=login_email)
       response = jsonify(access_token=token)
@@ -22,10 +22,10 @@ def login_user(login_email, password):
     # return jsonify(message="Invalid username or password"), 401
     return None
 
-def login(login_email, password):
+def login(login_email, password_hash):
   user = get_user_by_email(login_email)
   
-  if user and user.check_password(password):
+  if user and user.check_password(password_hash):
     token = create_access_token(identity=login_email)
     print('token created')
     return (token)
@@ -38,22 +38,22 @@ def setup_jwt(app):
   # configure's flask jwt to resolve get_current_identity() to the corresponding user's ID
   @jwt.user_identity_loader
   def user_identity_lookup(identity):
-    # user = User.query.filter_by(username=identity).one_or_none()
+    # user = User.query.filter_by(login_email=identity).one_or_none()
     # if user:
     #     return user.id
-    admin = AdminAccount.query.filter_by(username=identity).one_or_none()
+    admin = AdminAccount.query.filter_by(login_email=identity).one_or_none()
     if admin:
-      return admin.username
+      return admin.login_email
         # return admin.id
 
-    alumni = AlumnusAccount.query.filter_by(username=identity).one_or_none()
+    alumni = AlumnusAccount.query.filter_by(login_email=identity).one_or_none()
     if alumni:
-      return alumni.username
+      return alumni.login_email
       # return alumni.id
 
-    company = CompanyAccount.query.filter_by(username=identity).one_or_none()
+    company = CompanyAccount.query.filter_by(login_email=identity).one_or_none()
     if company:
-      return company.username
+      return company.login_email
       # company.id
 
     return None

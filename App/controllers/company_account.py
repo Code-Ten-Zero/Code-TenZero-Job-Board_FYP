@@ -4,7 +4,7 @@ from App.controllers import get_all_subscribed_alumni
 
 
 
-def add_company(registered_name, hash_password, login_email, mailing_address, phone_number, website_url):
+def add_company(registered_name, hash_password, login_email, mailing_address, public_email,phone_number, website_url):
     # Check if there are no other users with the same username or email values in any other subclass
         if (
             # Company.query.filter_by(email=email).first() is not None or
@@ -14,7 +14,7 @@ def add_company(registered_name, hash_password, login_email, mailing_address, ph
         ):
             return None  # Return None to indicate duplicates
 
-        newCompany= CompanyAccount(registered_name, hash_password, login_email, mailing_address, phone_number, website_url)
+        newCompany= CompanyAccount(registered_name, hash_password, login_email, mailing_address,public_email, phone_number, website_url)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database
@@ -52,7 +52,7 @@ def send_notification(job_categories=None):
     print(notif_alumni, job_categories)
     return notif_alumni, job_categories
 
-def add_listing(company_id, title, position_type, description, company_name, 
+def add_listing(company_id, title, position_type, description, 
                 monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
 
     # manually validate that the company actually exists
@@ -60,7 +60,7 @@ def add_listing(company_id, title, position_type, description, company_name,
     if not company:
         return None
 
-    newListing = JobListing(company_id,title, position_type, description, company_name, 
+    newListing = JobListing(company_id,title, position_type, description,
                 monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status)
     try:
         db.session.add(newListing)
