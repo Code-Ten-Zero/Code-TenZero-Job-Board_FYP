@@ -1,7 +1,7 @@
 from flask_jwt_extended import create_access_token,set_access_cookies, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
 
-from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, JobListing
-from App.controllers import get_user_by_username
+from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount
+from App.controllers import get_user_by_email
 
 from flask import jsonify
 
@@ -11,23 +11,22 @@ from flask import jsonify
 #     return create_access_token(identity=username)
 #   return None
 
-def login_user(username, password):
-    user = get_user_by_username(username)
+def login_user(login_email, password):
+    user = get_user_by_email(login_email)
     if user and user.check_password(password):
     # if user is not None:
-      token = create_access_token(identity=username)
+      token = create_access_token(identity=login_email)
       response = jsonify(access_token=token)
       set_access_cookies(response, token)
       return response
     # return jsonify(message="Invalid username or password"), 401
     return None
 
-def login(username, password):
-  # user = User.query.filter_by(username=username).first()
-  user = get_user_by_username(username)
+def login(login_email, password):
+  user = get_user_by_email(login_email)
   
   if user and user.check_password(password):
-    token = create_access_token(identity=username)
+    token = create_access_token(identity=login_email)
     print('token created')
     return (token)
   return None
@@ -42,17 +41,17 @@ def setup_jwt(app):
     # user = User.query.filter_by(username=identity).one_or_none()
     # if user:
     #     return user.id
-    admin = Admin.query.filter_by(username=identity).one_or_none()
+    admin = AdminAccount.query.filter_by(username=identity).one_or_none()
     if admin:
       return admin.username
         # return admin.id
 
-    alumni = Alumni.query.filter_by(username=identity).one_or_none()
+    alumni = AlumnusAccount.query.filter_by(username=identity).one_or_none()
     if alumni:
       return alumni.username
       # return alumni.id
 
-    company = Company.query.filter_by(username=identity).one_or_none()
+    company = CompanyAccount.query.filter_by(username=identity).one_or_none()
     if company:
       return company.username
       # company.id
@@ -64,17 +63,17 @@ def setup_jwt(app):
     identity = jwt_data["sub"]
     # return User.query.get(identity)
 
-    admin = Admin.query.filter_by(username=identity).one_or_none()
+    admin = AdminAccount.query.filter_by(login_email=identity).one_or_none()
       # admin = Admin.query.get(identity)
     if admin:
       return admin
 
-    alumni = Alumni.query.filter_by(username=identity).one_or_none()
+    alumni = AlumnusAccount.query.filter_by(login_email=identity).one_or_none()
     # alumni = Alumni.query.get(identity)
     if alumni:
       return alumni
 
-    company = Company.query.filter_by(username=identity).one_or_none()
+    company = CompanyAccount.query.filter_by(login_email=identity).one_or_none()
     # company = Company.query.get(identity)
     if company:
       return company
@@ -89,8 +88,8 @@ def add_auth_context(app):
           verify_jwt_in_request()
           # user_id = get_jwt_identity()
           # current_user = User.query.get(user_id)
-          username = get_jwt_identity()
-          current_user = get_user_by_username(username)
+          login_email = get_jwt_identity()
+          current_user = get_user_by_email(login_email)
           is_authenticated = True
       except Exception as e:
           print(e)
