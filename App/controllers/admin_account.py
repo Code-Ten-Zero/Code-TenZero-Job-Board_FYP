@@ -1,24 +1,19 @@
-from App.models import User, Admin, Alumni, Company, Listing
+from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, JobListing
 from App.database import db
 
 
 # create and add a new admin into the db
-def add_admin(username, password, email):
+def add_admin(password, email):
 
-    # Check if there are no other users with the same username or email values in any other subclass
+    # Check if there are no other users with the same email values in any other subclass
         if (
-            Alumni.query.filter_by(username=username).first() is not None or
-            # Admin.query.filter_by(username=username).first() is not None or
-            Company.query.filter_by(username=username).first() is not None or
-
-            Company.query.filter_by(email=email).first() is not None or
-            # Admin.query.filter_by(email=email).first() is not None
-            Alumni.query.filter_by(email=email).first() is not None
-            
+            AlumnusAccount.query.filter_by(email=email).first() is not None or
+            # Admin.query.filter_by(email=email).first() is not None or
+            CompanyAccount.query.filter_by(email=email).first() is not None 
         ):
             return None  # Return None to indicate duplicates
 
-        newAdmin= Admin(username, password, email)
+        newAdmin= AdminAccount(password, email)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAdmin)
             db.session.commit()  # Commit to save the new to the database
@@ -27,22 +22,20 @@ def add_admin(username, password, email):
             db.session.rollback()
             return None
 
-def delete_listing(listing_id):
-    from .listing import get_listing
+def delete_listing(jobListing_id):
+    from .job_listing import get_listing
 
-    listing = get_listing(listing_id)
+    joblisting = get_listing(jobListing_id)
 
-    if listing is not None:
-        db.session.delete(listing)
+    if joblisting is not None:
+        db.session.delete(joblisting)
         db.session.commit()
         return True
 
     return None
     
-
-
 def get_all_admins():
-    return db.session.query(Admin).all()
+    return db.session.query(AdminAccount).all()
 
 def get_all_admins_json():
     admins = get_all_admins()
@@ -53,7 +46,7 @@ def get_all_admins_json():
 
 # delete other listings
 def delete_listing(listing_id):
-    from .listing import get_listing
+    from .job_listing import get_listing
 
     listing = get_listing(listing_id)
 
@@ -65,7 +58,7 @@ def delete_listing(listing_id):
     return None
 
 def toggle_listing_approval(listing_id):
-    from .listing import get_listing
+    from .job_listing import get_listing
 
     listing = get_listing(listing_id)
 
