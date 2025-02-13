@@ -3,8 +3,8 @@ from App.database import db
 
 # from sqlalchemy.orm import with_polymorphic
 
-def create_user(password, login_email):
-    newuser = BaseUserAccount(password=password, login_email=login_email)
+def create_user(password_hash, login_email):
+    newuser = BaseUserAccount(password_hash=password_hash, login_email=login_email)
     db.session.add(newuser)
     db.session.commit()
     return newuser

@@ -1,24 +1,20 @@
-from App.models import User, Company, Listing, Alumni, Admin
+from App.models import BaseUserAccount, CompanyAccount, JobListing, AlumnusAccount, AdminAccount
 from App.database import db
 from App.controllers import get_all_subscribed_alumni
 
 
 
-def add_company(username, company_name, password, email, company_address, contact, company_website):
+def add_company(registered_name, hash_password, login_email, mailing_address, phone_number, website_url):
     # Check if there are no other users with the same username or email values in any other subclass
         if (
-            Alumni.query.filter_by(username=username).first() is not None or
-            Admin.query.filter_by(username=username).first() is not None or
-            # Company.query.filter_by(username=username).first() is not None or
-
             # Company.query.filter_by(email=email).first() is not None or
-            Admin.query.filter_by(email=email).first() is not None or
-            Alumni.query.filter_by(email=email).first() is not None
+            AdminAccount.query.filter_by(login_email=login_email).first() is not None or
+            AlumnusAccount.query.filter_by(login_email=login_email).first() is not None
             
         ):
             return None  # Return None to indicate duplicates
 
-        newCompany= Company(username,company_name, password, email, company_address, contact, company_website)
+        newCompany= CompanyAccount(registered_name, hash_password, login_email, mailing_address, phone_number, website_url)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database
@@ -56,16 +52,16 @@ def send_notification(job_categories=None):
     print(notif_alumni, job_categories)
     return notif_alumni, job_categories
 
-def add_listing(title, description, company_name, #, job_categories=None
-                salary, position, remote, ttnational, desiredcandidate, area, job_categories=None):
+def add_listing(company_id, title, position_type, description, company_name, 
+                monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
 
     # manually validate that the company actually exists
-    company = get_company_by_name(company_name)
+    company = get_company_by_id(company_id)
     if not company:
         return None
 
-    newListing = Listing(title, description, company_name, job_categories,
-                         salary, position, remote, ttnational, desiredcandidate, area)
+    newListing = JobListing(company_id,title, position_type, description, company_name, 
+                monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status)
     try:
         db.session.add(newListing)
         db.session.commit()
@@ -80,20 +76,23 @@ def add_listing(title, description, company_name, #, job_categories=None
         # print('nah')
         db.session.rollback()
         return None
+    
+def get_company_by_id (id):
+    return CompanyAccount.query.filter_by(id=id).first()
 
-def get_company_by_name(company_name):
-    return Company.query.filter_by(company_name=company_name).first()
+def get_company_by_email(login_email):
+    return CompanyAccount.query.filter_by(login_email=login_email).first()
 
-def get_company_listings(company_name):
+def get_company_listings(login_email):
     # return Listing.query.filter_by(company_name=company_name)
-    company = get_company_by_name(company_name)
+    company = get_company_by_email(login_email)
     
     # for listing in company.listings:
     #     print(listing.get_json())
     return company.listings
 
 def get_all_companies():
-    return Company.query.all()
+    return CompanyAccount.query.all()
 
 def get_all_companies_json():
     companies = get_all_companies()
