@@ -18,9 +18,9 @@ from App.controllers import(
 )
 
 from App.models import(
-    Alumni,
-    Company,
-    Admin
+    AlumnusAccount,
+    CompanyAccount,
+    AdminAccount
 )
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
@@ -35,7 +35,7 @@ def index_page():
     jobs = get_all_listings()
     approved_jobs = get_approved_listings() # retrieve approved jobs
 
-    if isinstance(current_user, Alumni):
+    if isinstance(current_user, AlumnusAccount):
         show_modal = current_user.has_seen_modal
         if not show_modal:
             # Pass True to the template to show modal
@@ -45,11 +45,11 @@ def index_page():
         return render_template('alumni.html', jobs=approved_jobs, show_modal=False)
 
     
-    if isinstance(current_user, Company):
-        jobs = get_company_listings(current_user.username)
+    if isinstance(current_user, CompanyAccount):
+        jobs = get_company_listings(current_user.login_email)
         return render_template('company-view.html', jobs=jobs)
 
-    if isinstance(current_user, Admin):
+    if isinstance(current_user, AdminAccount):
         return render_template('admin.html', jobs=jobs)
     
     return redirect('/login')
@@ -67,7 +67,7 @@ def submit_application_action():
     # print(current_user.alumni_id)
 
     try:
-        alumni = apply_listing(current_user.alumni_id, data['job_id'])
+        alumni = apply_listing(current_user.id, data['job_id'])
 
         # print(alumni)
         response = redirect(url_for('index_views.index_page'))
@@ -174,10 +174,10 @@ def init():
     # create_user('bob', 'bobpass')
 
     # add in the first admin
-    add_admin('bob', 'bobpass', 'bob@mail')
+    add_admin('bobpass','bob@mail')
 
     # add in alumni
-    add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
+    add_alumni('robpass','rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
     # add_alumni('rooooob', 'robpass', 'roooooob@mail', '123456089')
 

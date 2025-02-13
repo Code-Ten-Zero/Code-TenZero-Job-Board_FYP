@@ -6,7 +6,7 @@ from.index import index_views
 from App.controllers import (
     login,
     login_user,
-    get_user_by_username,
+    get_user_by_email,
     get_all_users,
     add_alumni,
     add_company
@@ -28,7 +28,7 @@ def get_user_page():
 @auth_views.route('/identify', methods=['GET'])
 @jwt_required()
 def identify_page():
-    return render_template('message.html', title="Identify", message=f"You are logged in as {current_user.id} - {current_user.username}")
+    return render_template('message.html', title="Identify", message=f"You are logged in as {current_user.id} - {current_user.login_email}")
 
 
 @auth_views.route('/', methods=['GET'])
@@ -43,7 +43,7 @@ def signup_page():
 @auth_views.route('/login', methods=['POST'])
 def login_action():
   data = request.form
-  token = login(data['username'], data['password'])
+  token = login(data['login_email'], data['password'])
   
   print(token)
   response = redirect(request.referrer)
@@ -53,7 +53,7 @@ def login_action():
     response = redirect(url_for('index_views.index_page'))
     set_access_cookies(response, token)
   else:
-    flash('Invalid username or password', 'unsuccessful'), 401  # send message to next page
+    flash('Invalid email or password', 'unsuccessful'), 401  # send message to next page
 
 #   csrf_token = generate_csrf()
 #   response.headers["X-CSRF-TOKEN"] = csrf_token
@@ -80,10 +80,10 @@ def alumni_signup_action():
   response = None
 
   try:
-    newAlumni = add_alumni(data['username'], data['password'], data['email'],
-                          data['alumni_id'], data['contact'], data['firstname'], data['lastname'])
+    newAlumni = add_alumni(data['password_hash'], data['login_email'],
+                          data['phone_number'], data['first_name'], data['last_name'])
 
-    token = login(data['username'], data['password'])
+    token = login(data['login_email'], data['password'])
 
     print(token)
 
@@ -96,7 +96,7 @@ def alumni_signup_action():
 
   except Exception:  # attempted to insert a duplicate user
     # db.session.rollback()
-    flash("username or email already exists", 'unsuccessful')  # error message
+    flash("User already exists", 'unsuccessful')  # error message
     response = redirect(url_for('auth_views.login_page'))
 
   return response
@@ -110,10 +110,10 @@ def company_signup_action():
   try:
     # newAlumni = add_alumni(data['username'], data['password'], data['email'],
     #                       data['alumni_id'], data['contact'], data['firstname'], data['lastname'])
-    newCompany = add_company(data['username'], data['company_name'], data['password'], data['email'],
-                             data['company_address'], data['contact'], data['company_website'])
+    newCompany = add_company(data['login_email'], data['password_hash'], data['registered_name'], data['mailing_address'],
+                             data['phone_number'], data['public_email'], data['website_url'])
 
-    token = login(data['username'], data['password'])
+    token = login(data['login_email'], data['password'])
 
     print(token)
 
@@ -126,7 +126,7 @@ def company_signup_action():
 
   except Exception:  # attempted to insert a duplicate user
     # db.session.rollback()
-    flash("username or email already exists", 'unsuccessful')  # error message
+    flash("User email already exists", 'unsuccessful')  # error message
     response = redirect(url_for('auth_views.login_page'))
 
   return response
@@ -145,9 +145,9 @@ API Routes
 @auth_views.route('/api/login', methods=['POST'])
 def user_login_api():
   data = request.json
-  token = login(data['username'], data['password'])
+  token = login(data['login_email'], data['password_hash'])
   if not token:
-    return jsonify(message='bad username or password given'), 401
+    return jsonify(message='bad email or password given'), 401
   response = jsonify(access_token=token) 
   set_access_cookies(response, token)
   return response
@@ -155,7 +155,7 @@ def user_login_api():
 @auth_views.route('/api/identify', methods=['GET'])
 @jwt_required()
 def identify_user():
-    return jsonify({'message': f"username: {current_user.username}, id : {current_user.id}"})
+    return jsonify({'message': f"Email: {current_user.login_email}, id : {current_user.id}"})
 
 @auth_views.route('/api/logout', methods=['GET'])
 def logout_api():

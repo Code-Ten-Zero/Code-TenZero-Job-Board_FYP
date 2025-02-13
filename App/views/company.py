@@ -8,7 +8,7 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     get_all_listings,
     get_company_listings,
     add_listing,
@@ -18,9 +18,9 @@ from App.controllers import(
 )
 
 from App.models import(
-    Alumni,
-    Company,
-    Admin
+    AlumnusAccount,
+    CompanyAccount,
+    AdminAccount
 )
 
 company_views = Blueprint('company_views', __name__, template_folder='../templates')
@@ -72,14 +72,11 @@ def add_listing_action():
         remote = False
         national = False
 
-        if 'remote_option' in data and data['remote_option'] == 'Yes':
-            remote = True
+        if 'is_remote' in data and data['is_remote'] == 'Yes':
+            is_remote = True
 
-        if 'national_tt' in data and data['national_tt'] == 'Yes':
-            national = True
-
-        listing = add_listing(data['title'], data['description'], current_user.company_name, data['salary'], data['position_type'],
-                              remote, national, data['desired_candidate_type'], data['job_area'], None)
+        listing = add_listing(current_user.company_id, data['title'], data['position_type'],data['description'], data['monthly_salary_ttd'],
+                              is_remote, data['job_site_address'], data['datetime_created'], data['datetime_last_modified'])
         # print(listing)
         flash('Created job listing', 'success')
         response = redirect(url_for('index_views.index_page'))
@@ -126,7 +123,7 @@ def request_delete_listing_action(job_id):
 @jwt_required()
 def view_notifications_page():
     # Assuming current_user is the logged-in company
-    if not isinstance(current_user, Company):
+    if not isinstance(current_user, CompanyAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 

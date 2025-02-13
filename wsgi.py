@@ -9,7 +9,7 @@ from App.controllers import ( create_user, get_all_users_json, get_all_users, ge
      get_all_companies, get_all_companies_json,
      get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json, get_company_listings, get_all_subscribed_alumni,
      is_alumni_subscribed, send_notification, apply_listing, get_all_applicants,
-     get_user_by_username, get_user, get_listing, delete_listing, subscribe, unsubscribe,
+     get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
      login, set_alumni_modal_seen, toggle_listing_approval, get_listing_title)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
@@ -32,10 +32,10 @@ def initialize():
     # create_user('bob', 'bobpass')
 
     # add in the first admin
-    add_admin('bob', 'bobpass', 'bob@mail')
+    add_admin('bobpass', 'bob@mail')
 
     # add in alumni
-    add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
+    add_alumni('robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
     # add_alumni('rooooob', 'robpass', 'roooooob@mail', '123456089')
 

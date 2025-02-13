@@ -8,7 +8,7 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     is_alumni_subscribed,
     subscribe,
     unsubscribe,
@@ -16,9 +16,9 @@ from App.controllers import(
 )
 
 from App.models import(
-    Alumni,
-    Company,
-    Admin
+    AlumnusAccount,
+    CompanyAccount,
+    AdminAccount
 )
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
@@ -35,8 +35,8 @@ def subscribe_action():
     # print(current_user.alumni_id)
 
     try:
-        alumni = subscribe(current_user.alumni_id, data['category'])
-        set_alumni_modal_seen(alumni.alumni_id)
+        alumni = subscribe(current_user.id, data['category'])
+        set_alumni_modal_seen(alumni.id)
         # print(alumni.get_json())
         response = redirect(url_for('index_views.index_page'))
         flash('Subscribed!', 'success')
@@ -58,7 +58,7 @@ def unsubscribe_action():
     # print(data)
 
     try:
-        alumni = unsubscribe(current_user.alumni_id)
+        alumni = unsubscribe(current_user.id)
         # print(alumni.get_json())
         response = redirect(url_for('index_views.index_page'))
         flash('Unsubscribed!', 'success')
@@ -79,7 +79,7 @@ def unsubscribe_action():
 def update_modal_seen():
     try:
         alumni = current_user  
-        set_alumni_modal_seen(alumni.alumni_id)  
+        set_alumni_modal_seen(alumni.id)  
         db.session.commit() 
         return jsonify(message="Modal seen status updated successfully"), 200
         

@@ -8,7 +8,7 @@ from .index import index_views
 
 
 from App.controllers import(
-    get_user_by_username,
+    get_user_by_email,
     get_all_listings,
     get_company_listings,
     add_listing,
@@ -19,9 +19,9 @@ from App.controllers import(
 )
 
 from App.models import(
-    Alumni,
-    Company,
-    Admin
+    AlumnusAccount,
+    CompanyAccount,
+    AdminAccount
 )
 
 admin_views = Blueprint('admin_views', __name__, template_folder='../templates')

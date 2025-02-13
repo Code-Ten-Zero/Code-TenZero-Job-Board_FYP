@@ -2,7 +2,7 @@ from App.models import BaseUserAccount, AlumnusAccount, AdminAccount, CompanyAcc
 from App.database import db
 
 
-def add_alumni(password_hash, login_email, alumni_id, firstname, lastname, phone_number):
+def add_alumni(id, password_hash, login_email, first_name, last_name, phone_number):
 
         # Check if there are no other users with the same email values in any other subclass
         if (
@@ -12,7 +12,7 @@ def add_alumni(password_hash, login_email, alumni_id, firstname, lastname, phone
         ):
             return None  # Return None to indicate duplicates
 
-        newAlumni= AlumnusAccount(password_hash, login_email, alumni_id, firstname, lastname, phone_number)
+        newAlumni= AlumnusAccount(id, password_hash, login_email, first_name, last_name, phone_number)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAlumni)
             db.session.commit()  # Commit to save the new  to the database
@@ -31,11 +31,11 @@ def get_all_alumni_json():
     alumnis = [alumni.get_json() for alumni in alumnis]
     return alumnis
 
-def get_alumni(alumni_id):
-    return AlumnusAccount.query.filter_by(alumni_id=alumni_id).first()
+def get_alumni(id):
+    return AlumnusAccount.query.filter_by(id=id).first()
 
-def is_alumni_subscribed(alumni_id):
-    alumni = get_alumni(alumni_id)
+def is_alumni_subscribed(id):
+    alumni = get_alumni(id)
 
     if(alumni.subscribed == True):
         return True
@@ -47,8 +47,8 @@ def get_all_subscribed_alumni():
     return all_alumni
 
 # handle subscribing and unsubscribing, this needs to be changed to handle subscribing to companies
-def subscribe(alumni_id, job_category=None):
-    alumni = get_alumni(alumni_id)
+def subscribe(id, job_category=None):
+    alumni = get_alumni(id)
 
     if alumni is None:
         print('nah')
@@ -64,15 +64,15 @@ def subscribe(alumni_id, job_category=None):
     db.session.commit()
     return alumni
 
-def unsubscribe(alumni_id):
-    alumni = get_alumni(alumni_id)
+def unsubscribe(id):
+    alumni = get_alumni(id)
 
     if not alumni:
         # print('nah')
         return None
 
     alumni.subscribed = False
-    remove_categories(alumni_id, alumni.get_categories())
+    remove_categories(id, alumni.get_categories())
 
     db.session.add(alumni)
     db.session.commit()
@@ -102,8 +102,8 @@ def unsubscribe(alumni_id):
 #     return alumni
         
 # adding and removing job categories 
-def add_categories(alumni_id, job_categories):
-    alumni = get_alumni(alumni_id)
+def add_categories(id, job_categories):
+    alumni = get_alumni(id)
     try:
         for category in job_categories:
             # print(category)
@@ -115,8 +115,8 @@ def add_categories(alumni_id, job_categories):
         db.session.rollback()
         return None   
 
-def remove_categories(alumni_id, job_categories):
-    alumni = get_alumni(alumni_id)
+def remove_categories(id, job_categories):
+    alumni = get_alumni(id)
     try:
         for category in job_categories:
             alumni.remove_category(category)
@@ -128,10 +128,10 @@ def remove_categories(alumni_id, job_categories):
 
 # apply to an application
 # def apply_listing(alumni_id, listing_title):
-def apply_listing(alumni_id, joblisting_id):
+def apply_listing(id, joblisting_id):
     from App.controllers import get_listing, get_company_by_name
 
-    alumni = get_alumni(alumni_id)
+    alumni = get_alumni(id)
 
     # error check to see if alumni exists
     if alumni is None:
@@ -160,8 +160,8 @@ def apply_listing(alumni_id, joblisting_id):
     return alumni
 
 
-def set_alumni_modal_seen(alumni_id):
-    alumni = get_alumni(alumni_id)
+def set_alumni_modal_seen(id):
+    alumni = get_alumni(id)
     alumni.has_seen_modal = True
     db.session.commit()
     
