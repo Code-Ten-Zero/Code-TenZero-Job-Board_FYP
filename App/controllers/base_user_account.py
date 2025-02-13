@@ -1,25 +1,25 @@
-from App.models import User, Admin, Alumni, Company
+from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount
 from App.database import db
 
 # from sqlalchemy.orm import with_polymorphic
 
-def create_user(username, password, email):
-    newuser = User(username=username, password=password, email=email)
+def create_user(password, login_email):
+    newuser = BaseUserAccount(password=password, login_email=login_email)
     db.session.add(newuser)
     db.session.commit()
     return newuser
 
-def get_user_by_username(username):
+def get_user_by_email(login_email):
     # return User.query.filter_by(username=username).first()
     user = None
 #   user = User.query.filter_by(username=data['username']).first()
-    alumni = Alumni.query.filter_by(username=username).first()
+    alumni = AlumnusAccount.query.filter_by(login_email=login_email).first()
     if alumni:
         user = alumni
-    admin = Admin.query.filter_by(username=username).first()
+    admin = AdminAccount.query.filter_by(login_email=login_email).first()
     if admin:
         user = admin
-    company = Company.query.filter_by(username=username).first()
+    company = CompanyAccount.query.filter_by(login_email=login_email).first()
     if company:
         user = company
     
@@ -42,10 +42,10 @@ def get_user_by_username(username):
 #     return User.query.filter_by(username=username).first()
 
 def get_user(id):
-    return User.query.get(id)
+    return BaseUserAccount.query.get(id)
 
 def get_all_users():
-    return db.session.query(Admin).all() + db.session.query(Alumni).all() + db.session.query(Company).all()
+    return db.session.query(AdminAccount).all() + db.session.query(AlumnusAccount).all() + db.session.query(CompanyAccount).all()
     # return User.query.all()
 
 def get_all_users_json():
@@ -55,59 +55,10 @@ def get_all_users_json():
     users = [user.get_json() for user in users]
     return users
 
-def update_user(id, username):
+def update_user(id, login_email):
     user = get_user(id)
     if user:
-        user.username = username
+        user.login_email = login_email
         db.session.add(user)
         return db.session.commit()
     return None
-    from App.models import User, Admin, Alumni, Company
-from App.database import db
-
-# from sqlalchemy.orm import with_polymorphic
-
-def create_user(username, password, email):
-    newuser = User(username=username, password=password, email=email)
-    db.session.add(newuser)
-    db.session.commit()
-    return newuser
-
-def get_user_by_username(username):
-    # return User.query.filter_by(username=username).first()
-    user = None
-#   user = User.query.filter_by(username=data['username']).first()
-    alumni = Alumni.query.filter_by(username=username).first()
-    if alumni:
-        user = alumni
-    admin = Admin.query.filter_by(username=username).first()
-    if admin:
-        user = admin
-    company = Company.query.filter_by(username=username).first()
-    if company:
-        user = company
-    
-    return user
-
-def get_user(id):
-    return User.query.get(id)
-
-def get_all_users():
-    return db.session.query(Admin).all() + db.session.query(Alumni).all() + db.session.query(Company).all()
-    # return User.query.all()
-
-def get_all_users_json():
-    users = get_all_users()
-    if not users:
-        return []
-    users = [user.get_json() for user in users]
-    return users
-
-def update_user(id, username):
-    user = get_user(id)
-    if user:
-        user.username = username
-        db.session.add(user)
-        return db.session.commit()
-    return None
-    

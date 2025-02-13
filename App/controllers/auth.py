@@ -1,6 +1,6 @@
 from flask_jwt_extended import create_access_token,set_access_cookies, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
 
-from App.models import User, Admin, Alumni, Company, Listing
+from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, JobListing
 from App.controllers import get_user_by_username
 
 from flask import jsonify
