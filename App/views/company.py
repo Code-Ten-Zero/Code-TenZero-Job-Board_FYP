@@ -69,14 +69,13 @@ def add_listing_action():
     # print(current_user.company_name)
 
     try:
-        remote = False
-        national = False
+        #is_remote = False
 
         if 'is_remote' in data and data['is_remote'] == 'Yes':
             is_remote = True
 
-        listing = add_listing(current_user.company_id, data['title'], data['position_type'],data['description'], data['monthly_salary_ttd'],
-                              is_remote, data['job_site_address'], data['datetime_created'], data['datetime_last_modified'])
+        listing = add_listing(current_user.id, data['title'], data['position_type'],data['description'], data['monthly_salary_ttd'],
+                              is_remote, data['job_site_address'], data['datetime_created'], data['datetime_last_modified'], admin_approval_status='PENDING')
         # print(listing)
         flash('Created job listing', 'success')
         response = redirect(url_for('index_views.index_page'))

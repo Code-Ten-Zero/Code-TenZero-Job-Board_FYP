@@ -197,14 +197,14 @@ def init():
     
 
     # add in companies
-    add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
-    add_company('company2', 'company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'company_website2.com')
+    add_company('company1', 'compass', 'company@mail',  'company_address', 'contact', 'public_email','company_website.com')
+    add_company('company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'public_email2' ,'company_website2.com')
 
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing('listing1', 'job description1', 'company1',
-                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+    add_listing('id','listing1', 'Full-time' ,'job description1', 'company1',
+                8000, True, 'Curepe')
 
     add_listing('listing2', 'job description', 'company2',
                 4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
