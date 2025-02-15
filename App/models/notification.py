@@ -21,7 +21,7 @@ class Notification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     message = db.Column(db.String(1000), nullable=False)
     created_at = db.Column(
-        db.DateTime, default=datetime.now(datetime.timezone.utc))
+        db.DateTime, default=datetime.utcnow)
     reviewed_by_user = db.Column(db.Boolean, default=False, nullable=False)
 
     user = db.relationship("BaseUserAccount", back_populates='notifications')

@@ -38,24 +38,14 @@ class JobListing(db.Model):
     monthly_salary_ttd = db.Column(db.Integer, nullable=False)
     is_remote = db.Column(db.Boolean, nullable=False, default=False)
     job_site_address = db.Column(db.String(120), nullable=False)
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.now(datetime.timezone.utc))
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.now(datetime.timezone.utc), onupdate=datetime.now(datetime.timezone.utc))
+    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     admin_approval_status = db.Column(db.String(50), nullable=False, default="PENDING")
 
     company = db.relationship("CompanyAccount", back_populates="job_listings")
     job_applications = db.relationship("JobApplication", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
     saved_job_listings = db.relationship("SavedJobListing", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
 
-    __table_args__ = (
-        db.CheckConstraint(
-            f"position_type IN ({', '.join(repr(s) for s in current_app.config['JOB_POSITION_TYPES'])})", name="valid_position_type"),
-        db.CheckConstraint(
-            f"admin_approval_status IN ({', '.join(repr(s) for s in current_app.config['APPROVAL_STATUSES'])})", name="valid_approval_status"),
-        db.CheckConstraint(
-            "(is_remote = TRUE AND job_site_address = 'N/A') OR (is_remote = FALSE AND job_site_address != 'N/A')",
-            name="valid_job_site_address"
-        ),
-    )
 
     def __init__(self, company_id: int, title: str, position_type: str, description: str, monthly_salary_ttd: int, is_remote: bool = False, job_site_address: str = None) -> None:
         """
@@ -136,22 +126,18 @@ class JobListing(db.Model):
         }
 
     @validates("admin_approval_status")
-    def validate_admin_approval_status(self, value: str) -> str:
+    def validate_admin_approval_status(self, key, value: str) -> str:
         """
         Ensures that 'approval_status' is valid.
-
         Args:
             value (str): The value assigned to 'admin_approval_status'.
-
         Returns:
             str: Validated value.
-
         Raises:
             ValueError: If the status is invalid.
         """
-        valid_statuses = current_app.config["APPROVAL_STATUSES"]
-        if value not in valid_statuses:
-            raise ValueError(f"Invalid status '{value}'. Allowed values: {valid_statuses}")
+        if value not in ApprovalStatus._value2member_map_:
+            raise ValueError(f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
         return value
 
     @validates("is_remote", "job_site_address")
