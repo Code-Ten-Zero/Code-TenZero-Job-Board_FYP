@@ -37,42 +37,26 @@ def initialize():
     # add in alumni
     add_alumni('robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
-    # add_alumni('rooooob', 'robpass', 'roooooob@mail', '123456089')
-
-    # add_categories('123456789', ['Database'])
-    # print('test')
-
-    # remove_categories('123456789', ['N/A'])
-    # remove_categories('123456789', ['Database'])
-    
-
-    # subscribe rob
-    # subscribe_action('123456789', ['Software Engineer'])
-
-    # subscribe('123456789', 'Database Manager')
-    # unsubscribe('123456789')
-
-    
-
     # add in companies
-    add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
-    add_company('company2', 'company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'company_website2.com')
+    add_company('company1','compass','company@mail',  'mailing_address', 'phone_number','public@email' ,'company_website.com')
+    add_company('company2', 'compass', 'company@mail2',  'mailing_address2', 'phone_number2', 'public2@email','company_website2.com')
 
+    #search for company1 and company2 in database
+    company1 = get_user_by_email('company@mail') 
+    company2 = get_user_by_email('company@mail2') 
+    
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing('listing1', 'job description1', 'company1',
-                8000, 'Part-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+    add_listing(company1.id,'listing1', 'Part-time','job description1', 'company1',
+                8000, True, 'Curepe','02-01-2025', '10-01-2025', 'PENDING')
 
-    add_listing('listing2', 'job description', 'company2',
-                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
+    add_listing(company2.id,'listing2', 'Full-time', 'job description2','company2',
+                4000,  True, 'Port-Of-Spain','04-02-2025', '05-02-2025', 'PENDING')
 
     
-
-
     # print(get_all_listings_json())
     print(get_company_listings('company2'))
-    
 
     print(get_all_subscribed_alumni())
     # send_notification(['Programming'])
@@ -134,11 +118,10 @@ def list_admin_command(format):
 
 # flask admin add
 @admin_cli.command("add", help="adds an admin")
-@click.argument("username", default='bob2')
-@click.argument("password", default='bobpass')
-@click.argument("email", default="bob@mail2")
-def add_admin_command(username, password, email):
-    admin = add_admin(username, password, email)
+@click.argument("password_hash", default='bobpass')
+@click.argument("login_email", default="bob@mail")
+def add_admin_command(password_hash, login_email):
+    admin = add_admin(password_hash, login_email)
     
     if admin is None:
         print('Error creating admin')
@@ -173,16 +156,14 @@ def list_alumni_command(format):
 
 # flask alumni add
 @alumni_cli.command("add", help = "Add an alumni object to the database")
-@click.argument("username", default="rob2")
-@click.argument("password", default="robpass")
-@click.argument("email", default="rob@mail2")
-@click.argument("alumni_id", default="987654321")
-@click.argument("contact", default="8686861000")
+@click.argument("password_hash", default="robpass")
+@click.argument("login_email", default="rob@mail2")
+@click.argument("phone_number", default="8686861000")
 @click.argument("firstname", default="rob2fname")
 @click.argument("lastname", default="rob2lname")
 # @click.argument("job_categories", default='Database')
-def add_alumni_command(username, password, email, alumni_id, contact, firstname, lastname):
-    alumni = add_alumni(username, password, email, alumni_id, contact, firstname, lastname)
+def add_alumni_command(password_hash, login_email, phone_number, firstname, lastname):
+    alumni = add_alumni(password_hash, login_email, phone_number, firstname, lastname)
 
     if alumni is None:
         print('Error creating alumni')
@@ -206,25 +187,23 @@ def subscribe_alumni_command(alumni_id):
 
 # flask alumni add_categories
 # note, must manually add in job_categories in the cli command eg: flask alumni add_categories 123456789 Database,Programming
-@alumni_cli.command("add_categories", help="Add job categories for the user")
-@click.argument("alumni_id", default="123456789")
-@click.argument("job_categories", nargs=-1, type=str)
-def add_categories_command(alumni_id, job_categories):
-    alumni = add_categories(alumni_id, job_categories)
+# @alumni_cli.command("add_categories", help="Add job categories for the user")
+# @click.argument("job_categories", nargs=-1, type=str)
+# def add_categories_command(alumni_id, job_categories):
+#     alumni = add_categories(alumni_id, job_categories)
 
-    if alumni is None:
-        print(f'Error adding categories')
-    else:
-        print(f'{alumni} categories added!')
+#     if alumni is None:
+#         print(f'Error adding categories')
+#     else:
+#         print(f'{alumni} categories added!')
 
 # flask alumni apply
 @alumni_cli.command("apply", help="Applies an alumni to a job listing")
-@click.argument('alumni_id', default='123456789')
 @click.argument('listing_title', default='listing1')
-def apply_listing_command(alumni_id, listing_title):
+def apply_listing_command(listing_title):
     listing = get_listing_title(listing_title)
     
-    alumni = apply_listing(alumni_id, listing.id)
+    alumni = apply_listing(listing.id)
 
     if alumni is None:
         print(f'Error applying to listing {listing_title}')
@@ -257,16 +236,15 @@ def list_company_command(format):
 
 # flask company add
 @company_cli.command("add", help = "Add an copmany object to the database")
-@click.argument("username", default="representative name")
-@click.argument("company_name", default="aah pull")
-@click.argument("password", default="password")
-@click.argument("email", default="aahpull@mail")
-@click.argument("company_address", default="aahpull address")
-@click.argument("contact", default="8689009000")
-@click.argument("company_website", default="https://www.aahpull.com")
-# @click.argument("job_categories", default='Database')
-def add_company_command(username, company_name, password, email, company_address, contact, company_website):
-    company = add_company(username, company_name, password, email, company_address, contact, company_website)
+@click.argument("registered_name", default="aah pull")
+@click.argument("password_hash", default="password")
+@click.argument("login_email", default="aahpull@mail")
+@click.argument("mailing_address", default="aahpull address")
+@click.argument("phone_number", default="8689009000")
+@click.argument("public_email", default="aahpull@mail")
+@click.argument("website_url", default="https://www.aahpull.com")
+def add_company_command(registered_name, password_hash, login_email, mailing_address, phone_number, public_email, website_url):
+    company = add_company(registered_name, password_hash, login_email, mailing_address, phone_number, public_email, website_url)
 
     if company is None:
         print('Error creating company')
@@ -275,9 +253,9 @@ def add_company_command(username, company_name, password, email, company_address
 
 #flask company notifications 
 @company_cli.command("notifications", help="Show all notifications for a company")
-@click.argument("company_name", default="company1")
-def show_notifications(company_name):
-    listings = get_company_listings(company_name)
+@click.argument("registered_name", default="company1")
+def show_notifications(registered_name):
+    listings = get_company_listings(registered_name)
     notifications = []
     
     for listing in listings:
@@ -287,7 +265,7 @@ def show_notifications(company_name):
         for notification in notifications:
             print(f"Notification: {notification.message} (Timestamp: {notification.created_at})")
     else:
-        print(f"No notifications found for {company_name}.")
+        print(f"No notifications found for {registered_name}.")
 
 
 app.cli.add_command(company_cli)
@@ -307,18 +285,19 @@ def list_listing_command(format):
 # flask listing add
 # Note: you have to manually enter in the job categories here eg: flask listing add listingtitle desc company1 Database
 @listing_cli.command("add", help="Add listing object to the database")
+@click.argument("company_id", default="company1.id")
 @click.argument("title", default="Job offer 1")
+@click.argument("postion-type", default="Full-time")
 @click.argument("description", default="very good job :)")
-@click.argument("company_name", default="company1")
-@click.argument("salary", default="10000")
-@click.argument("position", default="Full-time")
-@click.argument("remote", default="True")
-@click.argument("ttnational", default="True")
-@click.argument("desiredcandidate", default="Technical Skills")
-@click.argument("area", default="Laventille")
-@click.argument("job_categories", nargs=-1, type=str)
-def add_listing_command(title, description, company_name, salary, position, remote, ttnational, desiredcandidate, area, job_categories):
-    listing = add_listing(title, description, company_name, salary, position, remote, ttnational, desiredcandidate, area, job_categories)
+@click.argument("registered_name", default="company1")
+@click.argument("monthly_salary_ttd", default="10000")
+@click.argument("is_remote", default="True")
+@click.argument("job_site_address", default="Curepe")
+@click.argument("datetime_created", default="dd-mm-yy")
+@click.argument("datetime_last_mmodified", default="dd-mm-yy")
+@click.argument("admin_approval_status", default="  PENDING")
+def add_listing_command(company_id,title,position_type ,description, registered_name, monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
+    listing = add_listing(company_id,title, position_type,description,registered_name, monthly_salary_ttd, is_remote, job_site_address,datetime_created, datetime_last_modified, admin_approval_status)
 
     if listing is None:
         print(f'Error adding categories')
@@ -351,7 +330,6 @@ def get_listing_applicants_command(listing_id):
         print(applicants)
 
 app.cli.add_command(listing_cli)
-
 
 '''
 Test Commands
