@@ -16,12 +16,12 @@ class CompanySubscription(db.Model):
     __tablename__ = "company_subscriptions"
 
     alumnus_id = db.Column(db.Integer(), db.ForeignKey(
-        'alumnus.id'), primary_key=True, nullable=False)
+        'alumnus_accounts.id'), primary_key=True, nullable=False)
     company_id = db.Column(db.Integer(), db.ForeignKey(
-        'company.id'), primary_key=True, nullable=False)
+        'company_accounts.id'), primary_key=True, nullable=False)
 
     alumni = db.relationship(
-        "AlumnusAccount", back_populates="comany_subscriptions")
+        "AlumnusAccount", back_populates="company_subscriptions")
     companies = db.relationship(
         "CompanyAccount", back_populates='subscribed_alumni')
 
