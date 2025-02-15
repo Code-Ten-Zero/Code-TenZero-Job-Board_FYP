@@ -12,8 +12,8 @@ class JobApplication(db.Model):
     __tablename__ = "job_applications"
 
     id = db.Column(db.Integer(), primary_key=True)
-    alumnus_id = db.Column(db.Integer, db.ForeignKey('alumnus.id'), nullable=False)
-    job_listing_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
+    alumnus_id = db.Column(db.Integer, db.ForeignKey('alumnus_accounts.id'), nullable=False)
+    job_listing_id = db.Column(db.Integer, db.ForeignKey('job_listings.id'), nullable=False)
     resume_file_path = db.Column(db.String, nullable=False)
     datetime_applied = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     company_approval_status = db.Column(db.String(50), nullable=False, default="PENDING")

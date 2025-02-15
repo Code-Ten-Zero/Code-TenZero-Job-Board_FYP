@@ -31,7 +31,7 @@ class JobListing(db.Model):
     __tablename__ = "job_listings"
 
     id = db.Column(db.Integer(), primary_key=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company_accounts.id'), nullable=False)
     title = db.Column(db.String(120), nullable=False)
     position_type = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(1000), nullable=False)

@@ -13,7 +13,7 @@ class BaseUserAccount(db.Model):
     @declared_attr
     def notifications(cls):
         return db.relationship(
-            'Notification', back_populates='user', lazy="dynamic", cascade="all, delete-orphan"
+            'Notifications', back_populates='user', lazy="dynamic", cascade="all, delete-orphan"
         )
 
     @declared_attr
