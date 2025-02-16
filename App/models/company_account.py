@@ -104,7 +104,7 @@ class CompanyAccount(BaseUserAccount):
         """
         return {
             'id': self.id,
-            'email': self.email,
+            'Login Email': self.login_email,
             'password_hash': "[HIDDEN]",
             'registered_name': self.registered_name,
             'mailing_address': self.mailing_address,
