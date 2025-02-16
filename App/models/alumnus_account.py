@@ -37,7 +37,7 @@ class AlumnusAccount(BaseUserAccount):
     phone_number = db.Column(db.String, unique=True)
 
     job_applications = db.relationship(
-        'JobApplications', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
+        'JobApplication', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     saved_job_listings = db.relationship(
         'SavedJobListings', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     company_subscriptions = db.relationship(
