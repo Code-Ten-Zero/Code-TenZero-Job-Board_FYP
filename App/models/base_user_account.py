@@ -10,11 +10,11 @@ class BaseUserAccount(db.Model):
     password_hash = db.Column(db.String(120), nullable=False)
     profile_photo_file_path = db.Column(db.String, default=None)
 
-    @declared_attr
-    def notifications(cls):
-        return db.relationship(
-            'Notifications', back_populates='user', lazy="dynamic", cascade="all, delete-orphan"
-        )
+    # @declared_attr
+    # def notifications(cls):
+    #     return db.relationship(
+    #         'Notification', back_populates='user', lazy="dynamic", cascade="all, delete-orphan"
+    #     )
 
     @declared_attr
     def type(cls):

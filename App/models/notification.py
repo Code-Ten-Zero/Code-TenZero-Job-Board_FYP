@@ -27,12 +27,16 @@ class Notification(db.Model):
         db.DateTime, default=datetime.utcnow)
     reviewed_by_user = db.Column(db.Boolean, default=False, nullable=False)
 
+    alumnus = db.relationship("AlumnusAccount", back_populates="notifications")
+    company = db.relationship("CompanyAccount", back_populates="notifications")
+    admin = db.relationship("AdminAccount", back_populates="notifications")
+
     def __init__(self, alumnus_id: int, company_id: int, admin_id: int, message: str) -> None:
         """
         Initializes a Notification instance.
 
         Args:
-            user_id (int): ID of the user recieving the notification.
+            
             message (str): Notification message.
         """
         if alumnus_id:

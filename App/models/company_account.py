@@ -28,6 +28,8 @@ class CompanyAccount(BaseUserAccount):
         'polymorphic_identity': 'company',
     }
 
+    notifications = db.relationship("Notification", back_populates="company", lazy="dynamic", cascade="all, delete-orphan")
+
     registered_name = db.Column(db.String, nullable=False, unique=True)
     mailing_address = db.Column(db.String, nullable=False)
     public_email = db.Column(db.String, nullable=False)
