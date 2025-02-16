@@ -20,9 +20,9 @@ class CompanySubscription(db.Model):
     company_id = db.Column(db.Integer(), db.ForeignKey(
         'company_accounts.id'), primary_key=True, nullable=False)
 
-    alumni = db.relationship(
+    alumnus = db.relationship(
         "AlumnusAccount", back_populates="company_subscriptions")
-    companies = db.relationship(
+    company = db.relationship(
         "CompanyAccount", back_populates='subscribed_alumni')
 
     def __init__(self, alumnus_id: int, company_id: int) -> None:

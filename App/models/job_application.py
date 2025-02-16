@@ -19,7 +19,7 @@ class JobApplication(db.Model):
     company_approval_status = db.Column(db.String(50), nullable=False, default="PENDING")
 
     alumnus = db.relationship("AlumnusAccount", back_populates="job_applications")
-    job_listings = db.relationship("JobListing", back_populates='job_applications')
+    job_listing = db.relationship("JobListing", back_populates='job_applications')
 
     @validates("company_approval_status")
     def validate_approval_status(self, key, value: str) -> str:

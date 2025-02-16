@@ -35,7 +35,7 @@ def initialize():
     add_admin('bobpass', 'bob@mail')
 
     # add in alumni
-    add_alumni('robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
+    add_alumni('1','robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
     # add in companies
     add_company('company1','compass','company@mail',  'mailing_address', 'phone_number','public@email' ,'company_website.com')
@@ -48,10 +48,10 @@ def initialize():
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing(company1.id,'listing1', 'Part-time','job description1', 'company1',
+    add_listing('listing1', 'Part-time','job description1', 'company1',
                 8000, True, 'Curepe','02-01-2025', '10-01-2025', 'PENDING')
 
-    add_listing(company2.id,'listing2', 'Full-time', 'job description2','company2',
+    add_listing('listing2', 'Full-time', 'job description2','company2',
                 4000,  True, 'Port-Of-Spain','04-02-2025', '05-02-2025', 'PENDING')
 
     

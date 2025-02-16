@@ -47,7 +47,7 @@ class JobListing(db.Model):
     saved_job_listings = db.relationship("SavedJobListing", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
 
 
-    def __init__(self, company_id: int, title: str, position_type: str, description: str, monthly_salary_ttd: int, is_remote: bool = False, job_site_address: str = None) -> None:
+    def __init__(self, company_id: int, title: str, position_type: str, description: str, monthly_salary_ttd: int, is_remote: bool = False, job_site_address: str = None,  datetime_created=None, datetime_last_modified=None, admin_approval_status: str = 'PENDING') -> None:
         """
         Initializes a JobListing instance.
 
@@ -67,6 +67,9 @@ class JobListing(db.Model):
         self.monthly_salary_ttd = monthly_salary_ttd
         self.is_remote = is_remote
         self.job_site_address = job_site_address or "(Not specified)" if self.is_remote else "N/A"
+        self.datetime_created = datetime.utcnow()
+        self.datetime_last_modified = datetime.utcnow()
+        self.admin_approval_status = admin_approval_status
 
     def __str__(self) -> str:
         """

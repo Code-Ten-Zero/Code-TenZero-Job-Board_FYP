@@ -39,9 +39,9 @@ class AlumnusAccount(BaseUserAccount):
     job_applications = db.relationship(
         'JobApplication', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     saved_job_listings = db.relationship(
-        'SavedJobListings', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
+        'SavedJobListing', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
     company_subscriptions = db.relationship(
-        'CompanySubscriptions', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
+        'CompanySubscription', back_populates='alumnus', lazy="dynamic", cascade="all, delete-orphan")
 
     def __init__(self, login_email: str, password: str, first_name: str, last_name: str, phone_number: str = None, profile_photo_file_path: str = None) -> None:
         """

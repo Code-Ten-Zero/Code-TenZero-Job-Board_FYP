@@ -52,7 +52,7 @@ def send_notification(job_categories=None):
     print(notif_alumni, job_categories)
     return notif_alumni, job_categories
 
-def add_listing(company_id, title, position_type, description, company_name, 
+def add_listing(company_id, title, position_type, description,
                 monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
 
     # manually validate that the company actually exists
@@ -60,7 +60,7 @@ def add_listing(company_id, title, position_type, description, company_name,
     if not company:
         return None
 
-    newListing = JobListing(company_id,title, position_type, description, company_name, 
+    newListing = JobListing(company_id, title, position_type, description, 
                 monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status)
     try:
         db.session.add(newListing)
@@ -89,7 +89,7 @@ def get_company_listings(login_email):
     
     # for listing in company.listings:
     #     print(listing.get_json())
-    return company.listings
+    return company.job_listings
 
 def get_all_companies():
     return CompanyAccount.query.all()
