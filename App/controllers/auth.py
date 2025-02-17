@@ -13,6 +13,7 @@ from flask import jsonify
 
 def login_user(login_email, password_hash):
     user = get_user_by_email(login_email)
+
     if user and user.check_password(password_hash):
     # if user is not None:
       token = create_access_token(identity=login_email)
@@ -24,7 +25,11 @@ def login_user(login_email, password_hash):
 
 def login(login_email, password_hash):
   user = get_user_by_email(login_email)
-  
+  print (user)
+  if user.check_password(password_hash):
+    print("Password checked and is true")
+  else:
+      print("Password is wrong")
   if user and user.check_password(password_hash):
     token = create_access_token(identity=login_email)
     print('token created')

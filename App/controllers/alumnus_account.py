@@ -4,6 +4,7 @@ from App.database import db
 
 def add_alumni(id, password_hash, login_email, first_name, last_name, phone_number):
 
+
         # Check if there are no other users with the same email values in any other subclass
         if (
             # Alumni.query.filter_by(username=username).first() is not None or
@@ -12,9 +13,10 @@ def add_alumni(id, password_hash, login_email, first_name, last_name, phone_numb
         ):
             return None  # Return None to indicate duplicates
 
-        newAlumni= AlumnusAccount(id, password_hash, login_email, first_name, last_name, phone_number)
+        newAlumni= AlumnusAccount(login_email, password_hash, first_name, last_name, phone_number)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAlumni)
+            print("alumni added successfully")
             db.session.commit()  # Commit to save the new  to the database
             return newAlumni
         except:

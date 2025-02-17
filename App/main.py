@@ -29,6 +29,7 @@ def create_app(overrides={}):
     #db.init_app(app)
     with app.app_context():
         # Ensure all tables are created
+        #db.drop_all()
         db.create_all()
 
     photos = UploadSet('photos', TEXT + DOCUMENTS + IMAGES)
