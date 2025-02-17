@@ -13,7 +13,7 @@ def add_admin(password, login_email):
         ):
             return None  # Return None to indicate duplicates
 
-        newAdmin= AdminAccount(password, login_email,profile_photo_file_path="N/A")
+        newAdmin= AdminAccount(login_email,password,profile_photo_file_path="N/A")
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAdmin)
             db.session.commit()  # Commit to save the new to the database

@@ -14,7 +14,7 @@ def add_company(registered_name, password, login_email, mailing_address, phone_n
         ):
             return None  # Return None to indicate duplicates
 
-        newCompany= CompanyAccount(registered_name, password, login_email, mailing_address, phone_number, public_email, website_url)
+        newCompany= CompanyAccount(login_email, password,registered_name, mailing_address, public_email, phone_number, website_url,profile_photo_file_path="N/A")
         try: # safetey measure for trying to add duplicate 
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database
@@ -87,6 +87,11 @@ def get_company_listings(login_email):
     # return Listing.query.filter_by(company_name=company_name)
     company = get_company_by_email(login_email)
     
+    if company is None:
+        raise ValueError(f"No company found with email: {login_email}")
+    
+    if not company.job_listings:
+        return "No job listings found for this company."
     # for listing in company.listings:
     #     print(listing.get_json())
     return company.job_listings

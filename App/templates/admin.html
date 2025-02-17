@@ -158,10 +158,10 @@
             {% for job in jobs %}
             <tbody>
                 <tr class="{{ 'published' if job.isApproved else '' }}">
-                    <td>{{ job.company_name }}</td>
+                    <td>{{ job.company_id }}</td>
                     <td>{{ job.title }}</td>
                     <td>{{ job.description }}</td>
-                    <td>{{ job.request }}</td>
+                    <td>{{ job.requests}}</td>
                     <td class="actions">
                         <!-- <button onclick="editListing(0)">Edit</button> -->
                         <a href="/delete_listing/{{job.id}}">Delete</a>
@@ -169,7 +169,7 @@
                             <button class="publish-button" data-job-id="{{ job.id }}" onclick="publishJob(event, this)">Publish</button>
                         {% else %}
                             <button class="publish-button" data-job-id="{{ job.id }}" onclick="unpublishJob(event, this)">Unpublish</button>
-                        {% endif %} 
+                        {% endif %}
                     </td>
                 </tr>
             </tbody>

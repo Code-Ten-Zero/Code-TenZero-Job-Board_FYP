@@ -50,15 +50,15 @@ def initialize():
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing('listing1', 'Part-time','job description1', 'company1',
-                8000, True, 'Curepe','02-01-2025', '10-01-2025', 'PENDING')
+    add_listing(company1.id,'listing1', 'Part-time','job description1', 'company1',
+                8000, True, 'Curepe','02-01-2025', '10-01-2025')
 
-    add_listing('listing2', 'Full-time', 'job description2','company2',
-                4000,  True, 'Port-Of-Spain','04-02-2025', '05-02-2025', 'PENDING')
+    add_listing(company2.id,'listing2', 'Full-time', 'job description2','company2',
+                4000,  True, 'Port-Of-Spain','04-02-2025', '05-02-2025')
 
     
     # print(get_all_listings_json())
-    print(get_company_listings('company2'))
+    print(get_company_listings('company@mail'))
 
     print(get_all_subscribed_alumni())
     # send_notification(['Programming'])
