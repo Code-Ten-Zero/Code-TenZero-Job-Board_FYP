@@ -36,7 +36,9 @@ def index_page():
     approved_jobs = get_approved_listings() # retrieve approved jobs
 
     if isinstance(current_user, AlumnusAccount):
-        show_modal = current_user.has_seen_modal
+
+        #show_modal = current_user.has_seen_modal
+        show_modal = True
         if not show_modal:
             # Pass True to the template to show modal
             return render_template('alumni.html', jobs=approved_jobs, show_modal=True)

@@ -173,6 +173,6 @@ def set_alumni_modal_seen(id):
     alumni.has_seen_modal = True
     db.session.commit()
     
-# only view approved listings
+# To be re written - CTZ
 def get_approved_listings():
-    return JobListing.query.filter_by(isApproved=True).all()
+    return JobListing.query.all()

@@ -14,7 +14,7 @@ def get_user_by_email(login_email):
     user = None
 #   user = User.query.filter_by(username=data['username']).first()
     alumni = AlumnusAccount.query.filter_by(login_email=login_email).first()
-    alumni = AlumnusAccount.query.first()
+    #alumni = AlumnusAccount.query.first()
 
     if alumni:
         print("got alumni by email")
@@ -29,7 +29,7 @@ def get_user_by_email(login_email):
     if company:
         print("got company by email")
         return company
-        
+
     print("found nothing by email")
     return user
 

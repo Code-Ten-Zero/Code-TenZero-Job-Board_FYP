@@ -27,7 +27,7 @@ def login(login_email, password_hash):
   user = get_user_by_email(login_email)
   print (user)
   if user.check_password(password_hash):
-    print("Password checked and is true")
+    print("Password is correct")
   else:
       print("Password is wrong")
   if user and user.check_password(password_hash):
