@@ -3,7 +3,7 @@ from App.database import db
 
 
 # create and add a new admin into the db
-def add_admin(password_hash, login_email):
+def add_admin(password, login_email):
 
     # Check if there are no other users with the same email values in any other subclass
         if (
@@ -13,7 +13,7 @@ def add_admin(password_hash, login_email):
         ):
             return None  # Return None to indicate duplicates
 
-        newAdmin= AdminAccount(password_hash, login_email)
+        newAdmin= AdminAccount(password, login_email,profile_photo_file_path="N/A")
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAdmin)
             db.session.commit()  # Commit to save the new to the database
@@ -33,7 +33,10 @@ def delete_listing(jobListing_id):
         return True
 
     return None
-    
+
+def get_admin(id):
+    return AdminAccount.query.filter_by(id=id).first()
+
 def get_all_admins():
     return db.session.query(AdminAccount).all()
 

@@ -37,7 +37,7 @@ def initialize():
     add_admin('bobpass', 'bob@mail')
 
     # add in alumni
-    add_alumni('1','robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
+    add_alumni('robpass', 'rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
     # add in companies
     add_company('company1','compass','company@mail',  'mailing_address', 'phone_number','public@email' ,'company_website.com')

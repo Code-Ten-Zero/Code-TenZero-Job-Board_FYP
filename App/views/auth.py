@@ -80,7 +80,7 @@ def alumni_signup_action():
   response = None
 
   try:
-    newAlumni = add_alumni(data['password_hash'], data['login_email'],
+    newAlumni = add_alumni(data['password'], data['login_email'],
                           data['phone_number'], data['first_name'], data['last_name'])
 
     token = login(data['login_email'], data['password'])
@@ -110,7 +110,7 @@ def company_signup_action():
   try:
     # newAlumni = add_alumni(data['username'], data['password'], data['email'],
     #                       data['alumni_id'], data['contact'], data['firstname'], data['lastname'])
-    newCompany = add_company(data['login_email'], data['password_hash'], data['registered_name'], data['mailing_address'],
+    newCompany = add_company(data['registered_name'], data['password'], data['login_email'], data['mailing_address'],
                              data['phone_number'], data['public_email'], data['website_url'])
 
     token = login(data['login_email'], data['password'])
@@ -145,7 +145,7 @@ API Routes
 @auth_views.route('/api/login', methods=['POST'])
 def user_login_api():
   data = request.json
-  token = login(data['login_email'], data['password_hash'])
+  token = login(data['login_email'], data['password'])
   if not token:
     return jsonify(message='bad email or password given'), 401
   response = jsonify(access_token=token) 

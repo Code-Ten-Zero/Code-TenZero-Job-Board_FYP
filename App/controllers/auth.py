@@ -11,10 +11,10 @@ from flask import jsonify
 #     return create_access_token(identity=username)
 #   return None
 
-def login_user(login_email, password_hash):
+def login_user(login_email, password):
     user = get_user_by_email(login_email)
 
-    if user and user.check_password(password_hash):
+    if user and user.check_password(password):
     # if user is not None:
       token = create_access_token(identity=login_email)
       response = jsonify(access_token=token)
@@ -23,14 +23,14 @@ def login_user(login_email, password_hash):
     # return jsonify(message="Invalid username or password"), 401
     return None
 
-def login(login_email, password_hash):
+def login(login_email, password):
   user = get_user_by_email(login_email)
   print (user)
-  if user.check_password(password_hash):
+  if user.check_password(password):
     print("Password is correct")
   else:
       print("Password is wrong")
-  if user and user.check_password(password_hash):
+  if user and user.check_password(password):
     token = create_access_token(identity=login_email)
     print('token created')
     return (token)
