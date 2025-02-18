@@ -15,9 +15,11 @@ from App.controllers import (
 
 from App.views import views
 
+
 def add_views(app):
     for view in views:
         app.register_blueprint(view)
+
 
 def create_app(overrides={}):
     app = Flask(__name__, static_url_path='/static')
@@ -26,22 +28,21 @@ def create_app(overrides={}):
     add_auth_context(app)
     app.config.from_pyfile('default_config.py')
     init_db(app)
-    #db.init_app(app)
+    # db.init_app(app)
     with app.app_context():
         # Ensure all tables are created
-        #db.drop_all()
+        # db.drop_all()
         db.create_all()
 
     photos = UploadSet('photos', TEXT + DOCUMENTS + IMAGES)
     configure_uploads(app, photos)
     add_views(app)
-    #init_db(app)
+    # init_db(app)
     jwt = setup_jwt(app)
-    
+
     @jwt.invalid_token_loader
     @jwt.unauthorized_loader
     def custom_unauthorized_response(error):
         return render_template('401.html', error=error), 401
     app.app_context().push()
     return app
-

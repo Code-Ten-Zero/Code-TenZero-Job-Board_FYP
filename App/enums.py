@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class JobPositionType(Enum):
     CONTRACT = "CONTRACT"
     FREELANCE = "FREELANCE"
@@ -8,6 +9,7 @@ class JobPositionType(Enum):
     PART_TIME = "PART TIME"
     TEMPORARY = "TEMPORARY"
     VOLUNTEER = "VOLUNTEER"
+
 
 class ApprovalStatus(Enum):
     APPROVED = "APPROVED"

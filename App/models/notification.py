@@ -19,9 +19,12 @@ class Notification(db.Model):
     __tablename__ = "notifications"
 
     id = db.Column(db.Integer, primary_key=True)
-    alumnus_id = db.Column(db.Integer, db.ForeignKey('alumnus_accounts.id'), nullable=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('company_accounts.id'), nullable=True)
-    admin_id = db.Column(db.Integer, db.ForeignKey('admin_accounts.id'), nullable=True)
+    alumnus_id = db.Column(db.Integer, db.ForeignKey(
+        'alumnus_accounts.id'), nullable=True)
+    company_id = db.Column(db.Integer, db.ForeignKey(
+        'company_accounts.id'), nullable=True)
+    admin_id = db.Column(db.Integer, db.ForeignKey(
+        'admin_accounts.id'), nullable=True)
     message = db.Column(db.String(1000), nullable=False)
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow)
@@ -36,7 +39,7 @@ class Notification(db.Model):
         Initializes a Notification instance.
 
         Args:
-            
+
             message (str): Notification message.
         """
         if alumnus_id:
@@ -85,7 +88,7 @@ class Notification(db.Model):
                 f"message='{self.message}', "
                 f"datetime_created='{self.datetime_created.isoformat()}', "
                 f"reviewed_by_user='{self.reviewed_by_user}')>")
-    
+
     def __json__(self):
         return {
             "id": self.id,

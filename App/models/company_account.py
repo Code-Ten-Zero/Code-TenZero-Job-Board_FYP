@@ -28,7 +28,8 @@ class CompanyAccount(BaseUserAccount):
         'polymorphic_identity': 'company',
     }
 
-    notifications = db.relationship("Notification", back_populates="company", lazy="dynamic", cascade="all, delete-orphan")
+    notifications = db.relationship(
+        "Notification", back_populates="company", lazy="dynamic", cascade="all, delete-orphan")
 
     registered_name = db.Column(db.String, nullable=False, unique=True)
     mailing_address = db.Column(db.String, nullable=False)
@@ -95,7 +96,7 @@ class CompanyAccount(BaseUserAccount):
                 f"mailing_address='{self.mailing_address}', public_email='{self.public_email}', "
                 f"website_url='{self.website_url if self.website_url else '[N/A]'}', "
                 f"phone_number='{self.phone_number if self.phone_number else '[N/A]'}', "
-    f"profile_photo_file_path='{self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'}')>")
+                f"profile_photo_file_path='{self.profile_photo_file_path if self.profile_photo_file_path else 'N/A'}')>")
 
     def __json__(self) -> dict:
         """

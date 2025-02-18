@@ -31,21 +31,26 @@ class JobListing(db.Model):
     __tablename__ = "job_listings"
 
     id = db.Column(db.Integer(), primary_key=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('company_accounts.id'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey(
+        'company_accounts.id'), nullable=False)
     title = db.Column(db.String(120), nullable=False)
     position_type = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
     monthly_salary_ttd = db.Column(db.Integer, nullable=False)
     is_remote = db.Column(db.Boolean, nullable=False, default=False)
     job_site_address = db.Column(db.String(120), nullable=False)
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    admin_approval_status = db.Column(db.String(50), nullable=False, default="PENDING")
+    datetime_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_last_modified = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    admin_approval_status = db.Column(
+        db.String(50), nullable=False, default="PENDING")
 
     company = db.relationship("CompanyAccount", back_populates="job_listings")
-    job_applications = db.relationship("JobApplication", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
-    saved_job_listings = db.relationship("SavedJobListing", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
-
+    job_applications = db.relationship(
+        "JobApplication", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
+    saved_job_listings = db.relationship(
+        "SavedJobListing", back_populates='job_listing', lazy="dynamic", cascade="all, delete-orphan")
 
     def __init__(self, company_id: int, title: str, position_type: str, description: str, monthly_salary_ttd: int, is_remote: bool = False, job_site_address: str = None,  datetime_created=None, datetime_last_modified=None, admin_approval_status: str = 'PENDING') -> None:
         """
@@ -127,7 +132,7 @@ class JobListing(db.Model):
             "datetime_last_modified": self.datetime_last_modified.isoformat(),
             "admin_approval_status": self.admin_approval_status
         }
-    #was causing errors revise-CTZ
+    # was causing errors revise-CTZ
     # @validates("admin_approval_status")
     # def validate_admin_approval_status(self, value: str) -> str:
     #     """
