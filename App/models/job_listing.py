@@ -127,22 +127,25 @@ class JobListing(db.Model):
             "datetime_last_modified": self.datetime_last_modified.isoformat(),
             "admin_approval_status": self.admin_approval_status
         }
+    #was causing errors revise-CTZ
+    # @validates("admin_approval_status")
+    # def validate_admin_approval_status(self, value: str) -> str:
+    #     """
+    #     Ensures that 'approval_status' is valid.
 
-    @validates("admin_approval_status")
-    def validate_admin_approval_status(self, key, value: str) -> str:
-        """
-        Ensures that 'approval_status' is valid.
-        Args:
-            value (str): The value assigned to 'admin_approval_status'.
-        Returns:
-            str: Validated value.
-        Raises:
-            ValueError: If the status is invalid.
-        """
-        # was raising errors so needs to be reviewed CTZ
-        # if value not in ApprovalStatus._value2member_map_:
-        #     raise ValueError(f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
-        return True
+    #     Args:
+    #         value (str): The value assigned to 'admin_approval_status'.
+
+    #     Returns:
+    #         str: Validated value.
+
+    #     Raises:
+    #         ValueError: If the status is invalid.
+    #     """
+    #     valid_statuses = current_app.config["APPROVAL_STATUSES"]
+    #     if value not in valid_statuses:
+    #         raise ValueError(f"Invalid status '{value}'. Allowed values: {valid_statuses}")
+    #     return value
 
     @validates("is_remote", "job_site_address")
     def validate_job_site_address(self, key, value):

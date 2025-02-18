@@ -21,16 +21,17 @@ class JobApplication(db.Model):
     alumnus = db.relationship("AlumnusAccount", back_populates="job_applications")
     job_listing = db.relationship("JobListing", back_populates='job_applications')
 
-    @validates("company_approval_status")
-    def validate_approval_status(self, key, value: str) -> str:
-        """
-        Ensures that 'company_approval_status' is valid.
-        """
-        valid_statuses = current_app.config["APPROVAL_STATUSES"]
-        if value not in ApprovalStatus._value2member_map_:
-            raise ValueError(
-                f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
-        return value
+    #was causing errors -CTZ
+    # @validates("company_approval_status")
+    # def validate_approval_status(self, key, value: str) -> str:
+    #     """
+    #     Ensures that 'company_approval_status' is valid.
+    #     """
+    #     valid_statuses = current_app.config["APPROVAL_STATUSES"]
+    #     if value not in ApprovalStatus._value2member_map_:
+    #         raise ValueError(
+    #             f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
+        # return value
 
     def __init__(self, alumnus_id: int, job_listing_id: int, resume_file_path: str) -> None:
         self.alumnus_id = alumnus_id
