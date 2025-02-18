@@ -54,16 +54,16 @@ def initialize():
     # add in listings
     # listing1 = add_listing('listing1', 'job description', 'company2')
     # print(listing1, 'test')
-    add_listing(company1.id, 'listing1', 'Part-time', 'job description1', 'company1',
-                8000, True, 'Curepe', '02-01-2025', '10-01-2025')
+    add_listing(company1.id, 'listing1','Part-time', 'job description1',
+                8000, False, 'Curepe', '02-01-2025', '10-01-2025', 'PENDING')
 
-    add_listing(company2.id, 'listing2', 'Full-time', 'job description2', 'company2',
-                4000,  True, 'Port-Of-Spain', '04-02-2025', '05-02-2025')
+    add_listing(company2.id, 'listing2', 'Full-time', 'job description2',
+                4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
 
-    # print(get_all_listings_json())
-    print(get_company_listings('company@mail'))
+    # # print(get_all_listings_json())
+    # print(get_company_listings('company@mail'))
 
-    print(get_all_subscribed_alumni())
+    # print(get_all_subscribed_alumni())
     # send_notification(['Programming'])
     # create_user('username', 'password', 'email')
     # print(get_user_by_username('rob'))
@@ -132,8 +132,8 @@ def list_admin_command(format):
 @admin_cli.command("add", help="adds an admin")
 @click.argument("password_hash", default='bobpass')
 @click.argument("login_email", default="bob@mail")
-def add_admin_command(password_hash, login_email):
-    admin = add_admin(password_hash, login_email)
+def add_admin_command(password, login_email):
+    admin = add_admin(password, login_email)
 
     if admin is None:
         print('Error creating admin')
@@ -181,8 +181,8 @@ def list_alumni_command(format):
 @click.argument("firstname", default="rob2fname")
 @click.argument("lastname", default="rob2lname")
 # @click.argument("job_categories", default='Database')
-def add_alumni_command(password_hash, login_email, phone_number, firstname, lastname):
-    alumni = add_alumni(password_hash, login_email,
+def add_alumni_command(password, login_email, phone_number, firstname, lastname):
+    alumni = add_alumni(password, login_email,
                         phone_number, firstname, lastname)
 
     if alumni is None:
@@ -274,8 +274,8 @@ def list_company_command(format):
 @click.argument("phone_number", default="8689009000")
 @click.argument("public_email", default="aahpull@mail")
 @click.argument("website_url", default="https://www.aahpull.com")
-def add_company_command(registered_name, password_hash, login_email, mailing_address, phone_number, public_email, website_url):
-    company = add_company(registered_name, password_hash, login_email,
+def add_company_command(registered_name, password, login_email, mailing_address, phone_number, public_email, website_url):
+    company = add_company(registered_name, password, login_email,
                           mailing_address, phone_number, public_email, website_url)
 
     if company is None:
@@ -328,15 +328,14 @@ def list_listing_command(format):
 @click.argument("title", default="Job offer 1")
 @click.argument("postion-type", default="Full-time")
 @click.argument("description", default="very good job :)")
-@click.argument("registered_name", default="company1")
 @click.argument("monthly_salary_ttd", default="10000")
 @click.argument("is_remote", default="True")
 @click.argument("job_site_address", default="Curepe")
 @click.argument("datetime_created", default="dd-mm-yy")
 @click.argument("datetime_last_mmodified", default="dd-mm-yy")
 @click.argument("admin_approval_status", default="  PENDING")
-def add_listing_command(company_id, title, position_type, description, registered_name, monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
-    listing = add_listing(company_id, title, position_type, description, registered_name, monthly_salary_ttd,
+def add_listing_command(company_id, title, position_type, description, monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
+    listing = add_listing(company_id, title, position_type, description, monthly_salary_ttd,
                           is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status)
 
     if listing is None:
