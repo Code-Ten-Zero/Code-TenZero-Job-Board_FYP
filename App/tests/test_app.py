@@ -3,13 +3,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from App.main import create_app
 from App.database import db, create_db
-from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, CompanySubscription, JobApplication, JobListing
+from App.models import User, Admin, Alumni, Company, Listing
 from App.controllers import (
     create_user,
     get_all_users_json,
     login,
     get_user,
-    get_user_by_email,
+    get_user_by_username,
     update_user,
     add_admin,
     add_alumni,
@@ -25,7 +25,7 @@ from App.controllers import (
     toggle_listing_approval,
     get_listing,
     get_approved_listings,
-    get_company_by_email
+    get_company_by_name
 )
 
 
@@ -41,62 +41,39 @@ class UserUnitTests(unittest.TestCase):
     #     assert user.username == "bob"
 
     def test_new_admin(self):
-        admin = AdminAccount('bob@mail','bobpass')
-        assert admin.login_email == "bob@mail"
+        admin = Admin('bob', 'bobpass', 'bob@mail')
+        assert admin.username == "bob"
 
     def test_new_alumni(self):
-        alumni = AlumnusAccount('rob@mail','robpass', 'robfname', 'roblname', '1868-333-4444')
-        assert alumni.login_email == 'rob@mail'
+        alumni = Alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
+        assert alumni.username == 'rob'
     
     def test_new_company(self):
-        company = CompanyAccount('company@mail', 'compass',  'company1', 'mailing_address', 'public@email','company_website.com','phone_number')
-        assert company.login_email == 'company@mail'
+        company = Company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
+        assert company.company_name == 'company1'
 
     # pure function no side effects or integrations called
     def test_get_json(self):
-        user = AdminAccount("bob@mail", "bobpass")
+        user = Admin("bob", "bobpass", 'bob@mail')
         user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "login_email":"bob@mail", 'password':'bobpass'})
+        self.assertDictEqual(user_json, {"id":None, "username":"bob", 'email':'bob@mail'})
 
     # pure function no side effects or integrations called
     def test_get_json(self):
-        user = AdminAccount("bob@mail", "bobpass")
+        user = Admin("bob", "bobpass", 'bob@mail')
         user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "login_email":"bob@mail", 'password':'bobpass'})
+        self.assertDictEqual(user_json, {"id":None, "username":"bob", 'email':'bob@mail'})
     
-    def test_generate_hashed_password(self):
+    def test_hashed_password(self):
         password = "mypass"
         hashed = generate_password_hash(password, method='sha256')
-        user = AdminAccount("bob@mail", password)
+        user = Admin("bob", password, 'bob@mail')
         assert user.password != password
 
     def test_check_password(self):
         password = "mypass"
-        user = AdminAccount('bob@mail',password)
+        user = Admin("bob", password, 'bob@mail')
         assert user.check_password(password)
-
-    #test the retrieval of an admin account
-    def test_get_admin_by_email(self):
-        user = AdminAccount("bob@mail", "bobpass")
-        retreived_user = get_user_by_email("bob@mail")
-        assert retreived_user.login_email == user.login_email
-
-    #test the retrieval of an alumnus account
-    def test_get_almunus_by_email(self):
-        alumni = AlumnusAccount('rob@mail','robpass', 'robfname', 'roblname', '1868-333-4444')
-        assert alumni.login_email == 'rob@mail'
-    
-    #test the retrieval of a company account
-    def test_get_company_by_email(self):
-        company = CompanyAccount('company@mail', 'compass',  'company1', 'mailing_address', 'public@email','company_website.com','phone_number')
-        retreived_company = get_company_by_email("company@mail")
-        assert retreived_company.login_email == company.login_email
-
-    #test the behaviour of the retrieval fucntion of a user that does not exist 
-    def test_get_user_by_email_not_found(self):
-        retreived_user = get_user_by_email("unknown@mail")
-        assert retreived_user is None
-    
 
 '''
     Integration Tests
@@ -140,11 +117,10 @@ class UserIntegrationTests(unittest.TestCase):
         listing = add_listing('listing1', 'listing1 description', 'company1', '8000', 'Full-time', True, True, 'desiredcandidate', 'curepe')
         assert listing.title == 'listing1' and listing.company_name == 'company1'
 
-    #this was removed -CTZ
-    # def test_czsubscribe(self):
+    def test_czsubscribe(self):
 
-    #     alumni = subscribe('123456789', 'Database Manager')
-    #     assert alumni.subscribed == True
+        alumni = subscribe('123456789', 'Database Manager')
+        assert alumni.subscribed == True
 
     # def test_czadd_categories(self):
 
@@ -231,9 +207,9 @@ class UserIntegrationTests(unittest.TestCase):
 
         apply_listing(alumni.alumni_id, job2.id)
 
-        company = get_company_by_email(job2.company.login_email)
+        company = get_company_by_name(job2.company_name)
 
         # Check if the notification was created
         notifications = company.notifications
         assert len(notifications) == 1
-        assert notifications[0].message == f"Alumni {alumni.login_email} applied to your listing '{job2.title}'."
+        assert notifications[0].message == f"Alumni {alumni.username} applied to your listing '{job2.title}'."

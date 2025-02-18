@@ -21,6 +21,17 @@ class JobApplication(db.Model):
     alumnus = db.relationship("AlumnusAccount", back_populates="job_applications")
     job_listing = db.relationship("JobListing", back_populates='job_applications')
 
+    @validates("company_approval_status")
+    def validate_approval_status(self, key, value: str) -> str:
+        """
+        Ensures that 'company_approval_status' is valid.
+        """
+        valid_statuses = current_app.config["APPROVAL_STATUSES"]
+        if value not in ApprovalStatus._value2member_map_:
+            raise ValueError(
+                f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
+        return value
+
     def __init__(self, alumnus_id: int, job_listing_id: int, resume_file_path: str) -> None:
         self.alumnus_id = alumnus_id
         self.job_listing_id = job_listing_id
@@ -51,24 +62,3 @@ class JobApplication(db.Model):
             "datetime_applied": self.datetime_applied.isoformat(),
             "company_approval_status": self.company_approval_status
         }
-    
-    @validates("company_approval_status")
-    def validate_approval_status(self, value: str) -> str:
-        """
-        Ensures that 'company_approval_status' is valid.
-
-        Args:
-            key (str): The column being validated.
-            value (str): The value assigned to 'approval_status'.
-
-        Returns:
-            str: Validated value.
-
-        Raises:
-            ValueError: If the status is invalid.
-        """
-        valid_statuses = current_app.config["APPROVAL_STATUSES"]
-        if value not in valid_statuses:
-            raise ValueError(
-                f"Invalid status '{value}'. Allowed values: {valid_statuses}")
-        return value
