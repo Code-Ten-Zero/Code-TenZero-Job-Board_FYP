@@ -59,6 +59,12 @@ def initialize():
 
     add_listing(company2.id, 'listing2', 'Full-time', 'job description2',
                 4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
+    
+    add_listing(company2.id, 'listing3', 'Full-time', 'job description2',
+                4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
+    
+    add_listing(company1.id, 'listing4', 'Full-time', 'job description2',
+                4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
 
     # # print(get_all_listings_json())
     # print(get_company_listings('company@mail'))
