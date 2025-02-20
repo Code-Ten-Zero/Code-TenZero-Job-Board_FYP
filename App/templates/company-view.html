@@ -1,107 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Listings</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company View</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: gainsboro;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: gainsboro;
+        max-height: 90%;
+      }
 
-        header {
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+      header {
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
 
-        button, a {
-            padding: 10px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        button:hover, a:hover {
-            background-color: rgb(98, 127, 191);
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .job-listing {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff;
-            position: relative;
-        }
-        .job-actions {
-            position: absolute;
-            bottom: 10px; 
-            right: 10px;
-        }
+      button,
+      a {
+        padding: 10px;
+        background-color: rgb(57, 61, 185);
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+      }
 
-        .logout{
-            position: absolute;
-            top: 20px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+      button,
+      a.delete {
+        padding: 10px;
+        background-color: rgb(204, 56, 56);
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+      }
 
-        .addJob {
-            position: absolute;
-            top: 20px;
-            right: 100px;
-            padding: 10px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .addjob:hover, .logout:hover {
-            background-color: rgb(98, 127, 191);
-        }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 3px;
-            font-size: 14px;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-        }
+      button:hover,
+      a.delete:hover {
+        /* Add hover effect for button and anchor */
+        background-color: rgb(136, 90, 90); /* Darker red for hover */
+      }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
+      button:hover,
+      a:hover {
+        background-color: rgb(98, 127, 191);
+      }
 
-        .alert-unsuccessful {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .notifications {
+      .btn-group {
+        margin-right: 7%;
+      }
+
+      .btn-group button {
+        background-color: gainsboro;
+        border: 1px;
+        color: black;
+        margin-top: 5%;
+        padding: 1%;
+        cursor: pointer;
+        border-radius: 4px;
+        float: right;
+      }
+
+      .btn-group button.active {
+        background-color: black;
+        border: 1px solid rgb(185, 185, 185);
+        color: rgb(255, 255, 255);
+      }
+
+      /* Clear floats (clearfix hack) */
+      .btn-group:after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+
+      .btn-group button:not(:last-child) {
+        border-left: none; /* Prevent double borders */
+      }
+
+      /* Add a background color on hover */
+      .btn-group button:hover {
+        background-color: rgb(27, 27, 179);
+        color: white;
+      }
+
+      .listings-container {
+        width: 85%;
+        height: 100%;
+        display: grid;
+        gap: 5%;
+        grid-template-columns: 1fr 1fr;
+        margin-left: 5%;
+        margin-top: 0;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        overflow-y: auto;
+      }
+
+      .container {
+        max-width: 90%;
+        margin-left: 5%;
+        margin-right: 10%;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      .job-listing {
+        margin-bottom: 2%;
+        padding: 5%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+        position: relative;
+      }
+
+      .job-actions {
+        
+        display: flex; 
+        gap: 10%; 
+        justify-content: flex-end; 
+      }
+
+      .logout {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .addJob {
+        position: absolute;
+        top: 20px;
+        right: 100px;
+        padding: 10px;
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .addjob:hover,
+      .logout:hover {
+        background-color: rgb(98, 127, 191);
+      }
+
+      .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 3px;
+        font-size: 14px;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-unsuccessful {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .notifications {
         position: absolute;
         top: 20px;
         right: 200px; /* Adjust spacing as needed */
@@ -112,61 +193,64 @@
         border-radius: 5px;
         cursor: pointer;
         text-decoration: none;
-        }
+      }
 
-        .notifications:hover {
-            background-color: rgb(98, 127, 191);
-        }
+      .notifications:hover {
+        background-color: rgb(98, 127, 191);
+      }
     </style>
-</head>
-<header>
-    <h2>Job Listings</h2>
+  </head>
+  <header>
+    <h2>DCIT Job Board</h2>
     <a href="/notifications" class="notifications">Notifications</a>
     <a href="/add_listing" class="addJob"> Add Job</a>
     <a href="/logout" class="logout">Logout</a>
-</header>
-<body>
+  </header>
+  <body>
     <div id="flash-messages">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
     </div>
-    <div class="container">
+    <div class="conatiner">
+      <div class="btn-group">
+        <button>Browse Companies</button>
+        <button>Brwose Jobs</button>
+        <button class="active">Company Listings</button>
+      </div>
+      <div class="listings-container">
         {% for job in jobs %}
         <div class="job-listing">
-            <h3>{{ job.company_name }}</h3>
-            <h4>{{ job.title }}</h4>
-            <p>Description: {{ job.description }}</p>
-            <p>Position Type: {{ job.position }}</p>
-            <p>Remote: {{ job.remote }}</p>
-            <!-- <p>Employment Term: {{ job.employment_term }}</p> -->
-            <p>Must Be a TT National: {{ job.ttnational }}</p>
-            <p>Category: {{ job.job_category }}</p>
-            <p>Desired Candidate Type: {{ job.desiredcandidate }}</p>
-            <!-- <p>Test for job request: {{ job.request }}</p> -->
-            <div class="job-actions">
-                    <a href="/view_applications/{{job.id}}">View Applicants</a>
-                    <!-- <input type="hidden" name="job_id" value="{{ job.id }}"> -->
-                    <!-- <a href="/request_edit_listing/{{job.id}}">Request Edits</a> -->
-                    <a href="/request_delete_listing/{{job.id}}">Request Deletion</a>
-            </div>
+          <h2>{{ job.title }}</h2>
+          <p>Description: {{ job.description }}</p>
+          <p>Position Type: {{ job.position_type }}</p>
+          <p>Remote: {{ job.is_remote }}</p>
+          <!-- <p>Employment Term: {{ job.employment_term }}</p> -->
+          <p>Must Be a TT National: {{ job.ttnational }}</p>
+          <p>Category: {{ job.job_category }}</p>
+          <p>Desired Candidate Type: {{ job.desiredcandidate }}</p>
+          <!-- <p>Test for job request: {{ job.request }}</p> -->
+          <div class="job-actions">
+            <a href="/view_applications/{{job.id}}">View Applicants</a>
+            <!-- <input type="hidden" name="job_id" value="{{ job.id }}"> -->
+            <!-- <a href="/request_edit_listing/{{job.id}}">Request Edits</a> -->
+            <a href="/request_delete_listing/{{job.id}}" class="delete"
+              >Request Deletion</a
+            >
+          </div>
         </div>
         {% endfor %}
+      </div>
     </div>
     <script>
-        // Hide flash messages after 3 seconds
-        setTimeout(() => {
-            const flashMessages = document.getElementById('flash-messages');
-            if (flashMessages) {
-                flashMessages.style.display = 'none';
-            }
-        }, 3000);  // 3000 milliseconds = 3 seconds
+      // Hide flash messages after 3 seconds
+      setTimeout(() => {
+        const flashMessages = document.getElementById("flash-messages");
+        if (flashMessages) {
+          flashMessages.style.display = "none";
+        }
+      }, 3000); // 3000 milliseconds = 3 seconds
     </script>
-</body>
+  </body>
 </html>

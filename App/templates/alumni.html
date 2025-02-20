@@ -59,9 +59,9 @@
       }
 
       .btn-group button.active {
-        background-color: black; 
-        border: 1px solid rgb(185, 185, 185); 
-        color: rgb(255, 255, 255); 
+        background-color: black;
+        border: 1px solid rgb(185, 185, 185);
+        color: rgb(255, 255, 255);
       }
 
       /* Clear floats (clearfix hack) */
@@ -391,6 +391,48 @@
         color: #721c24;
         border: 1px solid #f5c6cb;
       }
+
+      /* #working on mobile view */
+      @media (max-width: 768px) {
+        body {
+          overflow-y: auto; 
+          height: auto;
+        }
+
+        .container {
+          grid-template-columns: 1fr; 
+          height: auto; 
+        }
+
+        .listings-container {
+          grid-template-columns: 1fr; 
+          height: auto; 
+          padding: 1% 0; 
+        }
+
+        .aside {
+          width: 100%;
+          margin-top: 0;
+          height: auto; 
+        }
+
+        .body-container {
+          overflow-y: auto; 
+          padding: 2%; 
+        }
+
+        .btn-group {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .btn-group button {
+          margin-right: 0;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -488,7 +530,7 @@
                 <h3>{{ job.title }}</h3>
                 <h5>{{ "Company Name"}}</h5>
                 <button>Save Listing</button>
-                <input type="button" class="view-button" value="View">
+                <input type="button" class="view-button" value="View" />
               </header_info>
             </div>
           </div>
@@ -507,7 +549,7 @@
               <h3>{{ job.title }}</h3>
               <h5>{{ "Company Name"}}</h5>
               <button>Remove</button>
-              <input type="button" class="view-button" value="View">
+              <input type="button" class="view-button" value="View" />
             </header_info>
           </div>
         </div>
