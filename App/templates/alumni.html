@@ -35,10 +35,10 @@
       }
 
       .btn-group button {
-        background-color: #f9f9f9;
+        background-color:  rgb(225, 227, 231);
         border: 1px;
         color: black;
-        padding: 2%;
+        padding: 1.5%;
         cursor: pointer;
         float: right;
         border-radius: 4px;
@@ -395,30 +395,30 @@
       /* #working on mobile view */
       @media (max-width: 768px) {
         body {
-          overflow-y: auto; 
+          overflow-y: auto;
           height: auto;
         }
 
         .container {
-          grid-template-columns: 1fr; 
-          height: auto; 
+          grid-template-columns: 1fr;
+          height: auto;
         }
 
         .listings-container {
-          grid-template-columns: 1fr; 
-          height: auto; 
-          padding: 1% 0; 
+          grid-template-columns: 1fr;
+          height: auto;
+          padding: 1% 0;
         }
 
         .aside {
           width: 100%;
           margin-top: 0;
-          height: auto; 
+          height: auto;
         }
 
         .body-container {
-          overflow-y: auto; 
-          padding: 2%; 
+          overflow-y: auto;
+          padding: 2%;
         }
 
         .btn-group {
@@ -487,7 +487,7 @@
                 <div class="category-input">
                   <i class="fas fa-list"></i>
                   <select name="category" id="category" required>
-                    <option value="">Select Category</option>
+                    <option value="">Select Company</option>
                     <option value="Software Engineer">Software Engineer</option>
                     <option value="Database Manager">Database Manager</option>
                     <option value="Cyber Security">Cyber Security</option>
@@ -517,12 +517,14 @@
         <div class="btn-group">
           <h1>
             Latest Listings
-            <button>Browse Companies</button>
-            <button class="active">Brwose Jobs</button>
-            <button>Submitted Applications</button>
+            <button id="browse-companies">Browse Companies</button>
+            <button id="browse-jobs" class="active">Brwose Jobs</button>
+            <button id="browse-submitted-applications">
+              Submitted Applications
+            </button>
           </h1>
         </div>
-        <div class="listings-container">
+        <div class="listings-container" id="jobs-container">
           {% for job in jobs %}
           <div class="job_card">
             <div class="job-header">
@@ -534,10 +536,45 @@
               </header_info>
             </div>
           </div>
-
           {% endfor%}
         </div>
+        <div class="listings-container" id="companies-container" style="display: none">
+          {% for company in companies %}
+          <div class="job_card">
+            <div class="job-header">
+              <header_info>
+                <h3>{{ company.registered_name }}</h3>
+                <h5>{{ company.website_url }}</h5>
+                <input
+                  type="button"
+                  class="view-button"
+                  value="View Company Listings"
+                />
+              </header_info>
+            </div>
+          </div>
+          {% endfor%}
+        </div>
+
+       <div class="listings-container" id="applications-container" style="display: none">
+        <!-- {% for company in companies %} to be changed when this fucntinonality updates CTZ--> 
+        <div class="job_card">
+          <div class="job-header">
+            <header_info>
+              <h3>{{ "Application info" }}</h3>
+              <h5>{{ "Application status" }}</h5>
+              <input
+                type="button"
+                class="view-button"
+                value="View Company Listings"
+              />
+            </header_info>
+          </div>
+        </div>
+        <!-- {% endfor%} -->
+        </div>
       </div>
+
       <aside>
         <div class="sticky">
           <h1>Saved Listings</h1>
@@ -706,6 +743,54 @@
           flashMessages.style.display = "none";
         }
       }, 3000); // 3000 milliseconds = 3 seconds
+
+      // Get all the buttons and containers
+      const browseCompaniesBtn = document.getElementById("browse-companies");
+      const browseJobsBtn = document.getElementById("browse-jobs");
+      const submittedApplicationsBtn = document.getElementById("browse-submitted-applications");
+
+      const jobsContainer = document.getElementById("jobs-container");
+      const companiesContainer = document.getElementById("companies-container");
+      const applicationsContainer = document.getElementById("applications-container");
+
+       // Function to show the content of the clicked category
+      function showContent(containerToShow) {
+        // Hide all containers
+        jobsContainer.style.display = 'none';
+        companiesContainer.style.display = 'none';
+        applicationsContainer.style.display = 'none';
+
+        // Show the selected container
+        containerToShow.style.display = 'grid';
+      }
+
+      // Event listeners for the buttons
+      browseCompaniesBtn.addEventListener('click', () => {
+        showContent(companiesContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.add('active');
+        browseJobsBtn.classList.remove('active');
+        submittedApplicationsBtn.classList.remove('active');
+      });
+
+      browseJobsBtn.addEventListener('click', () => {
+        showContent(jobsContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.remove('active');
+        browseJobsBtn.classList.add('active');
+        submittedApplicationsBtn.classList.remove('active');
+      });
+
+      submittedApplicationsBtn.addEventListener('click', () => {
+        showContent(applicationsContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.remove('active');
+        browseJobsBtn.classList.remove('active');
+        submittedApplicationsBtn.classList.add('active');
+      });
+
+      // Initial load (show jobs by default)
+      showContent(jobsContainer);
     </script>
   </body>
 </html>

@@ -14,7 +14,7 @@ def add_company(registered_name, password, login_email, mailing_address, phone_n
         ):
             return None  # Return None to indicate duplicates
 
-        newCompany= CompanyAccount(login_email, password,registered_name, mailing_address, public_email, phone_number, website_url,profile_photo_file_path="N/A")
+        newCompany= CompanyAccount(login_email, password,registered_name, mailing_address, public_email, website_url, phone_number,profile_photo_file_path="N/A")
         try: # safetey measure for trying to add duplicate 
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database
