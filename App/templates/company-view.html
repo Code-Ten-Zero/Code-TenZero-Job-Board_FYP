@@ -10,7 +10,8 @@
         margin: 0;
         padding: 0;
         background-color: gainsboro;
-        max-height: 90%;
+        max-height: 100%;
+        overflow-y: hidden;
       }
 
       header {
@@ -92,10 +93,10 @@
         background-color: rgb(27, 27, 179);
         color: white;
       }
-
+      
+      /* use for content sizing */
       .listings-container {
-        width: 85%;
-        height: 100%;
+        height: 63vh;
         display: grid;
         gap: 5%;
         grid-template-columns: 1fr 1fr;
@@ -109,13 +110,14 @@
       }
 
       .container {
-        max-width: 90%;
+        max-width: 100%;
         margin-left: 5%;
         margin-right: 10%;
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
-        background-color: #f9f9f9;
+        background-color: gainsboro;
+        overflow-y: none;
       }
 
       .job-listing {
@@ -124,13 +126,18 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         background-color: #fff;
-        position: relative;
+      }
+      .job-card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin: 20px;
+        padding: 15px;
+        width: 300px;
       }
 
       .job-actions {
-        
         display: flex; 
-        gap: 10%; 
+        gap: 10px; 
         justify-content: flex-end; 
       }
 
@@ -198,6 +205,37 @@
       .notifications:hover {
         background-color: rgb(98, 127, 191);
       }
+
+       /* #working on mobile view */
+       @media (max-width: 768px) {
+        body {
+          overflow-y: auto;
+          height: auto;
+        }
+
+        .container {
+          grid-template-columns: 1fr;
+          height: auto;
+        }
+
+        .listings-container {
+          grid-template-columns: 1fr;
+          height: auto;
+          padding: 1% 0;
+        }
+
+        .btn-group {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .btn-group button {
+          margin-right: 0;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <header>
@@ -213,35 +251,55 @@
       <div class="alert alert-{{ category }}">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
-    <div class="conatiner">
+    <div class="container">
       <div class="btn-group">
-        <button>Browse Companies</button>
-        <button>Brwose Jobs</button>
-        <button class="active">Company Listings</button>
+        <button id="browse-companies">Browse Companies</button>
+        <button class="active" id="browse-jobs">Browse Jobs</button>
+        <button id="my-company-listings">Company Listings</button>
       </div>
-      <div class="listings-container">
+      <div class="listings-container" id="all-listings-container">
         {% for job in jobs %}
         <div class="job-listing">
           <h2>{{ job.title }}</h2>
           <p>Description: {{ job.description }}</p>
           <p>Position Type: {{ job.position_type }}</p>
           <p>Remote: {{ job.is_remote }}</p>
-          <!-- <p>Employment Term: {{ job.employment_term }}</p> -->
-          <p>Must Be a TT National: {{ job.ttnational }}</p>
-          <p>Category: {{ job.job_category }}</p>
-          <p>Desired Candidate Type: {{ job.desiredcandidate }}</p>
-          <!-- <p>Test for job request: {{ job.request }}</p> -->
           <div class="job-actions">
-            <a href="/view_applications/{{job.id}}">View Applicants</a>
-            <!-- <input type="hidden" name="job_id" value="{{ job.id }}"> -->
-            <!-- <a href="/request_edit_listing/{{job.id}}">Request Edits</a> -->
-            <a href="/request_delete_listing/{{job.id}}" class="delete"
+            <a href="#">View</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="listings-container" id="my-company-listings-container" style="display: none;">
+        {% for listing in company_listings %}
+        <div class="job-listing">
+          <h2>{{ listing.title }}</h2>
+          <p>Description: {{ listing.description }}</p>
+          <p>Position Type: {{ listing.position_type }}</p>
+          <p>Remote: {{ listing.is_remote }}</p>
+          <p>Created: {{ listing.datetime_created }}</p>
+          <div class="job-actions">
+            <a href="/view_applications/{{listing.id}}">View Applicants</a>
+            <a href="/request_delete_listing/{{listing.id}}" class="delete"
               >Request Deletion</a
             >
           </div>
         </div>
         {% endfor %}
       </div>
+      <div class="listings-container" id="companies-container" style="display: none;">
+        {% for company in companies %}
+        <div class="job-listing">
+              <h3>{{ company.registered_name }}</h3>
+              <p>{{ company.phone_number }}</p>
+              <p>{{ company.website_url }}</p>
+              <div class="job-actions">
+                <a href="#">View Company Listings</a>
+        </div>
+      </div>
+       {% endfor %}
+    </div>
     </div>
     <script>
       // Hide flash messages after 3 seconds
@@ -251,6 +309,53 @@
           flashMessages.style.display = "none";
         }
       }, 3000); // 3000 milliseconds = 3 seconds
+
+      // Get all the buttons and containers
+      const browseCompaniesBtn = document.getElementById("browse-companies");
+      const browseJobsBtn = document.getElementById("browse-jobs");
+      const myCompanyListingsBtn = document.getElementById("my-company-listings");
+
+      const jobsContainer = document.getElementById("all-listings-container");
+      const companiesContainer = document.getElementById("companies-container");
+      const myCompanyListingsContainer = document.getElementById("my-company-listings-container");
+      
+      // Function to show the content of the clicked category
+      function showContent(containerToShow) {
+      // Hide all containers
+      jobsContainer.style.display = 'none';
+      companiesContainer.style.display = 'none';
+      myCompanyListingsContainer.style.display = 'none';
+
+      // Show the selected container
+      containerToShow.style.display = 'grid';
+      }
+      // Event listeners for the buttons
+      browseCompaniesBtn.addEventListener('click', () => {
+        showContent(companiesContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.add('active');
+        browseJobsBtn.classList.remove('active');
+        myCompanyListingsBtn.classList.remove('active');
+      });
+
+      browseJobsBtn.addEventListener('click', () => {
+        showContent(jobsContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.remove('active');
+        browseJobsBtn.classList.add('active');
+        myCompanyListingsBtn.classList.remove('active');
+      });
+
+      myCompanyListingsBtn.addEventListener('click', () => {
+        showContent(myCompanyListingsContainer);
+        // Toggle active class
+        browseCompaniesBtn.classList.remove('active');
+        browseJobsBtn.classList.remove('active');
+        myCompanyListingsBtn.classList.add('active');
+      });
+      
+      // Initial load (show jobs by default)
+      showContent(jobsContainer);
     </script>
   </body>
 </html>

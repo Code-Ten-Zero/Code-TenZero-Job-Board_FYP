@@ -50,8 +50,8 @@ def index_page():
 
     
     if isinstance(current_user, CompanyAccount):
-        jobs = get_company_listings(current_user.login_email)
-        return render_template('company-view.html', jobs=jobs)
+        company_listings = get_company_listings(current_user.login_email)
+        return render_template('company-view.html', company_listings=company_listings,jobs=approved_jobs, companies=companies)
 
     if isinstance(current_user, AdminAccount):
         return render_template('admin.html', jobs=jobs)
