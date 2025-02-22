@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
     <title>DCIT Job Board-Alumni</title>
     <style>
@@ -17,6 +17,7 @@
         max-height: 100%;
         overflow: hidden;
       }
+      
       header {
         background-color: rgb(57, 97, 185);
         color: #fff;
@@ -88,6 +89,20 @@
         background-color: rgb(203, 203, 213);
         padding: 3%;
         font-size: 70%;
+      }
+
+      #uwi-logo{
+        height: 10vh;
+        width:10vh;
+        border-radius: 35px;
+        margin-right: 5px;
+      }
+
+      #company_logo{
+        height:20vh;
+        width:20vh;
+        float:right;
+        margin-bottom: 10px;
       }
 
       .logout {
@@ -192,7 +207,7 @@
         max-width: 100%;
         height: 50%;
         padding: 2%;
-        background-color: #f9f9f9;
+        background-color: #d4d4d8;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
@@ -343,25 +358,18 @@
         margin-bottom: 20px;
         cursor: pointer;
         transition: all 0.3s ease;
+        background-color: #ffffff;
       }
+      
       .job_card:hover {
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(34, 4, 228, 0.1);
       }
 
-      .job-card {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin: 20px;
-        padding: 15px;
-        width: 300px;
-      }
 
       .job-header {
-        display: flex;
-        justify-content: space-between;
         font-weight: bold;
         cursor: pointer;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
       }
 
       .expand-btn {
@@ -373,8 +381,16 @@
 
       .job-details {
         margin-top: 10px;
+        margin-bottom: 0;
       }
-      
+
+      .job-details h5 {
+      margin: 0;        
+      padding: 0;       
+      line-height: 1.5; 
+      font-weight:normal;
+      }
+
       .alert {
         padding: 15px;
         margin-bottom: 20px;
@@ -451,6 +467,7 @@
   </head>
   <body>
     <header>
+      <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
       <h1>DCIT Job Board</h1>
       <button class="subscribe" id="displayPopup">Subscribe</button>
       <!-- <button class="unsubscribe">
@@ -533,21 +550,25 @@
             Latest Listings
             <button id="browse-companies">Browse Companies</button>
             <button id="browse-jobs" class="active">Brwose Jobs</button>
-            <button id="browse-submitted-applications">
-              Submitted Applications
-            </button>
+            <button id="browse-submitted-applications">Submitted Applications</button>
+            <button id="saved-jobs">Saved Jobs</button>
           </h1>
         </div>
         <div class="listings-container" id="jobs-container">
           {% for job in jobs %}
           <div class="job_card">
             <div class="job-header">
-              <header_info>
                 <h3>{{ job.title }}</h3>
-                <h5>{{ "Company Name"}}</h5>
+      
+            </div>
+            <div class="job-details">
+                <img id="company_logo" src="{{ url_for('static', filename='images/c_logo.jpg') }}" alt="c_logo">
+                <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
+                <h5><i class="fa-solid fa-clock"></i> {{ job.position_type}}</h5>
+                <h5><i class="fa-solid fa-location-crosshairs"></i> {{ job.job_site_address}}</h5>
+                <h5>THIS IS A TEST</h5>
                 <button>Save Listing</button>
-                <input type="button" class="view-button" value="View" />
-              </header_info>
+                <button id="view-joblisting" class="view-button">View</button>
             </div>
           </div>
           {% endfor%}
@@ -556,7 +577,6 @@
           {% for company in companies %}
           <div class="job_card">
             <div class="job-header">
-              <header_info>
                 <h3>{{ company.registered_name }}</h3>
                 <h5>{{ company.website_url }}</h5>
                 <input
@@ -564,7 +584,6 @@
                   class="view-button"
                   value="View Company Listings"
                 />
-              </header_info>
             </div>
           </div>
           {% endfor%}
@@ -574,21 +593,20 @@
         <!-- {% for company in companies %} to be changed when this fucntinonality updates CTZ--> 
         <div class="job_card">
           <div class="job-header">
-            <header_info>
               <h3>{{ "Application info" }}</h3>
               <h5>{{ "Application status" }}</h5>
               <input
                 type="button"
                 class="view-button"
-                value="View Company Listings"
+                value="View Application"
               />
-            </header_info>
           </div>
         </div>
         <!-- {% endfor%} -->
         </div>
       </div>
 
+      <!-- saved listings content -->
       <aside>
         <div class="sticky">
           <h1>Saved Listings</h1>
@@ -596,12 +614,10 @@
         {% for job in jobs %}
         <div class="job_card">
           <div class="job-header">
-            <header_info>
               <h3>{{ job.title }}</h3>
               <h5>{{ "Company Name"}}</h5>
               <button>Remove</button>
               <input type="button" class="view-button" value="View" />
-            </header_info>
           </div>
         </div>
 
@@ -805,6 +821,7 @@
 
       // Initial load (show jobs by default)
       showContent(jobsContainer);
+
     </script>
   </body>
 </html>

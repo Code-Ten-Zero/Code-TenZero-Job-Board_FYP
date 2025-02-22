@@ -15,14 +15,17 @@
       header {
         background-color: rgb(57, 97, 185);
         color: #fff;
+        padding: 5px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding-left: 5%;
       }
 
+      header h1 {
+      font-size: 24px;
+      margin-right: 50vw; 
+
+      }
       nav a {
-        margin-left: 20px;
         font-size: large;
       }
 
@@ -162,10 +165,18 @@
       display: block; 
       z-index: 100; /*ensures flash message is displayed over content */
       }
+
+      #uwi-logo{
+        height: 10vh;
+        width:10vh;
+        border-radius: 35px;
+        margin-right: 5px;
+      }
     </style>
   </head>
   <body>
     <header>
+      <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
       <h1>DCIT Job Board</h1>
       <nav>
         <a href="#" class="">Notifications</a>

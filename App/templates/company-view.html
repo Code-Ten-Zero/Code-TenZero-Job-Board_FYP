@@ -21,8 +21,10 @@
         padding: 10px 20px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        
       }
+
+    
 
       button,
       a {
@@ -207,6 +209,13 @@
       z-index: 100; /*ensures flash message is displayed over content */
       }
 
+      #uwi-logo{
+        height: 10vh;
+        width:10vh;
+        border-radius: 35px;
+        margin-right: 5px;
+      }
+
       .notifications {
         position: absolute;
         top: 20px;
@@ -257,6 +266,7 @@
     </style>
   </head>
   <header>
+    <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
     <h2>DCIT Job Board</h2>
     <a href="/notifications" class="notifications">Notifications</a>
     <a href="/add_listing" class="addJob"> Add Job</a>
