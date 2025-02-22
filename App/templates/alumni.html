@@ -198,9 +198,11 @@
         gap: 20px;
         border-radius: 5px;
         overflow-y: scroll;
+        z-index: 1;
       }
 
       .body-container {
+        z-index: 1;
         max-width: 100%;
         padding: 2%;
         background-color: none;
@@ -209,6 +211,7 @@
       }
 
       .container {
+        z-index: 1;
         max-width: 100%;
         padding: 2%;
         background-color: none;
@@ -371,6 +374,7 @@
       .job-details {
         margin-top: 10px;
       }
+      
       .alert {
         padding: 15px;
         margin-bottom: 20px;
@@ -378,18 +382,28 @@
         font-size: 14px;
         opacity: 0.9;
         transition: opacity 0.3s ease;
+        z-index: 2;
       }
 
       .alert-success {
         background-color: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
+        z-index: 2;
       }
 
       .alert-unsuccessful {
         background-color: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
+        z-index: 2;
+      }
+
+      #flash-messages {
+      position: absolute;
+      width: 100%;
+      display: block; 
+      z-index: 100; /*ensures flash message is displayed over content */
       }
 
       /* #working on mobile view */
