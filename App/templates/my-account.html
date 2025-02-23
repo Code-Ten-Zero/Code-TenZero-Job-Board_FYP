@@ -24,6 +24,13 @@
         display: flex;
         align-items: center;
         }
+        .card {
+ 	 /* Add shadows to create the "card" effect */
+ 		 box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  		 transition: 0.3s;
+         border-radius: 5px;
+         background-color: white;
+        }
       
       .logout{
         position: relative;
@@ -33,7 +40,7 @@
         padding: 10px;
         border: none;
         border-radius: 5px;
-        font-size: 16px;
+        font-size: 2.5vw;
         cursor: pointer;
         text-decoration: none;
       }
@@ -45,7 +52,7 @@
         padding: 10px;
         border: none;
         border-radius: 5px;
-        font-size: 4vw;
+        font-size: 3vw;
         cursor: pointer;
         text-decoration: none;
       }
@@ -202,6 +209,8 @@
 <body>
     <br>
     <br>
+    <div class="card">
+    <br>
     <div class="image-form-container">
         <!-- Profile Picture -->
         <div class="image-container">
@@ -275,6 +284,8 @@
             </div>
         </form>
     </div>
-
+    <br>
+    <br>
+    </div>
 </body>
 </html>
