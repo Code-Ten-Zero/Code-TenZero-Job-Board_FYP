@@ -474,11 +474,11 @@
             Unsubscribe
         </button> -->
       <!-- <a href="/unsubscribe" method="['POST']" class="unsubscribe">Unsubscribe</a> -->
-      <form id="unsubscribeForm" action="/unsubscribe" method="POST">
+      <!-- <form id="unsubscribeForm" action="/unsubscribe" method="POST"> -->
         <!-- Add any additional hidden input fields if needed -->
-        <button type="submit" class="unsubscribe">Unsubscribe</button>
-      </form>
-
+        <!-- <button type="submit" class="unsubscribe">Unsubscribe</button>
+      </form> -->
+      <a href="/view_my_account/{{user.id}}" class="logout">My Account</a>
       <!-- <button class="logout">Logout</button> -->
       <a href="/logout" class="logout">Logout</a>
     </header>

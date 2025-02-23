@@ -66,7 +66,7 @@ def initialize():
     add_listing(company1.id, 'listing4', 'Full-time', 'job description2',
                 4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
 
-    # # print(get_all_listings_json())
+    # print(get_listing(1))
     # print(get_company_listings('company@mail'))
 
     # print(get_all_subscribed_alumni())

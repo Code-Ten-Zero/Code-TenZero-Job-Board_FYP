@@ -25,11 +25,10 @@ from App.models import(
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
 
-@alumni_views.route('/update_alumni', methods=['POST'])
+@alumni_views.route('/update_alumni/<id>', methods=['POST'])
 @jwt_required()
-def update_alumni():
+def update_alumni(id):
     data = request.form
-    id = current_user.id
     first_name = data['fname']
     last_name = data['lname']
     phone_number = data['contact']
@@ -47,15 +46,24 @@ def update_alumni():
             return {"message": "New passwords do not match"}, 400
 
     update_status = update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password)
-   
+
     if update_status:
         return {"message": "Alumni information updated successfully"}, 200
     else:
         return {"message": "Update failed. Check your information and try again."}, 400
 
+@alumni_views.route('/view_my_account/<id>', methods=["GET"])
+@jwt_required()
+def view_my_account_page(id):
+    user = get_user_by_email(current_user.login_email)
+    try:
+        return render_template('my-account-alumni.html', user=user)
 
+    except Exception:
+        flash('Error retreiving User')
+        response = redirect(url_for('index_views.index_page'))
 
-
+    return response
 
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()

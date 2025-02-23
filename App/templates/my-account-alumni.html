@@ -198,8 +198,6 @@
     }
 </style>
 </head>
-
-
     <header>
         <h1>DCIT Job Board</h1>
         <p class="my-account">My Account</p>
@@ -219,14 +217,14 @@
                  alt="Profile Image">
             <input type="file" id="profile_pic_input" accept="image/*">
             <label class="upload-label" for="profile_pic_input">Change Photo</label>
-            <p class="image-text">Jane Doe</p>
+            <p class="image-text">{{user.first_name}} {{user.last_name}}</p>
             <p class="image-text">Alumni</p>
-            <p class="image-text">janedoe@gmail.com</p>
-            <p class="image-text">1-868-XXX-XXXX</p>
+            <p class="image-text">{{user.login_email}}</p>
+            <p class="image-text">{{user.phone_number}}</p>
         </div>
         
         <!-- Form -->
-        <form method="POST "action="/update-alumni">
+        <form method="POST" action="/update-alumni/{{user.id}}">
             <!-- First Name and Last Name row -->
             <div class="form-row">
                 <div class="col">
