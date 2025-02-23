@@ -12,7 +12,8 @@ from App.controllers import(
     is_alumni_subscribed,
     subscribe,
     unsubscribe,
-    set_alumni_modal_seen
+    set_alumni_modal_seen,
+    update_alumni_info
 )
 
 from App.models import(
@@ -22,6 +23,38 @@ from App.models import(
 )
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
+
+@alumni_views.route('/update_alumni', methods=['POST'])
+@jwt_required()
+def update_alumni():
+    data = request.form
+    id = current_user.id
+    first_name = data['fname']
+    last_name = data['lname']
+    phone_number = data['contact']
+    login_email = data['email']
+
+    current_password = data['current_password']
+    confirm_current_password = data['confirm_current_password']
+    new_password = data['new_password']
+    confirm_new_password = data['confirm_new_password']
+
+    if current_password != confirm_current_password:
+        return {"message": "Current passwords do not match"}, 400
+
+    if new_password and new_password != confirm_new_password:
+            return {"message": "New passwords do not match"}, 400
+
+    update_status = update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password)
+   
+    if update_status:
+        return {"message": "Alumni information updated successfully"}, 200
+    else:
+        return {"message": "Update failed. Check your information and try again."}, 400
+
+
+
+
 
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()

@@ -176,3 +176,35 @@ def set_alumni_modal_seen(id):
 # To be re written - CTZ
 def get_approved_listings():
     return JobListing.query.all()
+
+
+def update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password):
+    alumni = get_alumni(id)
+    update_made = False
+
+    if alumni.check_password(current_password):
+        if alumni.first_name != first_name:
+            alumni.first_name = first_name
+            update_made = True
+
+        if alumni.last_name != last_name:
+            alumni.last_name = last_name
+            update_made = True
+
+        if alumni.phone_number != phone_number:
+            alumni.phone_number = phone_number
+            update_made = True
+
+        if alumni.login_email != login_email:
+            alumni.login_email = login_email
+            update_made = True
+
+        if new_password != None: 
+            alumni.set_password(new_password)
+            update_made = True
+
+    if update_made:
+        db.session.commit()
+
+    return update_made
+
