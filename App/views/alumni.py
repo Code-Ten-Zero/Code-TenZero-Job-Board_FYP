@@ -13,7 +13,8 @@ from App.controllers import(
     subscribe,
     unsubscribe,
     set_alumni_modal_seen,
-    update_alumni_info
+    update_alumni_info,
+    get_listing
 )
 
 from App.models import(
@@ -119,3 +120,16 @@ def update_modal_seen():
     except Exception as e:
         db.session.rollback()  
         return jsonify(message="Error updating modal status"), 500
+    
+@alumni_views.route('/view_listing_alumni/<id>', methods=["GET"])
+@jwt_required()
+def view_listing_page(id):
+    listing=get_listing(id)
+    try:
+        return render_template('view-listing-alumni.html', listing=listing)
+
+    except Exception:
+        flash('Error retreiving Listing')
+        response = redirect(url_for('auth_views.login_page'))
+
+    return response

@@ -7,7 +7,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
-    <title>DCIT Job Board-Alumni</title>
+    <title>DCIT Job Board-Listing</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -490,127 +490,32 @@
     </div>
 
     <div class="container">
-      <div
-        id="subpopup"
-        class="popup-container"
-        data-show-modal="{{ show_modal }}"
-      >
-        <div class="subpopup-content">
-          <h2>Wecome Alumni</h2>
-
-          <p>
-            Welcome to the DCIT Job Board! Explore our curated job listings
-            directly below. Whether you're a recent graduate or seasoned
-            professional, find your perfect opportunity here. Stay updated by
-            subscribing to our mailing list for the latest job postings. Start
-            your journey to career success today!
-          </p>
-
-          <section class="subscription">
-            <div class="box">
-              <h2>Subscribe to Job Alerts</h2>
-              <p>Get notified about new job opportunities.</p>
-              <form id="subscription-form" action="/subscribe" method="POST">
-                <!-- <div class="email-input">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" name="email" id="email" placeholder="Enter your email here" required>
-                            </div> -->
-                <div class="category-input">
-                  <i class="fas fa-list"></i>
-                  <select name="category" id="category" required>
-                    <option value="">Select Company</option>
-                    <option value="Software Engineer">Software Engineer</option>
-                    <option value="Database Manager">Database Manager</option>
-                    <option value="Cyber Security">Cyber Security</option>
-                  </select>
-                </div>
-                <div class="subscribe-btn">
-                  <i class="fas fa-bell"></i>
-                  <button id="subscribe-btn" type="submit">Subscribe</button>
-                </div>
-              </form>
-            </div>
-          </section>
-          <span class="close" id="subclose-btn">&times;</span>
-        </div>
-      </div>
-
-      <!-- <div class="search">
-            <input type="search" id="serachInput" placeholder="Search any job here">
-            <select class="categories" id="category">
-                <option>--select and option--</option>
-                <option>Web Design</option>
-                <option>Web Development</option>
-                <option>Database Manager</option>
-            </select>
-        </div> -->
       <div class="body-container">
-        <div class="btn-group">
-          <h1>
-            Latest Listings
-            <button id="browse-companies">Browse Companies</button>
-            <button id="browse-jobs" class="active">Brwose Jobs</button>
-            <button id="browse-submitted-applications">Submitted Applications</button>
-            <button id="saved-jobs">Saved Jobs</button>
-          </h1>
-        </div>
+
         <div class="listings-container" id="jobs-container">
-          {% for job in jobs %}
           <div class="job_card">
             <div class="job-header">
-                <h3>{{ job.title }}</h3>
+                <h3>{{ listing.title }}</h3>
       
             </div>
             <div class="job-details">
                 <img id="company_logo" src="{{ url_for('static', filename='images/c_logo.jpg') }}" alt="c_logo">
                 <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
-                <h5><i class="fa-solid fa-clock"></i> {{ job.position_type}}</h5>
-                <h5><i class="fa-solid fa-location-crosshairs"></i> {{ job.job_site_address}}</h5>
+                <h5><i class="fa-solid fa-clock"></i> {{ listing.position_type}}</h5>
+                <h5><i class="fa-solid fa-location-crosshairs"></i> {{ listing.job_site_address}}</h5>
                 <h5>THIS IS A TEST</h5>
                 <button>Save Listing</button>
-                <a href="/view_listing_alumni/{{job.id}}" class="view-button">View</a>
-
+                <button id="view-joblisting" class="view-button">View</button>
             </div>
           </div>
-          {% endfor%}
         </div>
-        <div class="listings-container" id="companies-container" style="display: none">
-          {% for company in companies %}
-          <div class="job_card">
-            <div class="job-header">
-                <h3>{{ company.registered_name }}</h3>
-                <h5>{{ company.website_url }}</h5>
-                <input
-                  type="button"
-                  class="view-button"
-                  value="View Company Listings"
-                />
-            </div>
-          </div>
-          {% endfor%}
+      
         </div>
-
-       <div class="listings-container" id="applications-container" style="display: none">
-        <!-- {% for company in companies %} to be changed when this fucntinonality updates CTZ--> 
-        <div class="job_card">
-          <div class="job-header">
-              <h3>{{ "Application info" }}</h3>
-              <h5>{{ "Application status" }}</h5>
-              <input
-                type="button"
-                class="view-button"
-                value="View Application"
-              />
-          </div>
-        </div>
-        <!-- {% endfor%} -->
-        </div>
-      </div>
 
       <!-- saved listings content -->
       <aside>
         <div class="sticky">
-          <h1>Saved Listings</h1>
+          <!-- <h1>Saved Listings</h1>
         </div>
         {% for job in jobs %}
         <div class="job_card">
@@ -622,7 +527,7 @@
           </div>
         </div>
 
-        {% endfor%}
+        {% endfor%} -->
       </aside>
     </div>
     <script>
