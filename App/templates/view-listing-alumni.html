@@ -17,7 +17,7 @@
         max-height: 100%;
         overflow: hidden;
       }
-      
+
       header {
         background-color: rgb(57, 97, 185);
         color: #fff;
@@ -36,7 +36,7 @@
       }
 
       .btn-group button {
-        background-color:  rgb(225, 227, 231);
+        background-color: rgb(225, 227, 231);
         border: 1px;
         color: black;
         padding: 1.5%;
@@ -91,17 +91,17 @@
         font-size: 70%;
       }
 
-      #uwi-logo{
+      #uwi-logo {
         height: 10vh;
-        width:10vh;
+        width: 10vh;
         border-radius: 35px;
         margin-right: 5px;
       }
 
-      #company_logo{
-        height:20vh;
-        width:20vh;
-        float:right;
+      #company_logo {
+        height: 20vh;
+        width: 20vh;
+        float: right;
         margin-bottom: 10px;
       }
 
@@ -220,20 +220,22 @@
         z-index: 1;
         max-width: 100%;
         padding: 2%;
-        background-color: none;
+        background-color: white;
         gap: 20px;
-        overflow: none;
+        overflow: scroll;
+        height: 80vh;
       }
 
       .container {
         z-index: 1;
         max-width: 100%;
+        max-height: 90%;
         padding: 2%;
         background-color: none;
         display: grid;
         grid-template-columns: 3fr 1fr;
         gap: 0.5%;
-        overflow: auto;
+        overflow: none;
       }
 
       .form-group {
@@ -347,6 +349,7 @@
         right: 10px;
         position: absolute;
       }
+
       .hidden {
         display: none;
       }
@@ -360,11 +363,10 @@
         transition: all 0.3s ease;
         background-color: #ffffff;
       }
-      
+
       .job_card:hover {
         box-shadow: 0 0 10px rgba(34, 4, 228, 0.1);
       }
-
 
       .job-header {
         font-weight: bold;
@@ -385,10 +387,10 @@
       }
 
       .job-details h5 {
-      margin: 0;        
-      padding: 0;       
-      line-height: 1.5; 
-      font-weight:normal;
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+        font-weight: normal;
       }
 
       .alert {
@@ -416,10 +418,10 @@
       }
 
       #flash-messages {
-      position: absolute;
-      width: 100%;
-      display: block; 
-      z-index: 100; /*ensures flash message is displayed over content */
+        position: absolute;
+        width: 100%;
+        display: block;
+        z-index: 100; /*ensures flash message is displayed over content */
       }
 
       /* #working on mobile view */
@@ -467,7 +469,11 @@
   </head>
   <body>
     <header>
-      <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
+      <img
+        id="uwi-logo"
+        src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+        alt="uwi_logo"
+      />
       <h1>DCIT Job Board</h1>
       <button class="subscribe" id="displayPopup">Subscribe</button>
       <!-- <button class="unsubscribe">
@@ -488,46 +494,55 @@
       <div class="alert alert-{{ category }}">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
-
+    <button onclick="goBack()" style="font-size:24px"><i class="fa fa-long-arrow-left"></i> Go Back</button>
     <div class="container">
       <div class="body-container">
-
-        <div class="listings-container" id="jobs-container">
-          <div class="job_card">
             <div class="job-header">
-                <h3>{{ listing.title }}</h3>
-      
+              <h3>{{ listing.title }}</h3>
+              <button>Save Listing</button>
+              <button>View Company Details</button>
             </div>
             <div class="job-details">
-                <img id="company_logo" src="{{ url_for('static', filename='images/c_logo.jpg') }}" alt="c_logo">
-                <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
-                <h5><i class="fa-solid fa-clock"></i> {{ listing.position_type}}</h5>
-                <h5><i class="fa-solid fa-location-crosshairs"></i> {{ listing.job_site_address}}</h5>
-                <h5>THIS IS A TEST</h5>
-                <button>Save Listing</button>
-                <button id="view-joblisting" class="view-button">View</button>
+              <img
+                id="company_logo"
+                src="{{ url_for('static', filename='images/c_logo.jpg') }}"
+                alt="c_logo"
+              />
+              <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
+              <h5>
+                <i class="fa-solid fa-clock"></i> {{ listing.position_type}}
+              </h5>
+              <h5>
+                <i class="fa-solid fa-location-crosshairs"></i> {{
+                listing.job_site_address}}
+              </h5>
+              <h5>{{ listing.description}}</h5>
+              <h5>{{ listing.monthly_salary_ttd}}</h5>
+              <h5>{{ listing.datetime_created}}</h5>
+              <h5>{{ listing.datetime_last_modified}}</h5>
+              <br>
+              <h2>To Apply fill out the section below:</h2>
+              <h5>Input Work Experience</h5>
+              <input type="number" name="work-experience" placeholder="Years of experience">
             </div>
           </div>
-        </div>
-      
-        </div>
 
       <!-- saved listings content -->
       <aside>
         <div class="sticky">
-          <!-- <h1>Saved Listings</h1>
+          <h1>Saved Listings</h1>
         </div>
         {% for job in jobs %}
         <div class="job_card">
           <div class="job-header">
-              <h3>{{ job.title }}</h3>
-              <h5>{{ "Company Name"}}</h5>
-              <button>Remove</button>
-              <input type="button" class="view-button" value="View" />
+            <h3>{{ job.title }}</h3>
+            <h5>{{ "Company Name"}}</h5>
+            <button>Remove</button>
+            <input type="button" class="view-button" value="View" />
           </div>
         </div>
 
-        {% endfor%} -->
+        {% endfor%}
       </aside>
     </div>
     <script>
@@ -683,51 +698,58 @@
       // Get all the buttons and containers
       const browseCompaniesBtn = document.getElementById("browse-companies");
       const browseJobsBtn = document.getElementById("browse-jobs");
-      const submittedApplicationsBtn = document.getElementById("browse-submitted-applications");
+      const submittedApplicationsBtn = document.getElementById(
+        "browse-submitted-applications"
+      );
 
       const jobsContainer = document.getElementById("jobs-container");
       const companiesContainer = document.getElementById("companies-container");
-      const applicationsContainer = document.getElementById("applications-container");
+      const applicationsContainer = document.getElementById(
+        "applications-container"
+      );
 
-       // Function to show the content of the clicked category
+      // Function to show the content of the clicked category
       function showContent(containerToShow) {
         // Hide all containers
-        jobsContainer.style.display = 'none';
-        companiesContainer.style.display = 'none';
-        applicationsContainer.style.display = 'none';
+        jobsContainer.style.display = "none";
+        companiesContainer.style.display = "none";
+        applicationsContainer.style.display = "none";
 
         // Show the selected container
-        containerToShow.style.display = 'grid';
+        containerToShow.style.display = "grid";
       }
 
       // Event listeners for the buttons
-      browseCompaniesBtn.addEventListener('click', () => {
+      browseCompaniesBtn.addEventListener("click", () => {
         showContent(companiesContainer);
         // Toggle active class
-        browseCompaniesBtn.classList.add('active');
-        browseJobsBtn.classList.remove('active');
-        submittedApplicationsBtn.classList.remove('active');
+        browseCompaniesBtn.classList.add("active");
+        browseJobsBtn.classList.remove("active");
+        submittedApplicationsBtn.classList.remove("active");
       });
 
-      browseJobsBtn.addEventListener('click', () => {
+      browseJobsBtn.addEventListener("click", () => {
         showContent(jobsContainer);
         // Toggle active class
-        browseCompaniesBtn.classList.remove('active');
-        browseJobsBtn.classList.add('active');
-        submittedApplicationsBtn.classList.remove('active');
+        browseCompaniesBtn.classList.remove("active");
+        browseJobsBtn.classList.add("active");
+        submittedApplicationsBtn.classList.remove("active");
       });
 
-      submittedApplicationsBtn.addEventListener('click', () => {
+      submittedApplicationsBtn.addEventListener("click", () => {
         showContent(applicationsContainer);
         // Toggle active class
-        browseCompaniesBtn.classList.remove('active');
-        browseJobsBtn.classList.remove('active');
-        submittedApplicationsBtn.classList.add('active');
+        browseCompaniesBtn.classList.remove("active");
+        browseJobsBtn.classList.remove("active");
+        submittedApplicationsBtn.classList.add("active");
       });
 
       // Initial load (show jobs by default)
       showContent(jobsContainer);
 
+      function goBack() {
+        window.history.back();
+      }
     </script>
   </body>
 </html>

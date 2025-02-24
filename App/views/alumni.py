@@ -14,7 +14,8 @@ from App.controllers import(
     unsubscribe,
     set_alumni_modal_seen,
     update_alumni_info,
-    get_listing
+    get_listing,
+    get_all_listings
 )
 
 from App.models import(
@@ -133,11 +134,12 @@ def update_modal_seen():
 @jwt_required()
 def view_listing_page(id):
     listing=get_listing(id)
+    jobs=get_all_listings()
     try:
-        return render_template('view-listing-alumni.html', listing=listing)
+        return render_template('view-listing-alumni.html', listing=listing, jobs=jobs)
 
     except Exception:
         flash('Error retreiving Listing')
-        response = redirect(url_for('auth_views.login_page'))
+        response = redirect(url_for('index_views.index_page'))
 
     return response
