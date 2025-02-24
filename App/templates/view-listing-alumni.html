@@ -223,7 +223,7 @@
         background-color: white;
         gap: 20px;
         overflow: scroll;
-        height: 80vh;
+        height: 65vh;
       }
 
       .container {
@@ -306,6 +306,19 @@
         cursor: pointer;
       }
 
+      .apply-button{
+        background-color: #062690;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+        float:left;
+      }
+
       .popup {
         display: none;
         position: fixed;
@@ -327,6 +340,7 @@
         overflow: auto;
         position: relative;
       }
+      
       .popup-form {
         display: none;
         position: fixed;
@@ -411,10 +425,51 @@
       }
 
       .alert-unsuccessful {
-        background-color: #f8d7da;
+        background-color: #f2f6ff;
         color: #721c24;
-        border: 1px solid #f5c6cb;
+        border: 1px solid #fff8f9;
         z-index: 2;
+      }
+
+      .file-upload-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 20px;
+        background-color: #efefef;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        height:20vh;
+      }
+
+      .file-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #2035a1;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      .file-upload-label i {
+        margin-right: 8px;
+      }
+
+      .file-upload-input {
+        display: none;
+      }
+
+      .file-upload-label:hover {
+        background-color: #4a89c4;
+      }
+
+      .file-upload-label:active {
+        background-color: #3b75a3;
       }
 
       #flash-messages {
@@ -494,38 +549,52 @@
       <div class="alert alert-{{ category }}">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
-    <button onclick="goBack()" style="font-size:24px"><i class="fa fa-long-arrow-left"></i> Go Back</button>
+    <button onclick="goBack()" style="font-size: 24px; border:none;">
+      <i class="fa fa-long-arrow-left"></i> Go Back
+    </button>
     <div class="container">
       <div class="body-container">
-            <div class="job-header">
-              <h3>{{ listing.title }}</h3>
-              <button>Save Listing</button>
-              <button>View Company Details</button>
-            </div>
-            <div class="job-details">
-              <img
-                id="company_logo"
-                src="{{ url_for('static', filename='images/c_logo.jpg') }}"
-                alt="c_logo"
-              />
-              <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
-              <h5>
-                <i class="fa-solid fa-clock"></i> {{ listing.position_type}}
-              </h5>
-              <h5>
-                <i class="fa-solid fa-location-crosshairs"></i> {{
-                listing.job_site_address}}
-              </h5>
-              <h5>{{ listing.description}}</h5>
-              <h5>{{ listing.monthly_salary_ttd}}</h5>
-              <h5>{{ listing.datetime_created}}</h5>
-              <h5>{{ listing.datetime_last_modified}}</h5>
-              <br>
-              <h2>To Apply fill out the section below:</h2>
-              <h5>Input Work Experience</h5>
-              <input type="number" name="work-experience" placeholder="Years of experience">
-            </div>
-          </div>
+        <div class="job-header">
+          <h3>{{ listing.title }}</h3>
+          <button>Save Listing</button>
+          <button>View Company Details</button>
+        </div>
+        <div class="job-details">
+          <img
+            id="company_logo"
+            src="{{ url_for('static', filename='images/c_logo.jpg') }}"
+            alt="c_logo"
+          />
+          <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
+          <h5><i class="fa-solid fa-clock"></i> {{ listing.position_type}}</h5>
+          <h5>
+            <i class="fa-solid fa-location-crosshairs"></i> {{
+            listing.job_site_address}}
+          </h5>
+          <h5>{{ listing.description}}</h5>
+          <h5>{{ listing.monthly_salary_ttd}}</h5>
+          <h5>{{ listing.datetime_created}}</h5>
+          <h5>{{ listing.datetime_last_modified}}</h5>
+          <br />
+          <h2>To Apply fill out the section below:</h2>
+          <h5>Input Work Experience</h5>
+          <input
+            type="number"
+            name="work-experience"
+            placeholder="Years"
+          />
+        </div>
+        <h3>Attach your resume below.</h3>
+        <div class="file-upload-container">
+          <label for="file-upload" class="file-upload-label">
+            <i class="fa fa-plus"></i> Upload File
+            <input type="file" id="file-upload" class="file-upload-input" onchange="displayFileName()" />
+          </label>
+        </div>
+        <div id="file-info" class="file-info"></div>
+        <br>
+        <button class="apply-button">Apply</button>
+      </div>
 
       <!-- saved listings content -->
       <aside>
@@ -750,6 +819,19 @@
       function goBack() {
         window.history.back();
       }
+      function displayFileName() {
+      const fileInput = document.getElementById('file-upload');
+      const fileNameSpan = document.getElementById('file-info');
+      const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
+      
+      if (fileName) {
+        // Remove the upload button and label
+        document.querySelector('.file-upload-container').style.display = 'none';
+
+        // Display the selected file's name
+        fileNameSpan.innerHTML = `Selected file: <strong>${fileName}</strong>`;
+      }
+    }
     </script>
   </body>
 </html>
