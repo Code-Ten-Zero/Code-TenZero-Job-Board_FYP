@@ -11,15 +11,18 @@ def add_alumni(password, login_email, first_name, last_name, phone_number):
             AdminAccount.query.filter_by(login_email=login_email).first() is not None or
             CompanyAccount.query.filter_by(login_email=login_email).first() is not None 
         ):
+            print("Duplicates")
             return None  # Return None to indicate duplicates
 
         newAlumni= AlumnusAccount(login_email, password, first_name, last_name, phone_number)
         try: # safetey measure for trying to add duplicate 
             db.session.add(newAlumni)
-            print("alumni added successfully")
+            print("going to add alumni")
             db.session.commit()  # Commit to save the new  to the database
+            print("alumni added successfully")
             return newAlumni
-        except:
+        except Exception as e:
+            print(f"Rollback: {e}")
             db.session.rollback()
             return None
 
