@@ -12,6 +12,7 @@ def add_company(registered_name, password, login_email, mailing_address, phone_n
             AlumnusAccount.query.filter_by(login_email=login_email).first() is not None
             
         ):
+            print("duplicate")
             return None  # Return None to indicate duplicates
 
         newCompany= CompanyAccount(login_email, password,registered_name, mailing_address, public_email, website_url, phone_number,profile_photo_file_path="N/A")
@@ -19,7 +20,8 @@ def add_company(registered_name, password, login_email, mailing_address, phone_n
             db.session.add(newCompany)
             db.session.commit()  # Commit to save the new  to the database
             return newCompany
-        except:
+        except Exception as e:
+            print(f"Rollback: {e}")
             db.session.rollback()
             return None
 

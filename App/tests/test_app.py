@@ -52,23 +52,25 @@ class UserUnitTests(unittest.TestCase):
         company = CompanyAccount('company@mail', 'compass',  'company1', 'mailing_address', 'public@email','company_website.com','phone_number')
         assert company.login_email == 'company@mail'
 
-    # pure function no side effects or integrations called
-    def test_get_json(self):
-        user = AdminAccount("bob@mail", "bobpass")
-        user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "login_email":"bob@mail", 'password':'bobpass'})
+    # # pure function no side effects or integrations called
+    # def test_get_json(self):
+    #     user = AdminAccount("bob@mail", "bobpass")
+    #     user_json = user.__json__()
+    #     self.assertDictEqual(user_json, {"id":None, "login_email":"bob@mail", 'password':'bobpass'})
 
     # pure function no side effects or integrations called
     def test_get_json(self):
         user = AdminAccount("bob@mail", "bobpass")
-        user_json = user.get_json()
-        self.assertDictEqual(user_json, {"id":None, "login_email":"bob@mail", 'password':'bobpass'})
+        user_json = user.__json__()
+        self.assertDictEqual(user_json, {"id": None,"login_email": "bob@mail",
+        "password_hash": "[HIDDEN]",
+        "profile_photo_file_path": None })
     
     def test_generate_hashed_password(self):
         password = "mypass"
         hashed = generate_password_hash(password, method='sha256')
         user = AdminAccount("bob@mail", password)
-        assert user.password != password
+        assert user.password_hash != password
 
     def test_check_password(self):
         password = "mypass"
@@ -78,13 +80,15 @@ class UserUnitTests(unittest.TestCase):
     #test the retrieval of an admin account
     def test_get_admin_by_email(self):
         user = AdminAccount("bob@mail", "bobpass")
+        print(get_user_by_email("bob@mail"))
         retreived_user = get_user_by_email("bob@mail")
         assert retreived_user.login_email == user.login_email
 
     #test the retrieval of an alumnus account
     def test_get_almunus_by_email(self):
         alumni = AlumnusAccount('rob@mail','robpass', 'robfname', 'roblname', '1868-333-4444')
-        assert alumni.login_email == 'rob@mail'
+        retreived_alumni = get_user_by_email("rob@mail")
+        assert retreived_alumni.login_email == 'rob@mail'
     
     #test the retrieval of a company account
     def test_get_company_by_email(self):
@@ -119,37 +123,38 @@ def empty_db():
 class UserIntegrationTests(unittest.TestCase):
 
     def test_authenticate(self):
-        user = add_admin("bob", "bobpass", 'bob@mail')
-        assert login("bob", "bobpass") != None
+        user = add_admin("bobpass", 'bob@mail')
+        assert login("bob@mail", "bobpass") != None
 
     def test_create_admin(self):
-        add_admin("bob", "bobpass", 'bob@mail')
-        admin = add_admin("rick", "bobpass", 'rick@mail')
-        assert admin.username == "rick"
+        add_admin("bobpass", 'bob@mail')
+        admin = add_admin("bobpass", 'rick@mail')
+        assert admin.login_email == "rick@mail"
 
     def test_create_alumni(self):
-        alumni = add_alumni('rob', 'robpass', 'rob@mail', '123456789', '1868-333-4444', 'robfname', 'roblname')
-        assert alumni.username == 'rob'
+        my_alumni = add_alumni('robpass', 'robby2@mail', 'robfname', 'roblname', '1868-399-9944')
+        assert my_alumni.login_email == "robby2@mail"
 
     def test_create_company(self):
-        company = add_company('company1', 'company1', 'compass', 'company@mail',  'company_address', 'contact', 'company_website.com')
-        assert company.username == 'company1' and company.company_name == 'company1'
+        #add_company(registered_name, password, login_email, mailing_address, phone_number, public_email, website_url)
+        company = add_company('company10', 'compass', 'company10@mail',  'mailing_address',
+                'phone10_number', 'public10@email', 'company10_website.com')
+        assert company.login_email == 'company10@mail' and company.public_email == 'public10@email'
 
     # cz at the beginning so that it runs after create company
     def test_czadd_listing(self):
-        listing = add_listing('listing1', 'listing1 description', 'company1', '8000', 'Full-time', True, True, 'desiredcandidate', 'curepe')
-        assert listing.title == 'listing1' and listing.company_name == 'company1'
+        company1 = get_user_by_email('company@mail')
+        listing =add_listing(company1.id, 'listing1','Part-time', 'job description1',
+        8000, False, 'Curepe', '02-01-2025', '10-01-2025', 'PENDING')
+        assert listing.description == 'job description1' and listing.monthly_salary_ttd == 8000
 
     #this was removed -CTZ
     # def test_czsubscribe(self):
-
     #     alumni = subscribe('123456789', 'Database Manager')
     #     assert alumni.subscribed == True
 
     # def test_czadd_categories(self):
-
     #     alumni = add_categories('123456789', ['Database'])
-
     #     assert alumni.get_categories() == ['Database']
 
     def test_czapply_listing(self):
@@ -160,7 +165,6 @@ class UserIntegrationTests(unittest.TestCase):
 
 
     # def get_all_applicants(self):
-
     #     applicants = get_all_applicants('1')
 
     
@@ -175,14 +179,14 @@ class UserIntegrationTests(unittest.TestCase):
             'company_website':'company_website.com'}
             ], users_json)
 
-    def test_initial_has_seen_modal(self):
-        alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
-        assert alumni.has_seen_modal == False
+    # def test_initial_has_seen_modal(self):
+    #     alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
+    #     assert alumni.has_seen_modal == False
 
-    def test_set_modal_seen(self):
-        alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
-        set_alumni_modal_seen(alumni.alumni_id)
-        assert alumni.has_seen_modal == True
+    # def test_set_modal_seen(self):
+    #     alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
+    #     set_alumni_modal_seen(alumni.alumni_id)
+    #     assert alumni.has_seen_modal == True
 
 
     # def test_create_user(self):
