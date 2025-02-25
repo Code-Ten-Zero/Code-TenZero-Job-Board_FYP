@@ -150,7 +150,7 @@ def add_admin_command(password, login_email):
 @admin_cli.command("toggle", help="Approve or disapprove a job listing")
 @click.argument("listing_id", default='1')
 def toggle_approval_command(listing_id):
-    result = toggle_listing_approval(listing_id)
+    result = toggle_listing_approval(listing_id,"APPROVED")
 
     if result is None:
         print(

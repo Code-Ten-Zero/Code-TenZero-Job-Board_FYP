@@ -60,7 +60,7 @@ def get_all_users_json():
     users = get_all_users()
     if not users:
         return []
-    users = [user.get_json() for user in users]
+    users = [user.__json__() for user in users]
     return users
 
 def update_user(id, login_email):

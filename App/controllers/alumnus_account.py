@@ -178,7 +178,12 @@ def set_alumni_modal_seen(id):
     
 # To be re written - CTZ
 def get_approved_listings():
-    return JobListing.query.all()
+    all_listings = JobListing.query.all()
+    my_approved_listings = []
+    for listing in all_listings:
+        if listing.admin_approval_status == "APPROVED" :
+            my_approved_listings.append(listing)
+    return my_approved_listings
 
 
 def update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password):

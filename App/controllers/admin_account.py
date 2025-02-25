@@ -60,24 +60,25 @@ def delete_listing(listing_id):
 
     return None
 
-def toggle_listing_approval(listing_id):
+def toggle_listing_approval(listing_id, status):
+    print("toggle listing approval function")
     from .job_listing import get_listing
 
     listing = get_listing(listing_id)
+    if not listing:
+        return None
+    if status in ["APPROVED", "PENDING", "REJECTED"]:
+        listing.admin_approval_status = status
+    else:
+        return None
 
-    if listing is not None:
-        current_state = listing.isApproved
-        listing.isApproved = not current_state
-        try:
-            db.session.commit()
-            if listing.isApproved:
-                return True
-            if not listing.isApproved: 
-                return False
-        except Exception as e:
-            db.session.rollback()
-            return None
-    return None
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f'my error: {e}')
+        db.session.rollback()
+        return None
+
 
 # def delete_exerciseSet(exerciseSet_id):
 
