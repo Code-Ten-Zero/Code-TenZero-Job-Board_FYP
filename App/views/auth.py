@@ -80,8 +80,8 @@ def alumni_signup_action():
   response = None
 
   try:
-    newAlumni = add_alumni(data['password'], data['login_email'],
-                          data['phone_number'], data['first_name'], data['last_name'])
+    newAlumni = add_alumni(data['password'], data['login_email'], data['first_name'],  data['last_name'],
+                          data['phone_number'])
 
     token = login(data['login_email'], data['password'])
 

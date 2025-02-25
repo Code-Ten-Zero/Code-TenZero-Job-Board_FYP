@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 </head>
+<style>
+     #uwi-logo {
+        height: 10vh;
+        width: 10vh;
+        border-radius: 35px;
+        margin-right: 5px;
+      }
+</style>
 <body>
     <div class="container">
         <div class="welcome-text">
@@ -23,7 +31,13 @@
             </section> 
         </div>
         <div class="forms-container">
+            
             <div class="form" id="login-form">
+                <img
+                id="uwi-logo"
+                src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+                alt="uwi_logo"
+                />
                 <h2>Login</h2>
                 <div id="flash-messages">
                     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -59,6 +73,11 @@
                 </div>
             </div>
             <div class="form hidden" id="signup-form">
+                <img
+                id="uwi-logo"
+                src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+                alt="uwi_logo"
+                />
                 <h2>Alumni Signup</h2>
                 <form method="POST" action="/alumni-signup">
                     <!-- csrf token -->
@@ -68,7 +87,7 @@
                     <input type="text" id="login_email" name="login_email" required>
                     
                     <label for="phone_number">Phone Number:</label>
-                    <input type="contact" id="contact" name="contact" required>
+                    <input type="contact" id="phone_number" name="phone_number" required>
         
                     <label for="first_name">First Name:</label>
                     <input type="text" id="first_name" name="first_name" required>
@@ -87,13 +106,18 @@
                 </div>
             </div>
             <div class="form hidden" id="company-form">
+                <img
+                id="uwi-logo"
+                src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+                alt="uwi_logo"
+                />
                 <h2>Company Signup</h2>
                 <form method="POST" action="/company-signup">
                     <!-- csrf token -->
                     <!-- <input type="hidden" name="csrf_token" value="csrf_token()"/> -->
                     
                     <label for="login_email">Login Email:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="login_email" name="login_email" required>
                     
                     <label for="registered_name">Company Name:</label>
                     <input type="text" id="registered_name" name="registered_name" required>
