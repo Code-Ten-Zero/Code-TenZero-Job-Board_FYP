@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 from App.models import db
 # from App.controllers import create_user
-
+from datetime import datetime
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
 from .index import index_views
@@ -75,7 +75,7 @@ def add_listing_action():
             is_remote = True
 
         listing = add_listing(current_user.id, data['title'], data['position_type'],data['description'], data['monthly_salary_ttd'],
-                              is_remote, data['job_site_address'], data['datetime_created'], data['datetime_last_modified'], admin_approval_status='PENDING')
+                              is_remote, data['job_site_address'], datetime_created=datetime.utcnow(), datetime_last_modified=datetime.utcnow(), admin_approval_status='PENDING')
         # print(listing)
         flash('Created job listing', 'success')
         response = redirect(url_for('index_views.index_page'))

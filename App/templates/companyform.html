@@ -1,179 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  />
     <title>Create Job Listing Form</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        header {
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center; 
-            padding-left: 5%;
-            font-size: larger;
-            padding-top: 15px;
-            padding-bottom: 15px;
-        }
+      
+      header {
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+      }
 
-        nav a {
+
+      header h2{
+        margin-right: 50vw;
+      }
+
+      nav a {
         margin-left: 20px;
         font-size: large;
-        }
-        
-        .logout{
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: large;
-            cursor: pointer;
-        }
+      }
 
-        .logout:hover{
-            background-color: rgb(98, 127, 191);
-        }
-        
-        a {
-            margin-right: 10px;
-            padding: 5px 10px;
-            color: #fff;
-            background-color: rgb(57, 97, 185);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: small;
-        }
+      .logout {
+        background-color: rgb(57, 97, 185);
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: large;
+        cursor: pointer;
+      }
 
-         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: gainsboro;
-        }
+      .logout:hover {
+        background-color: rgb(98, 127, 191);
+      }
 
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-height: 80vh;
-            margin: 20px auto;
-            margin-top: 5vh;
-            overflow-y: scroll;
-        }
+      a {
+        margin-right: 10px;
+        padding: 5px 10px;
+        color: #fff;
+        background-color: rgb(57, 97, 185);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: small;
+      }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: gainsboro;
+      }
 
-        .form-group label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-height: 80vh;
+        margin: 20px auto;
+        margin-top: 5vh;
+        overflow-y: scroll;
+      }
 
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-        .form-group textarea {
-            resize: vertical;
-        }
+      .form-group label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
 
-        .form-group input[type="checkbox"] {
-            margin-right: 5px;
-        }
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
 
-        .form-group input[type="submit"] {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+      .form-group textarea {
+        resize: vertical;
+      }
 
-        .form-group input[type="submit"]:hover {
-            background-color: #555;
-        }
+      .form-group input[type="checkbox"] {
+        margin-right: 5px;
+      }
+
+      .form-group input[type="submit"] {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .form-group input[type="submit"]:hover {
+        background-color: #555;
+      }
+      #uwi-logo {
+        height: 10vh;
+        width: 10vh;
+        border-radius: 35px;
+        margin-right: 5px;
+        margin-left: 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h2>DCIT Job Board</h2>
-        <nav>
+        <img
+        id="uwi-logo"
+        src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+        alt="uwi_logo"
+      />
+      <h2>DCIT Job Board</h2>
+      <nav>
         <a href="#" class="">Notifications</a>
         <a href="#" class="">My Account</a>
         <a href="/logout" class="logout">Logout</a>
-        </nav>
+      </nav>
     </header>
+    <button onclick="goBack()" style="font-size: 24px">
+      <i class="fa fa-long-arrow-left"></i> Go Back
+    </button>
     <div class="container">
-        <h2>Create Job Listing Form</h2>
-        <form action="/add_listing" method="POST">
-            <h3>Job Position Details</h3>
-            <div class="form-group">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="5" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="salary">Salary:</label>
-                <input type="number" id="salary" name="salary" required>
-            </div>
-            <div class="form-group">
-                <label for="position_type">Position Type:</label>
-                <select id="position_type" name="position_type" required>
-                    <option value="">Select Position Type</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                    <option value="Contract">Contract</option>
-                    <option value="Internship">Internship</option>
-                    <option value="Freelance">Freelance</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Remote Options:</label>
-                <input type="checkbox" id="remote_option" name="remote_option" value="Yes">
-                <label for="remote_option">Yes</label>
-            </div>
-            <div class="form-group">
-                <label>Must be a National of TT:</label>
-                <input type="checkbox" id="national_tt" name="national_tt" value="Yes">
-                <label for="national_tt">Yes</label>
-            </div>
-            <div class="form-group">
-                <label for="job_area">Job Area:</label>
-                <input type="text" id="job_area" name="job_area" required>
-            </div>
-            <div class="form-group">
-                <label for="desired_candidate_type">Desired Candidate Type:</label>
-                <input type="text" id="desired_candidate_type" name="desired_candidate_type" required>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Submit Application">
-            </div>
-        </form>
+      <h2>Create Job Listing Form</h2>
+      <form action="/add_listing" method="POST">
+        <h3>Job Position Details</h3>
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" name="title" required />
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="monthly_salary_ttd">Salary:</label>
+          <input type="number" id="monthly_salary_ttd" name="monthly_salary_ttd" required />
+        </div>
+        <div class="form-group">
+          <label for="position_type">Position Type:</label>
+          <select id="position_type" name="position_type" required>
+            <option value="">Select Position Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+            <option value="Freelance">Freelance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Remote Options:</label>
+          <input
+            type="checkbox"
+            id="is_remote"
+            name="is_remote"
+            value="Yes"
+          />
+          <label for="is_remote">Yes</label>
+        </div>
+        <div class="form-group">
+          <label for="job_site_address">Job Area:</label>
+          <input type="text" id="job_site_address" name="job_site_address" required />
+        </div>
+        <div class="form-group">
+          <input type="submit" value="Submit Application" />
+        </div>
+      </form>
     </div>
-</body>
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
 </html>
