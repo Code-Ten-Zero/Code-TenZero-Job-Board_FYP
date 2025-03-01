@@ -15,7 +15,8 @@ from App.controllers import(
     set_alumni_modal_seen,
     update_alumni_info,
     get_listing,
-    get_all_listings
+    get_all_listings,
+    get_approved_listings
 )
 
 from App.models import(
@@ -134,7 +135,8 @@ def update_modal_seen():
 @jwt_required()
 def view_listing_page(id):
     listing=get_listing(id)
-    jobs=get_all_listings()
+    jobs=get_approved_listings()
+    
     try:
         return render_template('view-listing-alumni.html', listing=listing, jobs=jobs)
 

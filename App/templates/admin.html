@@ -21,9 +21,8 @@
       }
 
       header h1 {
-      font-size: 24px;
-      margin-right: 50vw; 
-
+        font-size: 24px;
+        margin-right: 50vw;
       }
       nav a {
         font-size: large;
@@ -160,15 +159,15 @@
       }
 
       #flash-messages {
-      position: absolute;
-      width: 100%;
-      display: block; 
-      z-index: 100; /*ensures flash message is displayed over content */
+        position: absolute;
+        width: 100%;
+        display: block;
+        z-index: 100; /*ensures flash message is displayed over content */
       }
 
-      #uwi-logo{
+      #uwi-logo {
         height: 10vh;
-        width:10vh;
+        width: 10vh;
         border-radius: 35px;
         margin-right: 5px;
       }
@@ -176,7 +175,11 @@
   </head>
   <body>
     <header>
-      <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
+      <img
+        id="uwi-logo"
+        src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+        alt="uwi_logo"
+      />
       <h1>DCIT Job Board</h1>
       <nav>
         <a href="#" class="">Notifications</a>
@@ -191,12 +194,13 @@
       {% endfor %} {% endif %} {% endwith %}
     </div>
     <div class="container">
-      <h2>Welcome Admin!</h2>
+      <h2 id="jobHeader">Welcome Admin!</h2>
       <div class="button-container">
-        <button class="button" onclick="filterByStatus('published')">
+        <button class="button" onclick="filterByStatus('ALL')">View All</button>
+        <button class="button" onclick="filterByStatus('APPROVED')">
           Published
         </button>
-        <button class="button" onclick="filterByStatus('unpublished')">
+        <button class="button" onclick="filterByStatus('PENDING')">
           Unpublished
         </button>
       </div>
@@ -212,9 +216,12 @@
             <th>Action</th>
           </tr>
         </thead>
-        {% for job in jobs %}
         <tbody>
-          <tr class="{{ 'published' if job.isApproved else '' }}">
+          {% for job in jobs %}
+
+          <tr
+            data-status="{{ 'APPROVED' if job.admin_approval_status == 'APPROVED' else 'PENDING' }}"
+          >
             <td>{{ job.company_id }}</td>
             <td>{{ job.title }}</td>
             <td>{{ job.description }}</td>
@@ -222,7 +229,7 @@
             <td class="actions">
               <!-- <button onclick="editListing(0)">Edit</button> -->
               <a href="/delete_listing/{{job.id}}">Delete</a>
-              {% if not job.isApproved %}
+              {% if job.admin_approval_status != 'APPROVED' %}
               <button
                 class="publish-button"
                 data-job-id="{{ job.id }}"
@@ -249,6 +256,7 @@
       function publishJob(event, button) {
         event.preventDefault(); // Prevent page reload
 
+        const header = document.getElementById("jobHeader");
         const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
 
         fetch(`/publish_job/${jobId}`, {
@@ -261,15 +269,18 @@
             if (response.ok) {
               // Move job to published section (UI only)
               const row = button.closest("tr");
-              row.classList.add("published");
+              row.setAttribute("data-status", "APPROVED");
               button.textContent = "Unpublish";
               button.setAttribute("onclick", `unpublishJob(event, this)`);
 
-              // Apply filter to show the job in the "Published" section
-              filterByStatus("published");
+              // Apply filter to show the job in the "UnPublished" section
+              if (header.textContent.includes("Unpublished")) {
+                filterByStatus("PENDING");
+              }
+
               alert("Job published successfully!");
             } else {
-              alert("Failed to publish the job.");
+              alert("Failed to publish the job."); // <-- This will now only run if response is NOT OK
             }
           })
           .catch((error) => {
@@ -281,6 +292,7 @@
       function unpublishJob(event, button) {
         event.preventDefault(); // Prevent page reload
 
+        const header = document.getElementById("jobHeader");
         const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
 
         fetch(`/unpublish_job/${jobId}`, {
@@ -293,15 +305,18 @@
             if (response.ok) {
               // Move job to unpublished section (UI only)
               const row = button.closest("tr");
-              row.classList.remove("published");
+              row.setAttribute("data-status", "PENDING");
               button.textContent = "Publish";
               button.setAttribute("onclick", `publishJob(event, this)`);
 
-              // Apply filter to show the job in the "Unpublished" section
-              filterByStatus("unpublished");
+              // Apply filter to show the job in the "Published" section
+              if (header.textContent.includes("Published")) {
+                filterByStatus("APPROVED");
+              }
+
               alert("Job unpublished successfully!");
             } else {
-              alert("Failed to unpublish the job.");
+              alert("Failed to unpublish the job."); // <-- This will now only run if response is NOT OK
             }
           })
           .catch((error) => {
@@ -312,14 +327,24 @@
 
       function filterByStatus(status) {
         const rows = document.querySelectorAll("#jobTable tbody tr");
+        const header = document.getElementById("jobHeader");
+
+        // Update header text
+        if (status === "APPROVED") {
+          header.textContent = "Currently Displaying Published Jobs";
+        } else if (status === "PENDING") {
+          header.textContent = "Currently Displaying Unpublished Jobs";
+        } else if (status === "ALL") {
+          header.textContent = "Currently Displaying All Jobs";
+        }
+
+        // Show/Hide rows based on status
         rows.forEach((row) => {
-          const isPublished = row.classList.contains("published"); // Check if the row has the class 'published'
-          if (status === "published" && !isPublished) {
-            row.style.display = "none";
-          } else if (status === "unpublished" && isPublished) {
-            row.style.display = "none";
+          const jobStatus = row.getAttribute("data-status");
+          if (status === "ALL" || jobStatus === status) {
+            row.style.display = ""; // Show row
           } else {
-            row.style.display = ""; // Show the row
+            row.style.display = "none"; // Hide row
           }
         });
       }

@@ -74,6 +74,7 @@ def toggle_listing_approval(listing_id, status):
 
     try:
         db.session.commit()
+        return True
     except Exception as e:
         print(f'my error: {e}')
         db.session.rollback()
