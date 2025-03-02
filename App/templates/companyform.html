@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-  />
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <title>Create Job Listing Form</title>
     <style>
       * {
@@ -15,7 +15,6 @@
         padding: 0;
       }
 
-      
       header {
         background-color: rgb(57, 97, 185);
         color: #fff;
@@ -24,8 +23,7 @@
         align-items: center;
       }
 
-
-      header h2{
+      header h2 {
         margin-right: 50vw;
       }
 
@@ -67,15 +65,27 @@
         background-color: gainsboro;
       }
 
+      .cancel-button {
+        background-color: #ff0808; /* Red color */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-left: 75vh;
+        display: inline-block;
+      }
+
       .container {
         background-color: #fff;
         padding: 30px;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: 80%;
-        max-height: 80vh;
+        width: 60vw;
+        height: 60vh;
         margin: 20px auto;
-        margin-top: 5vh;
         overflow-y: scroll;
       }
 
@@ -127,11 +137,19 @@
         margin-right: 5px;
         margin-left: 0;
       }
+
+      #submit-button{
+        margin-bottom: 0;
+        display: inline-block;        
+      }
+      #job_site_container{
+        margin-bottom: 10vh;
+      }
     </style>
   </head>
   <body>
     <header>
-        <img
+      <img
         id="uwi-logo"
         src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
         alt="uwi_logo"
@@ -155,19 +173,6 @@
           <input type="text" id="title" name="title" required />
         </div>
         <div class="form-group">
-          <label for="description">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            rows="5"
-            required
-          ></textarea>
-        </div>
-        <div class="form-group">
-          <label for="monthly_salary_ttd">Salary:</label>
-          <input type="number" id="monthly_salary_ttd" name="monthly_salary_ttd" required />
-        </div>
-        <div class="form-group">
           <label for="position_type">Position Type:</label>
           <select id="position_type" name="position_type" required>
             <option value="">Select Position Type</option>
@@ -179,27 +184,67 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="monthly_salary_ttd">Salary:</label>
+          <input
+            type="number"
+            id="monthly_salary_ttd"
+            name="monthly_salary_ttd"
+            required
+          />
+        </div>
+        <div class="form-group">
           <label>Remote Options:</label>
           <input
             type="checkbox"
             id="is_remote"
             name="is_remote"
             value="Yes"
+            onclick="hideAddressField()"
           />
           <label for="is_remote">Yes</label>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="job_site_container">
           <label for="job_site_address">Job Area:</label>
-          <input type="text" id="job_site_address" name="job_site_address" required />
+          <input
+            type="text"
+            id="job_site_address"
+            name="job_site_address"
+            required
+          />
         </div>
-        <div class="form-group">
+        <div class="form-group" id="submit-button">
           <input type="submit" value="Submit Application" />
+          <button class="cancel-button" onclick="goBack()">Cancel</button>
         </div>
+        
       </form>
+      
     </div>
     <script>
       function goBack() {
         window.history.back();
+      }
+
+      function hideAddressField() {
+        const remoteCheckbox = document.getElementById("is_remote");
+        const jobSiteContainer = document.getElementById("job_site_container");
+        const jobSiteAddress = document.getElementById("job_site_address");
+
+        if (remoteCheckbox.checked) {
+          jobSiteContainer.style.display = "none"; // Hide job site field
+          jobSiteAddress.removeAttribute("required");
+        } else {
+          jobSiteContainer.style.display = "block"; // Show job site field
+        }
       }
     </script>
   </body>

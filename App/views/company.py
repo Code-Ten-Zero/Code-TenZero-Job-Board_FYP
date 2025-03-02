@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 from App.models import db
 # from App.controllers import create_user
-from datetime import datetime
+from datetime import date, datetime
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
 from .index import index_views
@@ -51,39 +51,45 @@ def view_applications_page(job_id):
 @company_views.route('/add_listing', methods=['GET'])
 @jwt_required()
 def add_listing_page():
-    # username = get_jwt_identity()
-    # user = get_user_by_username(username)
-
     return render_template('companyform.html')
 
 @company_views.route('/add_listing', methods=['POST'])
 @jwt_required()
 def add_listing_action():
-    # username = get_jwt_identity()
-    # user = get_user_by_username(username)
     data = request.form
-
     response = None
 
-    # print(data)
-    # print(current_user.company_name)
-
     try:
-        #is_remote = False
-
-        if 'is_remote' in data and data['is_remote'] == 'Yes':
+        is_remote = False  # Default value
+    
+        if data.get('is_remote') == 'Yes':  # Check if the checkbox is checked
             is_remote = True
+        
+        job_site_address = "N/A" if is_remote else data.get('job_site_address', "(Not specified)")
+      
+        listing = add_listing(
+            current_user.id,
+            data['title'],
+            data['position_type'],
+            data['description'],
+            data['monthly_salary_ttd'],
+            is_remote,  # Pass correct is_remote value
+            job_site_address,
+            datetime_created=datetime.utcnow(),
+            datetime_last_modified=datetime.utcnow(),
+            admin_approval_status='PENDING'
+        )
 
-        listing = add_listing(current_user.id, data['title'], data['position_type'],data['description'], data['monthly_salary_ttd'],
-                              is_remote, data['job_site_address'], datetime_created=datetime.utcnow(), datetime_last_modified=datetime.utcnow(), admin_approval_status='PENDING')
-        # print(listing)
-        flash('Created job listing', 'success')
+        flash('Created job listing', 'success')  # Fixed indentation
         response = redirect(url_for('index_views.index_page'))
-    except Exception:
-        flash('Error creating listing', 'unsuccessful')
-        response = redirect(url_for('company_views.add_listing_page'))
+    
+    except Exception as e:
+        flash(f'Error creating listing: {str(e)}', 'unsuccessful')  # Added error message for debugging
+        response = redirect(url_for('index_views.index_page'))
     
     return response
+
+
 
 @company_views.route('/request_delete_listing/<int:job_id>', methods=['GET'])
 @jwt_required()

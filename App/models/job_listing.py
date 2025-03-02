@@ -71,7 +71,7 @@ class JobListing(db.Model):
         self.description = description
         self.monthly_salary_ttd = monthly_salary_ttd
         self.is_remote = is_remote
-        self.job_site_address = job_site_address or "(Not specified)" if self.is_remote else "N/A"
+        self.job_site_address = "(Not specified)" if not job_site_address else ("N/A" if self.is_remote else job_site_address)
         self.datetime_created = datetime.utcnow()
         self.datetime_last_modified = datetime.utcnow()
         self.admin_approval_status = admin_approval_status

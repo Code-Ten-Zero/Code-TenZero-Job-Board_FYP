@@ -24,8 +24,6 @@
         
       }
 
-    
-
       button,
       a {
         padding: 10px;
@@ -306,6 +304,7 @@
           <p>Description: {{ listing.description }}</p>
           <p>Position Type: {{ listing.position_type }}</p>
           <p>Remote: {{ listing.is_remote }}</p>
+          <p>Job Site Address: {{ listing.job_site_address }}</p>
           <p>Created: {{ listing.datetime_created }}</p>
           <div class="job-actions">
             <a href="/view_applications/{{listing.id}}">View Applicants</a>

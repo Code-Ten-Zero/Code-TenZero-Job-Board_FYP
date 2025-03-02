@@ -60,7 +60,6 @@
         padding: 5px 15px;
         text-align: center;
         text-decoration: none;
-        display: inline-block;
         font-size: 16px;
         margin-left: 7vh;
         cursor: pointer;
@@ -171,6 +170,7 @@
         flex-direction: column;
         gap: 10px;
       }
+
       .save-listing {
         background-color: #0022ff;
         border: none;
@@ -189,6 +189,42 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: 14px;
+      }
+
+      #saved_listing_card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 2px;
+        transition: all 0.3s ease;
+        background-color: #ffffff;
+        height: 10vh; 
+        display: flex;
+        align-items: center; 
+        justify-content: space-between;
+      }
+
+      #saved_card_header {
+        font-weight: bold;
+        margin-bottom: 0;
+        width: auto; 
+        flex-grow: 1; 
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .aside-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .remove-listing,
+      .view-button {
+        padding: 6px 10px;
+        border-radius: 4px;
+        border: 1px solid #000;
+        cursor: pointer;
       }
 
       .subscription input[type="email"],
@@ -730,10 +766,12 @@
           <h1>Saved Listings</h1>
         </div>
         {% for listing in saved %}
-        <div class="job_card">
-          <div class="job-header">
+        <div class="job_card" id="saved_listing_card">
+          <div class="job-header" id="saved_card_header">
             <h3>{{ listing.job_listing.title }}</h3>
             <h5>{{ listing.job_listing.company.registered_name }}</h5>
+          </div>
+          <div class="aside-buttons">
             <button
               class="remove-listing"
               data-job-id="{{ listing.job_listing_id }}"
@@ -988,7 +1026,7 @@
       document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".remove-listing").forEach((button) => {
           const jobId = button.getAttribute("data-job-id");
-        
+
           button.addEventListener("click", function () {
             fetch(`/remove_saved_listing/${jobId}`, {
               method: "GET",
@@ -1001,7 +1039,7 @@
 
                   //remove the saved job from SessionStorage
                   sessionStorage.removeItem(`saved-${jobId}`);
-                
+
                   //updates the saved-listings column on reload to remove items
                   location.reload();
                 } else {
