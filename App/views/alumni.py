@@ -22,7 +22,8 @@ from App.controllers import(
 from App.models import(
     AlumnusAccount,
     CompanyAccount,
-    AdminAccount
+    AdminAccount,
+    SavedJobListing
 )
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
@@ -145,3 +146,33 @@ def view_listing_page(id):
         response = redirect(url_for('index_views.index_page'))
 
     return response
+
+@alumni_views.route('/save_listing/<job_id>', methods=['POST'])
+@jwt_required()
+def save_job_listing(job_id):
+    alumnus_id = current_user.id
+
+    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_id).first()
+
+    if not already_saved:
+        new_saved_job_listing = SavedJobListing(alumnus_id=alumnus_id, job_listing_id=job_id)
+        db.session.add(new_saved_job_listing)
+        db.session.commit()
+
+        return jsonify({"message": "Job saved successfully!", "status": "saved"}), 201
+
+@alumni_views.route('/remove_saved_job_listing/<job_id>', methods=['GET'])
+@jwt_required()
+def remove_listing(job_id):
+    alumnus_id = current_user.id
+
+    already_saved_job = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_id).first()
+
+    if not already_saved_job:
+        return jsonify({"message": "Job not saved!", "status": "error"}), 404
+    
+    db.session.delete(already_saved_job)
+    db.session.commit()
+
+    return jsonify({"message": "Job Removed from saved listings", "status":"removed"}), 200
+

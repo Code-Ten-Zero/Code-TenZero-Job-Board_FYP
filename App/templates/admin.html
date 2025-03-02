@@ -222,7 +222,7 @@
           <tr
             data-status="{{ 'APPROVED' if job.admin_approval_status == 'APPROVED' else 'PENDING' }}"
           >
-            <td>{{ job.company_id }}</td>
+            <td>{{ job.company.registered_name }}</td>
             <td>{{ job.title }}</td>
             <td>{{ job.description }}</td>
             <td>{{ job.request }}</td>

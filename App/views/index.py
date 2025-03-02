@@ -16,13 +16,15 @@ from App.controllers import(
     get_listing,
     get_approved_listings,
     get_all_companies,
-    get_user_by_email
+    get_user_by_email,
+    get_saved_listings
 )
 
 from App.models import(
     AlumnusAccount,
     CompanyAccount,
-    AdminAccount
+    AdminAccount,
+    SavedJobListing
 )
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
@@ -38,6 +40,7 @@ def index_page():
     companies= get_all_companies()
     approved_jobs = get_approved_listings() # retrieve approved jobs
     user= get_user_by_email(current_user.login_email)
+    saved_alumni_listings = get_saved_listings()
 
     if isinstance(current_user, AlumnusAccount):
 
@@ -45,10 +48,10 @@ def index_page():
         show_modal = True
         if not show_modal:
             # Pass True to the template to show modal
-            return render_template('alumni.html', jobs=approved_jobs, show_modal=True, companies=companies, user=user)
+            return render_template('alumni.html', jobs=approved_jobs, show_modal=True, companies=companies, user=user, saved=saved_alumni_listings)
         
         # Pass False to the modal if already seen
-        return render_template('alumni.html', jobs=approved_jobs, show_modal=False, companies=companies, user=user)
+        return render_template('alumni.html', jobs=approved_jobs, show_modal=False, companies=companies, user=user, saved=saved_alumni_listings)
 
     
     if isinstance(current_user, CompanyAccount):

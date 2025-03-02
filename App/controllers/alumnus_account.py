@@ -1,4 +1,4 @@
-from App.models import BaseUserAccount, AlumnusAccount, AdminAccount, CompanyAccount, JobListing
+from App.models import BaseUserAccount, AlumnusAccount, AdminAccount, CompanyAccount, JobListing, SavedJobListing
 from App.database import db
 
 
@@ -215,4 +215,8 @@ def update_alumni_info(id, first_name, last_name, phone_number, login_email, cur
         db.session.commit()
 
     return update_made
+
+def get_saved_listings():
+    saved_listings = SavedJobListing.query.all()
+    return saved_listings
 

@@ -599,15 +599,6 @@
         </div>
       </div>
 
-      <!-- <div class="search">
-            <input type="search" id="serachInput" placeholder="Search any job here">
-            <select class="categories" id="category">
-                <option>--select and option--</option>
-                <option>Web Design</option>
-                <option>Web Development</option>
-                <option>Database Manager</option>
-            </select>
-        </div> -->
       <div class="body-container">
         <div class="search-container">
           <input
@@ -643,14 +634,22 @@
                 src="{{ url_for('static', filename='images/c_logo.jpg') }}"
                 alt="c_logo"
               />
-              <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
+              <h5>
+                <i class="fa-solid fa-building"></i>  {{ job.company.registered_name }}
+              </h5>
               <h5><i class="fa-solid fa-clock"></i> {{ job.position_type}}</h5>
               <h5>
                 <i class="fa-solid fa-location-crosshairs"></i> {{
                 job.job_site_address}}
               </h5>
               <h5>THIS IS A TEST</h5>
-              <button>Save Listing</button>
+              <button
+                id="save-button"
+                class="save-listing"
+                data-job-id="{{ job.id }}"
+              >
+                Save Listing
+              </button>
               <a href="/view_listing_alumni/{{job.id}}" class="view-button"
                 >View</a
               >
@@ -704,11 +703,11 @@
         <div class="sticky">
           <h1>Saved Listings</h1>
         </div>
-        {% for job in jobs %}
+        {% for listing in saved %}
         <div class="job_card">
           <div class="job-header">
-            <h3>{{ job.title }}</h3>
-            <h5>{{ "Company Name"}}</h5>
+            <h3>{{ listing.job_listing.title }}</h3>
+            <h5>{{ listing.job_listing.company.registered_name }}</h5>
             <button>Remove</button>
             <input type="button" class="view-button" value="View" />
           </div>
@@ -916,8 +915,43 @@
         submittedApplicationsBtn.classList.add("active");
       });
 
-      // Initial load (show jobs by default)
+      // Initial load (show browse jobs by default)
       showContent(jobsContainer);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".save-listing").forEach((button) => {
+          const jobId = button.getAttribute("data-job-id");
+          if (sessionStorage.getItem(`saved-${jobId}`)) {
+            button.textContent = "Saved";
+            button.disabled = true;
+          }
+
+          button.addEventListener("click", function () {
+            fetch(`/save_listing/${jobId}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === "saved") {
+                  alert("Job saved successfully!");
+
+                  //  Store saved job in SessionStorage
+                  sessionStorage.setItem(`saved-${jobId}`, "true");
+                 
+                  //updates the saved-listings column
+                  location.reload();
+                } else {
+                  alert("Failed to save job.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while saving the job.");
+              });
+          });
+        });
+      });
     </script>
   </body>
 </html>
