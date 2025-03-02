@@ -161,7 +161,7 @@ def save_job_listing(job_id):
 
         return jsonify({"message": "Job saved successfully!", "status": "saved"}), 201
 
-@alumni_views.route('/remove_saved_job_listing/<job_id>', methods=['GET'])
+@alumni_views.route('/remove_saved_listing/<job_id>', methods=['GET'])
 @jwt_required()
 def remove_listing(job_id):
     alumnus_id = current_user.id
