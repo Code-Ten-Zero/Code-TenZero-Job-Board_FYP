@@ -306,7 +306,7 @@
         cursor: pointer;
       }
 
-      .apply-button{
+      .apply-button {
         background-color: #062690;
         border: none;
         border-radius: 5px;
@@ -316,7 +316,7 @@
         text-decoration: none;
         font-size: 16px;
         cursor: pointer;
-        float:left;
+        float: left;
       }
 
       .popup {
@@ -340,7 +340,7 @@
         overflow: auto;
         position: relative;
       }
-      
+
       .popup-form {
         display: none;
         position: fixed;
@@ -440,7 +440,7 @@
         background-color: #efefef;
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        height:20vh;
+        height: 20vh;
       }
 
       .file-upload-label {
@@ -529,18 +529,11 @@
         src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
         alt="uwi_logo"
       />
-      <h1>DCIT Job Board</h1>
-      <button class="subscribe" id="displayPopup">Subscribe</button>
-      <!-- <button class="unsubscribe">
-            Unsubscribe
-        </button> -->
-      <!-- <a href="/unsubscribe" method="['POST']" class="unsubscribe">Unsubscribe</a> -->
-      <form id="unsubscribeForm" action="/unsubscribe" method="POST">
-        <!-- Add any additional hidden input fields if needed -->
-        <button type="submit" class="unsubscribe">Unsubscribe</button>
-      </form>
+      <h1><a href="/app" style="text-decoration: none; color: inherit;">DCIT Job Board</a></h1>
+      <button class="subscribe" id="displayPopup">My account</button>
+        <button type="submit" class="unsubscribe">Notifications</button>
 
-      <!-- <button class="logout">Logout</button> -->
+   
       <a href="/logout" class="logout">Logout</a>
     </header>
     <div id="flash-messages">
@@ -549,9 +542,10 @@
       <div class="alert alert-{{ category }}">{{ message }}</div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
-    <button onclick="goBack()" style="font-size: 24px; border:none;">
+    <!-- <button onclick="goBack()" style="font-size: 24px; border: none">
       <i class="fa fa-long-arrow-left"></i> Go Back
-    </button>
+    </button> -->
+    
     <div class="container">
       <div class="body-container">
         <div class="job-header">
@@ -565,7 +559,7 @@
             src="{{ url_for('static', filename='images/c_logo.jpg') }}"
             alt="c_logo"
           />
-          <h5><i class="fa-solid fa-building"></i>{{ " Company Name"}}</h5>
+          <h5><i class="fa-solid fa-building"></i>   {{ listing.company.registered_name}}</h5>
           <h5><i class="fa-solid fa-clock"></i> {{ listing.position_type}}</h5>
           <h5>
             <i class="fa-solid fa-location-crosshairs"></i> {{
@@ -578,21 +572,22 @@
           <br />
           <h2>To Apply fill out the section below:</h2>
           <h5>Input Work Experience</h5>
-          <input
-            type="number"
-            name="work-experience"
-            placeholder="Years"
-          />
+          <input type="number" name="work-experience" placeholder="Years" />
         </div>
         <h3>Attach your resume below.</h3>
         <div class="file-upload-container">
           <label for="file-upload" class="file-upload-label">
             <i class="fa fa-plus"></i> Upload File
-            <input type="file" id="file-upload" class="file-upload-input" onchange="displayFileName()" />
+            <input
+              type="file"
+              id="file-upload"
+              class="file-upload-input"
+              onchange="displayFileName()"
+            />
           </label>
         </div>
         <div id="file-info" class="file-info"></div>
-        <br>
+        <br />
         <button class="apply-button">Apply</button>
       </div>
 
@@ -601,237 +596,81 @@
         <div class="sticky">
           <h1>Saved Listings</h1>
         </div>
-        {% for job in jobs %}
-        <div class="job_card">
-          <div class="job-header">
-            <h3>{{ job.title }}</h3>
-            <h5>{{ "Company Name"}}</h5>
-            <button>Remove</button>
-            <input type="button" class="view-button" value="View" />
+        {% for listing in saved_listings %}
+        <div class="job_card" id="saved_listing_card">
+          <div class="job-header" id="saved_card_header">
+            <h3>{{ listing.job_listing.title }}</h3>
+            <h5>{{ listing.job_listing.company.registered_name }}</h5>
+          </div>
+          <div class="aside-buttons">
+            <button
+              class="remove-listing"
+              data-job-id="{{ listing.job_listing_id }}"
+            >
+              Remove
+            </button>
+            <a
+              href="/view_listing_alumni/{{listing.job_listing_id}}"
+              class="view-button"
+            >
+              View</a
+            >
           </div>
         </div>
 
         {% endfor%}
       </aside>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const jobCards = document.querySelectorAll(".job_card");
-        const searchInput = document.getElementById("searchInput");
-        const expandBtns = document.querySelectorAll(".expand-btn");
-        const applyBtns = document.querySelectorAll(".applyBtn"); // Select all apply buttons
-        const closeFormBtns = document.querySelectorAll(".close-btn"); // Select all close buttons
+        document.querySelectorAll(".remove-listing").forEach((button) => {
+          const jobId = button.getAttribute("data-job-id");
 
-        expandBtns.forEach((expandBtn) => {
-          expandBtn.addEventListener("click", function () {
-            const jobDetails = expandBtn.parentElement.nextElementSibling;
-            toggleJobDetails(jobDetails, expandBtn);
-          });
-        });
-
-        applyBtns.forEach((applyBtn) => {
-          applyBtn.addEventListener("click", function (event) {
-            event.preventDefault(); // Prevent the default link behavior
-            const popupId = applyBtn.getAttribute("data-popup-id"); // Get the popup ID from data-popup-id attribute
-            toggleFormPopup(popupId); // Toggle form popup visibility
-          });
-        });
-
-        closeFormBtns.forEach((closeFormBtn) => {
-          closeFormBtn.addEventListener("click", function (event) {
-            event.preventDefault();
-            const popupId = closeFormBtn.parentElement.parentElement.id; // Get the popup ID from parent element's ID
-            toggleFormPopup(popupId); // Toggle form popup visibility
-          });
-        });
-
-        // Function to toggle job details visibility
-        function toggleJobDetails(jobDetails, expandBtn) {
-          if (
-            jobDetails.style.display === "none" ||
-            jobDetails.style.display === ""
-          ) {
-            jobDetails.style.display = "block";
-            expandBtn.textContent = "▲"; // Change arrow direction
-          } else {
-            jobDetails.style.display = "none";
-            expandBtn.textContent = "▼"; // Change arrow direction
-          }
-        }
-
-        // Function to toggle form popup visibility
-        function toggleFormPopup(popupId) {
-          const popup = document.getElementById(popupId);
-          if (popup.classList.contains("hidden")) {
-            popup.classList.remove("hidden");
-            popup.style.display = "flex";
-          } else {
-            popup.classList.add("hidden");
-            popup.style.display = "none";
-          }
-        }
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const jobCards = document.querySelectorAll(".job_card");
-        const searchInput = document.getElementById("searchInput");
-
-        searchInput.addEventListener("input", function () {
-          const searchTerm = searchInput.value.trim().toLowerCase();
-          filterJobs(searchTerm);
-        });
-
-        function filterJobs(searchTerm) {
-          jobCards.forEach(function (jobCard) {
-            const jobTitle = jobCard
-              .querySelector(".job_details h2")
-              .textContent.toLowerCase();
-            if (jobTitle.includes(searchTerm)) {
-              jobCard.style.display = "block";
-            } else {
-              jobCard.style.display = "none";
-            }
-          });
-        }
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const popupContainer = document.getElementById("subpopup");
-        const closeButton = document.getElementById("subclose-btn");
-        const subscribeButton = document.getElementById("subscribe-btn");
-        const displayPopupButton = document.getElementById("displayPopup");
-
-        const showModal = popupContainer.dataset.showModal;
-
-        // Function to show the popup
-        function showPopup() {
-          popupContainer.style.display = "block";
-        }
-
-        // Function to hide the popup
-        function hidePopup() {
-          popupContainer.style.display = "none";
-        }
-
-        if (showModal === "True") showPopup();
-
-        // closeButton.addEventListener("click", hidePopup);
-
-        displayPopupButton.addEventListener("click", showPopup);
-
-        window.addEventListener("click", function (event) {
-          if (event.target === popupContainer) {
-            hidePopup();
-          }
-        });
-
-        subscribeButton.addEventListener("click", function (event) {
-          event.preventDefault(); // Prevent form submission
-          //const emailInput = document.getElementById("email").value;
-          const categoryInput = document.getElementById("category").value;
-
-          const form = document.getElementById("subscription-form");
-          form.submit();
-
-          //console.log("Subscribing email:", emailInput, "Category:", categoryInput);
-          hidePopup();
-        });
-
-        closeButton.addEventListener("click", function () {
-          fetch("/update_modal_seen", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log(data.message);
-              hidePopup();
+          button.addEventListener("click", function () {
+            fetch(`/remove_saved_listing/${jobId}`, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
             })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === "removed") {
+                  alert("Job removed successfully!");
+
+                  //remove the saved job from SessionStorage
+                  sessionStorage.removeItem(`saved-${jobId}`);
+
+                  //updates the saved-listings column on reload to remove items
+                  location.reload();
+                } else {
+                  alert("Failed to remove job.");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while removing the job.");
+              });
+          });
         });
       });
-
-      // Hide flash messages after 3 seconds
-      setTimeout(() => {
-        const flashMessages = document.getElementById("flash-messages");
-        if (flashMessages) {
-          flashMessages.style.display = "none";
-        }
-      }, 3000); // 3000 milliseconds = 3 seconds
-
-      // Get all the buttons and containers
-      const browseCompaniesBtn = document.getElementById("browse-companies");
-      const browseJobsBtn = document.getElementById("browse-jobs");
-      const submittedApplicationsBtn = document.getElementById(
-        "browse-submitted-applications"
-      );
-
-      const jobsContainer = document.getElementById("jobs-container");
-      const companiesContainer = document.getElementById("companies-container");
-      const applicationsContainer = document.getElementById(
-        "applications-container"
-      );
-
-      // Function to show the content of the clicked category
-      function showContent(containerToShow) {
-        // Hide all containers
-        jobsContainer.style.display = "none";
-        companiesContainer.style.display = "none";
-        applicationsContainer.style.display = "none";
-
-        // Show the selected container
-        containerToShow.style.display = "grid";
-      }
-
-      // Event listeners for the buttons
-      browseCompaniesBtn.addEventListener("click", () => {
-        showContent(companiesContainer);
-        // Toggle active class
-        browseCompaniesBtn.classList.add("active");
-        browseJobsBtn.classList.remove("active");
-        submittedApplicationsBtn.classList.remove("active");
-      });
-
-      browseJobsBtn.addEventListener("click", () => {
-        showContent(jobsContainer);
-        // Toggle active class
-        browseCompaniesBtn.classList.remove("active");
-        browseJobsBtn.classList.add("active");
-        submittedApplicationsBtn.classList.remove("active");
-      });
-
-      submittedApplicationsBtn.addEventListener("click", () => {
-        showContent(applicationsContainer);
-        // Toggle active class
-        browseCompaniesBtn.classList.remove("active");
-        browseJobsBtn.classList.remove("active");
-        submittedApplicationsBtn.classList.add("active");
-      });
-
-      // Initial load (show jobs by default)
-      showContent(jobsContainer);
 
       function goBack() {
         window.history.back();
       }
       function displayFileName() {
-      const fileInput = document.getElementById('file-upload');
-      const fileNameSpan = document.getElementById('file-info');
-      const fileName = fileInput.files[0] ? fileInput.files[0].name : '';
-      
-      if (fileName) {
-        // Remove the upload button and label
-        document.querySelector('.file-upload-container').style.display = 'none';
+        const fileInput = document.getElementById("file-upload");
+        const fileNameSpan = document.getElementById("file-info");
+        const fileName = fileInput.files[0] ? fileInput.files[0].name : "";
 
-        // Display the selected file's name
-        fileNameSpan.innerHTML = `Selected file: <strong>${fileName}</strong>`;
+        if (fileName) {
+          // Remove the upload button and label
+          document.querySelector(".file-upload-container").style.display =
+            "none";
+
+          // Display the selected file's name
+          fileNameSpan.innerHTML = `Selected file: <strong>${fileName}</strong>`;
+        }
       }
-    }
     </script>
   </body>
 </html>

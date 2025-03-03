@@ -32,8 +32,6 @@ def view_applications_page(job_id):
     # get the listing
     listing = get_listing(job_id)
 
-    # applicants = listing.get_applicants()
-
     response = None
     print(listing)
 

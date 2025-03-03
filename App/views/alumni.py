@@ -16,7 +16,8 @@ from App.controllers import(
     update_alumni_info,
     get_listing,
     get_all_listings,
-    get_approved_listings
+    get_approved_listings,
+    get_saved_listings
 )
 
 from App.models import(
@@ -115,10 +116,6 @@ def unsubscribe_action():
 
     return response
 
-# for unsubscribe route
-# get the user and their categories with user.get_categories
-# then call unsubscrive_action with user and their categores?
-
 @alumni_views.route('/update_modal_seen', methods=['POST'])
 @jwt_required()
 def update_modal_seen():
@@ -136,10 +133,10 @@ def update_modal_seen():
 @jwt_required()
 def view_listing_page(id):
     listing=get_listing(id)
-    jobs=get_approved_listings()
+    saved_listings=get_saved_listings()
     
     try:
-        return render_template('view-listing-alumni.html', listing=listing, jobs=jobs)
+        return render_template('view-listing-alumni.html', listing=listing, saved_listings=saved_listings)
 
     except Exception:
         flash('Error retreiving Listing')
