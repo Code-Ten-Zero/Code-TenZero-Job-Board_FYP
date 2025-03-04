@@ -198,17 +198,17 @@
         margin-bottom: 2px;
         transition: all 0.3s ease;
         background-color: #ffffff;
-        height: 10vh; 
+        height: 10vh;
         display: flex;
-        align-items: center; 
+        align-items: center;
         justify-content: space-between;
       }
 
       #saved_card_header {
         font-weight: bold;
         margin-bottom: 0;
-        width: auto; 
-        flex-grow: 1; 
+        width: auto;
+        flex-grow: 1;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -680,7 +680,6 @@
             <button id="browse-submitted-applications">
               Submitted Applications
             </button>
-            <!-- <button id="saved-jobs">Saved Jobs</button> -->
           </h1>
         </div>
         <div class="listings-container" id="jobs-container">
@@ -744,11 +743,12 @@
           id="applications-container"
           style="display: none"
         >
-          <!-- {% for company in companies %} to be changed when this fucntinonality updates CTZ-->
+        {% for application in applications %}
           <div class="job_card">
             <div class="job-header">
-              <h3>{{ "Application info" }}</h3>
-              <h5>{{ "Application status" }}</h5>
+              <h3>Application Info</h3>
+              <h5>Applied on: {{ application.datetime_applied }}</h5>
+              <h5>Work Experience: {{ application.work_experience }}</h5>
               <input
                 type="button"
                 class="view-button"
@@ -756,7 +756,7 @@
               />
             </div>
           </div>
-          <!-- {% endfor%} -->
+          {% endfor%}
         </div>
       </div>
 
@@ -778,9 +778,11 @@
             >
               Remove
             </button>
-            <a href="/view_listing_alumni/{{listing.job_listing_id}}" class="view-button"
-                >View</a
-              >
+            <a
+              href="/view_listing_alumni/{{listing.job_listing_id}}"
+              class="view-button"
+              >View</a
+            >
           </div>
         </div>
 
@@ -989,40 +991,46 @@
       // Initial load (show browse jobs by default)
       showContent(jobsContainer);
 
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".save-listing").forEach((button) => {
-          const jobId = button.getAttribute("data-job-id");
-          if (sessionStorage.getItem(`saved-${jobId}`)) {
-            button.innerHTML = '<i class="fa-solid fa-star"></i> Saved';
-            button.classList.add("disabled");
-            button.disabled = true;
-          }
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          // Fetch saved jobs from the server for the logged-in user
+          const response = await fetch("/get_saved_listing");
+          const savedJobs = await response.json(); // List of saved job IDs
+          const savedJobIds = new Set(savedJobs); // Store in a Set for fast lookup
 
-          button.addEventListener("click", function () {
-            fetch(`/save_listing/${jobId}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.status === "saved") {
-                  alert("Job saved successfully!");
+          // Iterate over all save buttons and disable if the job is already saved
+          document.querySelectorAll(".save-listing").forEach((button) => {
+            const jobId = button.getAttribute("data-job-id");
 
-                  //  Store saved job in SessionStorage
-                  sessionStorage.setItem(`saved-${jobId}`, "true");
+            if (savedJobIds.has(parseInt(jobId))) {
+              button.innerHTML = '<i class="fa-solid fa-star"></i> Saved';
+              button.classList.add("disabled");
+              button.disabled = true;
+            }
 
-                  //updates the saved-listings column on reload
-                  location.reload();
-                } else {
-                  alert("Failed to save job.");
-                }
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-                alert("An error occurred while saving the job.");
+            button.addEventListener("click", async function () {
+              const saveResponse = await fetch(`/save_listing/${jobId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
               });
+
+              const data = await saveResponse.json();
+
+              if (data.status === "saved") {
+                alert("Job saved successfully!");
+                button.innerHTML = '<i class="fa-solid fa-star"></i> Saved';
+                button.classList.add("disabled");
+                button.disabled = true;
+                savedJobIds.add(parseInt(jobId));
+                location.reload();
+              } else {
+                alert("Failed to save job.");
+              }
+            });
           });
-        });
+        } catch (error) {
+          console.error("Error fetching saved listings:", error);
+        }
       });
 
       document.addEventListener("DOMContentLoaded", function () {

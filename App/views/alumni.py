@@ -142,7 +142,7 @@ def update_modal_seen():
 @jwt_required()
 def view_listing_page(id):
     listing=get_listing(id)
-    saved_listings=get_saved_listings()
+    saved_listings=get_saved_listings(current_user.id)
     
     try:
         return render_template('view-listing-alumni.html', listing=listing, saved_listings=saved_listings)
@@ -152,6 +152,16 @@ def view_listing_page(id):
         response = redirect(url_for('index_views.index_page'))
 
     return response
+
+
+@alumni_views.route('/get_saved_listing', methods=['GET'])
+@jwt_required()
+def get_saved_job_listing():
+    alumnus_id = current_user.id
+
+    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id).all()
+
+    return jsonify([listing.job_listing_id for listing in already_saved])
 
 @alumni_views.route('/save_listing/<job_id>', methods=['POST'])
 @jwt_required()

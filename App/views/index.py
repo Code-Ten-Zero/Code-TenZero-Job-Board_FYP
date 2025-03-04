@@ -17,7 +17,8 @@ from App.controllers import(
     get_approved_listings,
     get_all_companies,
     get_user_by_email,
-    get_saved_listings
+    get_saved_listings,
+    get_job_applications
 )
 
 from App.models import(
@@ -40,7 +41,8 @@ def index_page():
     companies= get_all_companies()
     approved_jobs = get_approved_listings() # retrieve approved jobs
     user= get_user_by_email(current_user.login_email)
-    saved_alumni_listings = get_saved_listings()
+    saved_alumni_listings = get_saved_listings(user.id)
+    alumni_job_applications = get_job_applications(user.id)
 
     if isinstance(current_user, AlumnusAccount):
 
@@ -48,10 +50,10 @@ def index_page():
         show_modal = True
         if not show_modal:
             # Pass True to the template to show modal
-            return render_template('alumni.html', jobs=approved_jobs, show_modal=True, companies=companies, user=user, saved=saved_alumni_listings)
+            return render_template('alumni.html', jobs=approved_jobs, show_modal=True, companies=companies, user=user, saved=saved_alumni_listings, applications= alumni_job_applications)
         
         # Pass False to the modal if already seen
-        return render_template('alumni.html', jobs=approved_jobs, show_modal=False, companies=companies, user=user, saved=saved_alumni_listings)
+        return render_template('alumni.html', jobs=approved_jobs, show_modal=False, companies=companies, user=user, saved=saved_alumni_listings, applications= alumni_job_applications)
 
     
     if isinstance(current_user, CompanyAccount):

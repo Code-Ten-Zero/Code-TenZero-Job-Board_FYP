@@ -1,4 +1,4 @@
-from App.models import BaseUserAccount, AlumnusAccount, AdminAccount, CompanyAccount, JobListing, SavedJobListing
+from App.models import AlumnusAccount, AdminAccount, CompanyAccount, JobListing, SavedJobListing, JobApplication
 from App.database import db
 
 
@@ -225,7 +225,10 @@ def update_alumni_info(id, first_name, last_name, phone_number, login_email, cur
 
     return update_made
 
-def get_saved_listings():
-    saved_listings = SavedJobListing.query.all()
+def get_saved_listings(alumnus_id):
+    saved_listings = SavedJobListing.query.filter_by(alumnus_id=alumnus_id).all()
     return saved_listings
 
+def get_job_applications(alumnus_id):
+    job_applications =JobApplication.query.filter_by(alumnus_id=alumnus_id).all()
+    return job_applications 
