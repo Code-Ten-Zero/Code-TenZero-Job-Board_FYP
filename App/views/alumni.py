@@ -1,6 +1,7 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
+import os
+from flask import Blueprint, app, current_app, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 from App.models import db
-# from App.controllers import create_user
+from werkzeug.utils import secure_filename
 
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
@@ -24,7 +25,8 @@ from App.models import(
     AlumnusAccount,
     CompanyAccount,
     AdminAccount,
-    SavedJobListing
+    SavedJobListing,
+    JobApplication
 )
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
@@ -179,4 +181,41 @@ def remove_listing(job_id):
     db.session.commit()
 
     return jsonify({"message": "Job Removed from saved listings", "status":"removed"}), 200
+
+@alumni_views.route('/apply_to_listing/<job_id>', methods=['POST'])
+@jwt_required()
+def apply(job_id):
+    # Get form data
+    work_experience = request.form.get("work-experience")
+    resume = request.files["resume"]
+
+    # Secure and save filename
+    filename = secure_filename(resume.filename)
+    resume_path = os.path.join('static', 'uploads', 'resumes', filename)  # Store relative path
+    os.makedirs(os.path.dirname(resume_path), exist_ok=True)  # Ensure folder exists
+
+    # Save the file to the directory
+    resume.save(resume_path)  # This actually writes the file!
+    resume_path = resume_path.replace("\\", "/")
+    alumnus_id = current_user.id
+
+    # Create a new JobApplication record
+    new_application = JobApplication(
+        alumnus_id=alumnus_id,
+        job_listing_id=job_id,
+        resume_file_path=resume_path,  
+        work_experience=work_experience,
+    )
+
+    # Save to the database
+    db.session.add(new_application)
+    db.session.commit()
+
+    # print(new_application) for debugging purposes CTZ
+
+    flash("Application submitted successfully!", "success")
+    return redirect(url_for("index_views.index_page"))
+
+    
+
 

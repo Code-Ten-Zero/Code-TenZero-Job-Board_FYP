@@ -570,27 +570,29 @@
           <h5>{{ listing.datetime_created}}</h5>
           <h5>{{ listing.datetime_last_modified}}</h5>
           <br />
-          <h2>To Apply fill out the section below:</h2>
-          <h5>Input Work Experience</h5>
-          <input type="number" name="work-experience" placeholder="Years" />
+          <form action="/apply_to_listing/{{ listing.id }}" method="POST" enctype="multipart/form-data">
+            <h2>To Apply fill out the section below:</h2>
+            
+            <h5>Input Work Experience</h5>
+            <input type="number" name="work-experience" placeholder="Years" required />
+        
+            <h3>Attach your resume below.</h3>
+            <div class="file-upload-container">
+                <label for="file-upload" class="file-upload-label">
+                    <i class="fa fa-plus"></i> Upload File
+                    <input type="file" id="file-upload" name="resume" class="file-upload-input" required onchange="displayFileName()" />
+                </label>
+            </div>
+        
+            <div id="file-info" class="file-info"></div>
+        
+            <br />
+            <input type="hidden" name="job_listing_id" value="{{ listing.id }}" />
+        
+            <button type="submit" value="Upload" class="apply-button">Apply</button>
+        </form>  <!-- Form should be closed here! -->
         </div>
-        <h3>Attach your resume below.</h3>
-        <div class="file-upload-container">
-          <label for="file-upload" class="file-upload-label">
-            <i class="fa fa-plus"></i> Upload File
-            <input
-              type="file"
-              id="file-upload"
-              class="file-upload-input"
-              onchange="displayFileName()"
-            />
-          </label>
-        </div>
-        <div id="file-info" class="file-info"></div>
-        <br />
-        <button class="apply-button">Apply</button>
       </div>
-
       <!-- saved listings content -->
       <aside>
         <div class="sticky">

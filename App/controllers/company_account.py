@@ -94,8 +94,7 @@ def get_company_listings(login_email):
     
     if not company.job_listings:
         return "No job listings found for this company."
-    # for listing in company.listings:
-    #     print(listing.get_json())
+
     return company.job_listings
 
 def get_all_companies():

@@ -7,6 +7,7 @@ from App.database import db
 class JobApplication(db.Model):
     """
     Represents an application made by an alumnus to a given job listing.
+    
     """
 
     __tablename__ = "job_applications"
@@ -17,6 +18,7 @@ class JobApplication(db.Model):
     job_listing_id = db.Column(db.Integer, db.ForeignKey(
         'job_listings.id'), nullable=False)
     resume_file_path = db.Column(db.String, nullable=False)
+    work_experience = db.Column(db.Integer(), default=1)
     datetime_applied = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
     company_approval_status = db.Column(
@@ -39,10 +41,14 @@ class JobApplication(db.Model):
     #             f"Invalid status '{value}'. Allowed values: {[status.value for status in ApprovalStatus]}")
     # return value
 
-    def __init__(self, alumnus_id: int, job_listing_id: int, resume_file_path: str) -> None:
+    
+    def __init__(self, alumnus_id: int, job_listing_id: int, resume_file_path: str, work_experience: int) -> None:
         self.alumnus_id = alumnus_id
         self.job_listing_id = job_listing_id
         self.resume_file_path = resume_file_path
+        self.work_experience = work_experience
+        self.datetime_applied = datetime.utcnow()
+        self.company_approval_status = "PENDING"
 
     def __str__(self) -> str:
         return f"""{self.__class__.__name__} Info:
@@ -50,6 +56,7 @@ class JobApplication(db.Model):
     - Alumnus ID: {self.alumnus_id}
     - Job Listing ID: {self.job_listing_id}
     - Resume File Path: {self.resume_file_path}
+    - Work Experience: {self.work_experience}
     - Date/Time Applied: {self.datetime_applied.isoformat()}
     - Company Approval Status = {self.company_approval_status}
     """
@@ -57,6 +64,7 @@ class JobApplication(db.Model):
     def __repr__(self) -> str:
         return (f"<{self.__class__.__name__} (id={self.id}, alumnus_id={self.alumnus_id}, "
                 f"job_listing_id='{self.job_listing_id}'], resume_file_path='{self.resume_file_path}', "
+                f"work_experience='{self.work_experience}',"
                 f"datetime_applied='{self.datetime_applied.isoformat()}, "
                 f"company_approval_status='{self.company_approval_status}')>")
 
@@ -66,6 +74,7 @@ class JobApplication(db.Model):
             "alumnus_id": self.alumnus_id,
             "job_listing_id": self.job_listing_id,
             "resume_file_path": self.resume_file_path,
+            "work_experience": self.work_experience,
             "datetime_applied": self.datetime_applied.isoformat(),
             "company_approval_status": self.company_approval_status
         }
