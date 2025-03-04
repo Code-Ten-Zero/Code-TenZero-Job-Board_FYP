@@ -220,8 +220,10 @@
             <img class="form-image" id="profile_pic" 
                  src="C:\Users\psoon\Desktop\sky image.jpg" 
                  alt="Profile Image">
+            <!-- <form method="POST" action="/update_profile_photo/{{user.id}}">      -->
             <input type="file" id="profile_pic_input" accept="image/*">
             <label class="upload-label" for="profile_pic_input">Change Photo</label>
+            <!-- </form> -->
             <p class="image-text">{{user.first_name}} {{user.last_name}}</p>
             <p class="image-text">Alumni</p>
             <p class="image-text">{{user.login_email}}</p>
@@ -229,16 +231,16 @@
         </div>
         
         <!-- Form -->
-        <form method="POST" action="/update-alumni/{{user.id}}">
+        <form method="POST" action="/update_alumni/{{user.id}}">
             <!-- First Name and Last Name row -->
             <div class="form-row">
                 <div class="col">
                     <label for="fname">First name:</label>
-                    <input type="text" id="fname" name="fname" value="First Name...">
+                    <input type="text" id="fname" name="fname" value="{{user.first_name}}">
                 </div>
                 <div class="col">
                     <label for="lname">Last name:</label>
-                    <input type="text" id="lname" name="lname" value="Last Name...">
+                    <input type="text" id="lname" name="lname" value="{{user.last_name}}">
                 </div>
             </div>
 
@@ -247,11 +249,11 @@
             <div class="form-row">
                 <div class="col">
                     <label for="email">Email:</label>
-                    <input type="text" id="email" name="email" value="Email">
+                    <input type="text" id="email" name="email" value="{{user.login_email}}">
                 </div>
                 <div class="col">
                     <label for="contact">Contact:</label>
-                    <input type="text" id="contact" name="contact" value="1-868-XXX-XXXX">
+                    <input type="text" id="contact" name="contact" value="{{user.phone_number}}">
                 </div>
             </div>
             <br>

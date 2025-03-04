@@ -189,26 +189,35 @@ def get_approved_listings():
 def update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password):
     alumni = get_alumni(id)
     update_made = False
+    # print("current password:")
+    # print (current_password)
+    # print("new password:")
+    # print(new_password)
 
     if alumni.check_password(current_password):
         if alumni.first_name != first_name:
             alumni.first_name = first_name
+            print("first name updated")
             update_made = True
 
         if alumni.last_name != last_name:
             alumni.last_name = last_name
+            print("last name updated")
             update_made = True
 
         if alumni.phone_number != phone_number:
             alumni.phone_number = phone_number
+            print("phone number updated")
             update_made = True
 
         if alumni.login_email != login_email:
             alumni.login_email = login_email
+            print("email updated")
             update_made = True
 
-        if new_password != None: 
+        if new_password: 
             alumni.set_password(new_password)
+            print("password updated")
             update_made = True
 
     if update_made:

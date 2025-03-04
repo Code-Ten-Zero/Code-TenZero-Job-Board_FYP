@@ -32,6 +32,7 @@ alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates
 @alumni_views.route('/update_alumni/<id>', methods=['POST'])
 @jwt_required()
 def update_alumni(id):
+    user = get_user_by_email(current_user.login_email)
     data = request.form
     first_name = data['fname']
     last_name = data['lname']
@@ -44,17 +45,23 @@ def update_alumni(id):
     confirm_new_password = data['confirm_new_password']
 
     if current_password != confirm_current_password:
-        return {"message": "Current passwords do not match"}, 400
+        flash ("Current passwords do not match")
+        return render_template('my-account-alumni.html', user=user)
 
-    if new_password and new_password != confirm_new_password:
-            return {"message": "New passwords do not match"}, 400
+    if new_password != confirm_new_password:
+        flash ("New passwords do not match")
+        return render_template('my-account-alumni.html', user=user)
 
     update_status = update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password)
 
     if update_status:
-        return {"message": "Alumni information updated successfully"}, 200
+        flash ("Alumni information updated successfully")
+        return render_template('my-account-alumni.html', user=user)
     else:
-        return {"message": "Update failed. Check your information and try again."}, 400
+        flash("Update failed. Check your information and try again.")
+        return render_template('my-account-alumni.html', user=user)
+
+    return render_template('my-account-alumni.html', user=user)
 
 @alumni_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
