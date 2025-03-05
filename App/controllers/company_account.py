@@ -1,4 +1,4 @@
-from App.models import BaseUserAccount, CompanyAccount, JobListing, AlumnusAccount, AdminAccount
+from App.models import CompanyAccount, JobListing, AlumnusAccount, AdminAccount, JobApplication
 from App.database import db
 from App.controllers import get_all_subscribed_alumni
 
@@ -85,12 +85,11 @@ def get_company_by_id (id):
 def get_company_by_email(login_email):
     return CompanyAccount.query.filter_by(login_email=login_email).first()
 
-def get_company_listings(login_email):
-    # return Listing.query.filter_by(company_name=company_name)
-    company = get_company_by_email(login_email)
+def get_company_listings(id):
+    company = get_company_by_id(id)
     
     if company is None:
-        raise ValueError(f"No company found with email: {login_email}")
+        raise ValueError(f"No company found")
     
     if not company.job_listings:
         return "No job listings found for this company."
@@ -106,3 +105,19 @@ def get_all_companies_json():
         return []
     companies = [company.get_json() for company in companies]
     return companies
+
+def get_listing_job_applications(id):
+    listing = JobListing.query.filter_by(id=id).first()
+    
+    if not listing:
+        raise ValueError(f"Job listing with id {id} not found")
+    
+    listing_applications = JobApplication.query.filter_by(job_listing_id=listing.id).all()
+    
+    # Check if the list of applications is empty
+    if not listing_applications:
+        print("No applications found for this listing")
+    
+    return listing_applications
+
+    

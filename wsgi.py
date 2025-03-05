@@ -12,7 +12,7 @@ from App.controllers import (create_user, get_all_users_json, get_all_users, get
                              get_all_alumni, get_all_alumni_json, get_all_listings, get_all_listings_json,
                              get_company_listings,
                              get_all_subscribed_alumni, is_alumni_subscribed,
-                             send_notification, apply_listing, get_all_applicants,
+                             send_notification, apply_listing, get_all_applications, get_listing_job_applications,
                              get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
                              login, set_alumni_modal_seen, toggle_listing_approval, get_listing_title)
 
@@ -33,7 +33,6 @@ migrate = get_migrate(app)
 def initialize():
     db.drop_all()
     db.create_all()
-    # create_user('bob', 'bobpass')
 
     # add in the first admin
     add_admin('bobpass', 'bob@mail')
@@ -65,15 +64,6 @@ def initialize():
     
     add_listing(company1.id, 'listing4', 'Full-time', 'job description2',
                 4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
-
-    # print(get_listing(1))
-    # print(get_company_listings('company@mail'))
-
-    # print(get_all_subscribed_alumni())
-    # send_notification(['Programming'])
-    # create_user('username', 'password', 'email')
-    # print(get_user_by_username('rob'))
-    # print(jwt_authenticate('bob', 'bobpass'))
 
     print('database intialized')
 
@@ -368,15 +358,15 @@ def delete_listing_command(id):
 # flask listing applicants
 
 
-@listing_cli.command("applicants", help="Get all applicants for the listing")
-@click.argument("listing_id", default='1')
-def get_listing_applicants_command(listing_id):
-    applicants = get_all_applicants(listing_id)
+# @listing_cli.command("applicants", help="Get all applicants for the listing")
+# @click.argument("listing_id", default='1')
+# def get_listing_applicants_command(listing_id):
+#     applicants = get_all_applicants(listing_id)
 
-    if applicants is None:
-        print(f'Error getting applicants')
-    else:
-        print(applicants)
+#     if applicants is None:
+#         print(f'Error getting applicants')
+#     else:
+#         print(applicants)
 
 
 app.cli.add_command(listing_cli)

@@ -14,7 +14,8 @@ from App.controllers import(
     add_listing,
     add_categories,
     get_listing,
-    set_request
+    set_request,
+    get_listing_job_applications
 )
 
 from App.models import(
@@ -25,26 +26,24 @@ from App.models import(
 
 company_views = Blueprint('company_views', __name__, template_folder='../templates')
 
-@company_views.route('/view_applications/<int:job_id>', methods=['GET'])
+@company_views.route('/view_applications/<int:id>', methods=['GET'])
 @jwt_required()
-def view_applications_page(job_id):
+def view_applications_page(id):
 
     # get the listing
-    listing = get_listing(job_id)
+    listing = get_listing(id)
 
-    response = None
     print(listing)
 
     try:
-        applicants = listing.get_applicants()
-        print(applicants)
-        return render_template('viewapp-company.html', applicants=applicants)
+        applications = get_listing_job_applications(listing.id)
+        print(applications)
+        return render_template('viewapp-company.html', applications=applications)
 
     except Exception:
         flash('Error receiving applicants', 'unsuccessful')
         response = redirect(url_for('index_views.index_page'))
-
-    return response
+        return response
 
 @company_views.route('/add_listing', methods=['GET'])
 @jwt_required()

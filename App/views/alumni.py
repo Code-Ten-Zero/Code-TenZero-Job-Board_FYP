@@ -192,7 +192,7 @@ def remove_listing(job_id):
 
     return jsonify({"message": "Job Removed from saved listings", "status":"removed"}), 200
 
-@alumni_views.route('/apply_to_listing/<job_id>', methods=['POST'])
+@alumni_views.route('/apply_to_listing/<int:job_id>', methods=['POST'])
 @jwt_required()
 def apply(job_id):
     # Get form data
@@ -201,19 +201,21 @@ def apply(job_id):
 
     # Secure and save filename
     filename = secure_filename(resume.filename)
-    resume_path = os.path.join('static', 'uploads', 'resumes', filename)  # Store relative path
-    os.makedirs(os.path.dirname(resume_path), exist_ok=True)  # Ensure folder exists
+    static_folder = os.path.join(current_app.root_path, 'static')
+    resume_path = os.path.join(static_folder, 'uploads', 'resumes', filename)
+    file_path =  os.path.join('uploads', 'resumes', filename)
 
     # Save the file to the directory
     resume.save(resume_path)  # This actually writes the file!
     resume_path = resume_path.replace("\\", "/")
+    file_path = file_path.replace("\\", "/")
     alumnus_id = current_user.id
 
     # Create a new JobApplication record
     new_application = JobApplication(
         alumnus_id=alumnus_id,
         job_listing_id=job_id,
-        resume_file_path=resume_path,  
+        resume_file_path=file_path,  
         work_experience=work_experience,
     )
 
