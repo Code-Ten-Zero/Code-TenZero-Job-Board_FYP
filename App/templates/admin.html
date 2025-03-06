@@ -10,6 +10,7 @@
         margin: 0;
         padding: 0;
         background-color: gainsboro;
+        width: 100vw;
       }
 
       header {
@@ -18,19 +19,39 @@
         padding: 5px;
         display: flex;
         align-items: center;
+        width: 100vw;
       }
-
       header h1 {
-        font-size: 24px;
         margin-right: 50vw;
       }
 
-      header h1 a{
-        font-size: x-large;
+      .top-content {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
       }
-      
-      nav a {
-        font-size: large;
+
+      .topnav {
+        overflow: hidden;
+      }
+
+      .topnav a {
+        float: right;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+      }
+
+      .topnav a:hover {
+        background-color: rgb(57, 97, 185);
+        color: black;
+      }
+
+      .topnav a.active {
+        background-color: rgb(57, 97, 185);
+        color: white;
       }
 
       .logout {
@@ -105,10 +126,6 @@
         background-color: rgb(74, 74, 192);
         color: white;
       }
-
-      /* th,tr{
-            background-color: #f2f2f2;
-        } */
 
       tr:hover {
         background-color: #ced4ea;
@@ -186,11 +203,11 @@
         alt="uwi_logo"
       />
       <h1><a href="/app">DCIT Job Board</a></h1>
-      <nav>
-        <a href="#" class="">Notifications</a>
-        <a href="#" class="">My Account</a>
+      <div class="topnav" id="mynav">
         <a href="/logout" class="logout">Logout</a>
-      </nav>
+        <a href="#" class="logout">Notifications</a>
+        <a href="#" class="logout">My Account</a>
+      </div>
     </header>
     <div id="flash-messages">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
