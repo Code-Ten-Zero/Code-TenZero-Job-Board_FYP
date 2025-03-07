@@ -19,7 +19,7 @@ from App.controllers import (
     unsubscribe,
     add_categories,
     apply_listing,
-    get_all_applicants,
+    #get_all_applicants,
     get_alumni,
     set_alumni_modal_seen,
     toggle_listing_approval,
