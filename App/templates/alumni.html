@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -18,14 +19,6 @@
         overflow: hidden;
       }
 
-      header {
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-      }
-
       aside {
         background-color: white;
         border-radius: 10px;
@@ -33,39 +26,6 @@
         overflow-y: scroll;
         height: 70%;
         padding-top: 0;
-      }
-
-      header h1 {
-        margin-right: 50vw;
-      }
-
-      .top-content {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-      }
-
-      .topnav {
-        overflow: hidden;
-      }
-
-      .topnav a {
-        float: right;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-      }
-
-      .topnav a:hover {
-        background-color: rgb(57, 97, 185);
-        color: black;
-      }
-
-      .topnav a.active {
-        background-color: rgb(57, 97, 185);
-        color: white;
       }
 
       .btn-group button {
@@ -130,12 +90,6 @@
         font-size: 70%;
       }
 
-      #uwi-logo {
-        height: 10vh;
-        width: 10vh;
-        border-radius: 35px;
-        margin-right: 5px;
-      }
 
       #company_logo {
         height: 20vh;
@@ -482,36 +436,6 @@
         font-weight: normal;
       }
 
-      .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 3px;
-        font-size: 14px;
-        opacity: 0.9;
-        transition: opacity 0.3s ease;
-        z-index: 2;
-      }
-
-      .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-        z-index: 2;
-      }
-
-      .alert-unsuccessful {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-        z-index: 2;
-      }
-
-      .alert-warning {
-        background-color: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeeba;
-      }
-
       #resume-view {
         height: 40px;
         width: 20px;
@@ -669,8 +593,8 @@
       <h1>DCIT Job Board</h1>
       <div class="topnav" id="mynav">
         <a href="/logout" class="logout">Logout</a>
-        <a href="#" class="logout">Notifications</a>
-        <a href="/view_my_account/{{user.id}}" class="logout">My Account</a>
+        <a href="#" >Notifications</a>
+        <a href="/view_my_account/{{user.id}}" >My Account</a>
       </div>
     </header>
     <div id="flash-messages">

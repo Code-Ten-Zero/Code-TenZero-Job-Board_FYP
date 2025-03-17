@@ -3,31 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCIT Job Board</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>My Account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-  />
-
+    />
     <style>
-        body {
-        position: relative;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: gainsboro;
-        max-height: 100%;
-        overflow-y: hidden;
-        }
-
-        header {
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        }
+      
         .card {
  	 /* Add shadows to create the "card" effect */
  		 box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -49,17 +32,19 @@
         text-decoration: none;
       }
 
-      .my-account {
-        margin: 0 auto; /* Center alignment */
+      a {
+        position: relative;
+        margin-left: auto;
         background-color: rgb(57, 97, 185);
         color: #fff;
         padding: 10px;
         border: none;
         border-radius: 5px;
-        font-size: 3vw;
+        font-size: 2.5vw;
         cursor: pointer;
         text-decoration: none;
       }
+
 
       .logout:hover {
         background-color: rgb(98, 127, 191);
@@ -202,13 +187,20 @@
     }
 </style>
 </head>
-    <header>
-        <h1>DCIT Job Board</h1>
-        <p class="my-account">My Account</p>
-        <!-- <button class="logout">Logout</button> -->
-        <a href="/logout" class="logout">Logout</a>
-      </header>
 <body>
+    <header>
+        <img
+          id="uwi-logo"
+          src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+          alt="uwi_logo"
+        />
+        <h1> <a href="/app">DCIT Job Board</a></h1>
+        <div class="topnav" id="mynav">
+          <a href="/logout"> Logout</a>
+          <a href="#"> Notifications</a>
+          <a href="/app"> View Listings</a>
+        </div>
+      </header>
     <br>
     <br>
     <button onclick="goBack()" style="font-size:24px"><i class="fa fa-long-arrow-left"></i> Go Back</button>

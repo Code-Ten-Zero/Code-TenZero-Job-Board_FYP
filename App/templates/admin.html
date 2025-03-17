@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DCIT Job Board- Admin</title>
     <style>
@@ -11,47 +12,6 @@
         padding: 0;
         background-color: gainsboro;
         width: 100vw;
-      }
-
-      header {
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        width: 100vw;
-      }
-      header h1 {
-        margin-right: 50vw;
-      }
-
-      .top-content {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-      }
-
-      .topnav {
-        overflow: hidden;
-      }
-
-      .topnav a {
-        float: right;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 17px;
-      }
-
-      .topnav a:hover {
-        background-color: rgb(57, 97, 185);
-        color: black;
-      }
-
-      .topnav a.active {
-        background-color: rgb(57, 97, 185);
-        color: white;
       }
 
       .logout {
@@ -141,43 +101,21 @@
         cursor: pointer;
         font-size: small;
       }
-
-      a {
+      a.delete {
         margin-right: 10px;
         padding: 5px 10px;
         color: #fff;
-        background-color: rgb(57, 97, 185);
+        background-color: red;
+        text-decoration: none;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        text-decoration: none;
         font-size: small;
       }
 
       .actions button:hover,
       a:hover {
         background-color: rgb(98, 127, 191);
-      }
-
-      .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 3px;
-        font-size: 14px;
-        opacity: 0.9;
-        transition: opacity 0.3s ease;
-      }
-
-      .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-      }
-
-      .alert-unsuccessful {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
       }
 
       #flash-messages {
@@ -187,12 +125,6 @@
         z-index: 100; /*ensures flash message is displayed over content */
       }
 
-      #uwi-logo {
-        height: 10vh;
-        width: 10vh;
-        border-radius: 35px;
-        margin-right: 5px;
-      }
     </style>
   </head>
   <body>
@@ -204,9 +136,9 @@
       />
       <h1><a href="/app">DCIT Job Board</a></h1>
       <div class="topnav" id="mynav">
-        <a href="/logout" class="logout">Logout</a>
-        <a href="#" class="logout">Notifications</a>
-        <a href="#" class="logout">My Account</a>
+        <a href="/logout" >Logout</a>
+        <a href="#" >Notifications</a>
+        <a href="#" >My Account</a>
       </div>
     </header>
     <div id="flash-messages">
@@ -250,7 +182,7 @@
             <td>{{ job.request }}</td>
             <td class="actions">
               <!-- <button onclick="editListing(0)">Edit</button> -->
-              <a href="/delete_listing/{{job.id}}">Delete</a>
+              <a href="/delete_listing/{{job.id}}" class="delete">Delete</a>
               {% if job.admin_approval_status != 'APPROVED' %}
               <button
                 class="publish-button"

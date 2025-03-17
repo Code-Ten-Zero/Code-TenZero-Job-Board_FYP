@@ -10,12 +10,105 @@
     />
   </head>
   <style>
-    #uwi-logo {
-      height: 10vh;
-      width: 10vh;
-      border-radius: 35px;
-      margin-right: 5px;
-    }
+   
+a,
+.login-bt,
+.signup-bt {
+  padding: 10px;
+  text-align: center;
+}
+
+.company-bt {
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  overflow: none;
+  width: 60vw;
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.welcome-text {
+  flex: 1;
+  padding: 15px;
+  height: 80vh;
+  width: 15vw;
+  background-color: rgb(57, 97, 185);
+  color: white;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.forms-container {
+  flex: 1;
+  padding: 20px;
+  width: 20vw;
+  height: 80vh;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.form {
+  max-width: 400px;
+  width: 100%;
+  height: 90%;
+  /*transition: transform 0.5s ease; */
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+  /*transform: translateX(150%);*/
+}
+
+.form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form input {
+  width: calc(100% - 10px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.form button {
+  width: 100%;
+  padding: 10px;
+  background-color: rgb(57, 97, 185);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.form button:hover {
+  background-color: rgb(98, 127, 191);
+}
+
 
     /* #working on different device views */
     @media (max-width: 768px) {
