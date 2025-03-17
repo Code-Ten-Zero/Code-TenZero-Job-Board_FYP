@@ -82,7 +82,7 @@ def view_my_account_page(id):
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()
 def subscribe_action():
-    # # get form data
+    # get form data
     data = request.form
     response = None
     
