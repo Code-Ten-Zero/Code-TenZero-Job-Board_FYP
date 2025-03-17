@@ -26,7 +26,8 @@ from App.models import(
     CompanyAccount,
     AdminAccount,
     SavedJobListing,
-    JobApplication
+    JobApplication,
+    CompanySubscription
 )
 
 alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
@@ -81,27 +82,43 @@ def view_my_account_page(id):
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()
 def subscribe_action():
-    # get form data
+    # # get form data
     data = request.form
     response = None
-
-    # print(data)
-    # print([data['category']])
-    # print(current_user.alumni_id)
-
+    
+    """
+    Allows an alumnus to subscribe to a company to receive updates about job listings.
+    """
     try:
-        alumni = subscribe(current_user.id, data['category'])
-        set_alumni_modal_seen(alumni.id)
-        # print(alumni.get_json())
-        response = redirect(url_for('index_views.index_page'))
-        flash('Subscribed!', 'success')
+        # Get the alumnus ID and company ID from the request
+        alumnus_id = request.json.get('alumnus_id')
+        company_id = request.json.get('company_id')
+        
+        # Check if the alumnus and company exist in the database
+        alumnus = AlumnusAccount.query.get(alumnus_id)
+        company = CompanyAccount.query.get(company_id)
+        
+        if not alumnus or not company:
+            flash('Alumnus or Company not found.', 'error') 
 
-    except Exception:
-        # db.session.rollback()
-        flash('Error subscribing', 'unsuccessful')
-        response = redirect(url_for('auth_views.login_page'))
+        # Check if the subscription already exists
+        existing_subscription = CompanySubscription.query.filter_by(
+            alumnus_id=alumnus_id, company_id=company_id).first()
+        
+        if existing_subscription:
+           flash('You are already subscribed.', 'error'), 409
+        
+        # Create a new subscription
+        new_alumni_subscription = CompanySubscription(alumnus_id=alumnus_id, company_id=company_id)
+        db.session.add(new_alumni_subscription)
+        db.session.commit()
 
-    return response
+        # Flash a success message
+        flash('Subscribed successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 500
 
 @alumni_views.route('/unsubscribe', methods=['POST'])
 @jwt_required()
