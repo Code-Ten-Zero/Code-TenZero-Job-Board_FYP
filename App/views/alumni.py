@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
+from App.models.notification import Notification
+
 from .index import index_views
 
 
@@ -126,7 +128,6 @@ def subscribe_action():
         
         db.session.commit()
         
-       
         # subscriptions = CompanySubscription.query.all()
         # print(subscriptions)  # Test print
         if new_subscription_added:
@@ -266,6 +267,34 @@ def apply(job_id):
     flash("Application submitted successfully!", "success")
     return redirect(url_for("index_views.index_page"))
 
+@alumni_views.route('/my_notifications', methods=['GET'])
+@jwt_required()
+def view_notifications_page():
+    
+    alumnus = current_user
+    
+    if not isinstance(alumnus,AlumnusAccount):
+        flash('Not an Alumnus', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    try:
+        # Fetch notifications for the alumnus
+        notifications = alumnus.notifications.all()
+        return render_template('alumnus_notifications.html', notifications=notifications, alumnus=current_user)
+    
+    except Exception as e:
+        flash('Error retrieving notifications', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+@alumni_views.route('/check_unread_notifications', methods=['GET'])
+@jwt_required()
+def check_notifications():
+    # Fetch unread notifications for the current user
+    unread_notifications = Notification.query.filter_by(alumnus_id=current_user.id, reviewed_by_user=False).all()
+
+    # Determine if there are new notifications
+    has_new_notifications = len(unread_notifications) > 0
+    return jsonify({'has_new_notifications': has_new_notifications})
     
 
 

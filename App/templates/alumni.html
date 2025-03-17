@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -89,7 +92,6 @@
         padding: 3%;
         font-size: 70%;
       }
-
 
       #company_logo {
         height: 20vh;
@@ -504,6 +506,16 @@
         padding-right: 10px;
         margin-top: 10px;
       }
+      
+      #notification-dot {
+        width: 10px;
+        height: 10px;
+        background-color: rgb(230, 151, 49);
+        border-radius: 50%;
+        position: absolute;
+        display: none; /* Hide by default */
+        z-index: 2000;
+      }
 
       #flash-messages {
         position: absolute;
@@ -593,8 +605,11 @@
       <h1>DCIT Job Board</h1>
       <div class="topnav" id="mynav">
         <a href="/logout" class="logout">Logout</a>
-        <a href="#" >Notifications</a>
-        <a href="/view_my_account/{{user.id}}" >My Account</a>
+        <a href="/my_notifications" id="notifications-link">
+          Notifications
+          <span id="notification-dot"></span>
+        </a>
+        <a href="/view_my_account/{{user.id}}">My Account</a>
       </div>
     </header>
     <div id="flash-messages">
@@ -810,6 +825,23 @@
       </aside>
     </div>
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const notificationDot = document.getElementById("notification-dot"); 
+
+        // Fetch the new notifications status from the server
+        fetch("/check_unread_notifications") 
+          .then((response) => response.json()) 
+          .then((data) => {
+            if (data.has_new_notifications) {
+              // Check if there are new notifications
+              notificationDot.style.display = "inline-block"; 
+            } 
+          })
+          .catch((error) => {
+            console.error("Error fetching notification status:", error);
+          });
+      });
+
       document.addEventListener("DOMContentLoaded", function () {
         const jobCards = document.querySelectorAll(".job_card");
         const searchInput = document.getElementById("searchInput");

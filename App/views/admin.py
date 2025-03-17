@@ -15,13 +15,16 @@ from App.controllers import(
     add_categories,
     get_listing,
     delete_listing,
-    toggle_listing_approval
+    toggle_listing_approval,
+    notify_subscribed_alumnus
 )
 
 from App.models import(
     AlumnusAccount,
     CompanyAccount,
-    AdminAccount
+    AdminAccount,
+    JobListing,
+    Notification
 )
 
 admin_views = Blueprint('admin_views', __name__, template_folder='../templates')
@@ -33,7 +36,20 @@ def publish_job(job_id):
     toggled = toggle_listing_approval(job_id,status='APPROVED') # Set the job as approved
 
     if toggled:
+        
+        job_listing = JobListing.query.get(job_id)
+        if job_listing and job_listing.company:
+            # Get the company name from the job listing's associated company
+            
+            company_name = job_listing.company.registered_name
+            company_id= job_listing.company.id
+            
+            # Send the notification with company name
+            notify_subscribed_alumnus(f"{company_name} posted a new listing, {job_listing.title}!", company_id)
+            
         flash('Job published successfully!', 'success')
+        subscribed_alumni = Notification.query.all()
+        print(len(subscribed_alumni))
         response = redirect(url_for('index_views.index_page'))
     else:
         flash('Job not found', 'unsuccessful')

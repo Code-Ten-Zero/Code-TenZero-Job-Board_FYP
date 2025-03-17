@@ -1,4 +1,4 @@
-from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, JobListing
+from App.models import AdminAccount, AlumnusAccount, CompanyAccount, JobListing, CompanySubscription
 from App.database import db
 
 
@@ -80,17 +80,3 @@ def toggle_listing_approval(listing_id, status):
         db.session.rollback()
         return None
 
-
-# def delete_exerciseSet(exerciseSet_id):
-
-#     exerciseSets = ExerciseSet.query.filter_by(id=exerciseSet_id).all()
-
-#     if exerciseSets is not None:
-#         for exerciseSet in exerciseSets:
-#             db.session.delete(exerciseSet)
-        
-#             db.session.commit()
-#         return True
-#     return None
-
-# edit other listings

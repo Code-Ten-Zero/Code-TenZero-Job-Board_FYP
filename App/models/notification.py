@@ -49,15 +49,15 @@ class Notification(db.Model):
             self.message = message
 
         elif company_id:
-            self.company_id = company_id
             self.alumnus_id = None
+            self.company_id = company_id
             self.admin_id = None
             self.message = message
 
         elif admin_id:
-            self.admin_id = admin_id
             self.alumnus_id = None
             self.company_id = None
+            self.admin_id = admin_id
             self.message = message
 
     def __str__(self) -> str:
@@ -71,7 +71,7 @@ class Notification(db.Model):
     - ID: {self.id}
     - Alumnus ID: {self.alumnus_id}
     - Company ID: {self.company_id}
-    - Admin ID: {self.company_id}
+    - Admin ID: {self.admin_id}
     - Message: {self.message}
     - Date/Time Created: {self.datetime_created.isoformat()}
     - Reviewed By User: {self.reviewed_by_user}
@@ -94,7 +94,7 @@ class Notification(db.Model):
             "id": self.id,
             "Alumnus ID": {self.alumnus_id},
             "Company ID": {self.company_id},
-            "Admin ID": {self.company_id},
+            "Admin ID": {self.admin_id},
             "message": self.message,
             "created_at": self.created_at.isoformat(),
             "reviewed_by_user": self.reviewed_by_user
