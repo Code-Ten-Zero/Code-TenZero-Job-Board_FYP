@@ -82,43 +82,64 @@ def view_my_account_page(id):
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()
 def subscribe_action():
-    # get form data
-    data = request.form
-    response = None
-    
     """
     Allows an alumnus to subscribe to a company to receive updates about job listings.
     """
+     # Get the list of selected companies from the form
+    selected_companies = request.form.getlist('company')
+    # print(f"Selected companies: {selected_companies}")  # Test print
+    
+    
+    if not selected_companies:
+        flash('No companies selected!', 'error')
     try:
         # Get the alumnus ID and company ID from the request
-        alumnus_id = request.json.get('alumnus_id')
-        company_id = request.json.get('company_id')
+        alumnus_id = current_user.id
+        
         
         # Check if the alumnus and company exist in the database
         alumnus = AlumnusAccount.query.get(alumnus_id)
-        company = CompanyAccount.query.get(company_id)
+        companies = CompanyAccount.query.filter(CompanyAccount.registered_name.in_(selected_companies)).all()
+        # print(f"Queried companies: {companies}")  # Test print
         
-        if not alumnus or not company:
-            flash('Alumnus or Company not found.', 'error') 
+        if not alumnus:
+           flash('Alumnus not found!', 'error') 
+           return redirect(url_for('index_views.index_page'))
+        
+        if not companies:
+            flash('No valid companies selected!', 'error')
+            return redirect(url_for('index_views.index_page'))
 
-        # Check if the subscription already exists
-        existing_subscription = CompanySubscription.query.filter_by(
-            alumnus_id=alumnus_id, company_id=company_id).first()
+        new_subscription_added = False
+         
+        for company in companies:
+            # Check if the alumnus is already subscribed to the company
+            existing_subscription = CompanySubscription.query.filter_by(alumnus_id=alumnus.id, company_id=company.id).first()
         
-        if existing_subscription:
-           flash('You are already subscribed.', 'error'), 409
+            if existing_subscription:
+                continue  # Skip if the alumnus is already subscribed to this company
+
+            # Create a new subscription
+            subscription = CompanySubscription(alumnus_id=alumnus.id, company_id=company.id)
+            db.session.add(subscription)
+            new_subscription_added = True  # Mark that a new subscription has been added
         
-        # Create a new subscription
-        new_alumni_subscription = CompanySubscription(alumnus_id=alumnus_id, company_id=company_id)
-        db.session.add(new_alumni_subscription)
         db.session.commit()
-
-        # Flash a success message
-        flash('Subscribed successfully!', 'success')
         
+       
+        # subscriptions = CompanySubscription.query.all()
+        # print(subscriptions)  # Test print
+        if new_subscription_added:
+            flash('Successfully subscribed to selected companies!', 'success')
+        else:
+            flash('You are already subscribed to all selected companies!', 'warning')
+
+        return redirect(url_for('index_views.index_page'))
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message": str(e)}), 500
+        flash(f"An error occurred: {str(e)}", 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
 @alumni_views.route('/unsubscribe', methods=['POST'])
 @jwt_required()

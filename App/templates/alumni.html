@@ -506,6 +506,12 @@
         z-index: 2;
       }
 
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+      }
+
       #resume-view {
         height: 40px;
         width: 20px;
@@ -569,12 +575,11 @@
 
       /* Styles the company checkbox subscription container to be scrollable */
       .checkbox-container {
-        max-height: 10vh; 
-        overflow-y: auto;  
-        padding-right: 10px; 
+        max-height: 10vh;
+        overflow-y: auto;
+        padding-right: 10px;
         margin-top: 10px;
       }
-
 
       #flash-messages {
         position: absolute;
@@ -698,29 +703,31 @@
               <p>Get notified about new job opportunities.</p>
               <form id="subscription-form" action="/subscribe" method="POST">
                 <div class="company-input">
-                  <h3> <i class="fas fa-list"></i>   Select Companies to Subscribe</h3>
+                  <h3>
+                    <i class="fas fa-list"></i> Select Companies to Subscribe
+                  </h3>
                   <div class="checkbox-container">
-                  <!-- "Select All" checkbox -->
-                  <div class="checkbox">
-                    <input type="checkbox" id="select_all" />
-                    <label for="select_all">Select All Companies</label>
-                  </div>
+                    <!-- "Select All" checkbox -->
+                    <div class="checkbox">
+                      <input type="checkbox" id="select_all" />
+                      <label for="select_all">Select All Companies</label>
+                    </div>
 
-                  <!-- Dynamically generated checkboxes for each company -->
-                  {% for company in companies %}
-                  <div class="checkbox">
-                    <input
-                      type="checkbox"
-                      name="company"
-                      value="{{ company.registered_name }}"
-                      id="company_{{ company.id }}"
-                    />
-                    <label for="company_{{ company.id }}"
-                      >{{ company.registered_name }}</label
-                    >
+                    <!-- Dynamically generated checkboxes for each company -->
+                    {% for company in companies %}
+                    <div class="checkbox">
+                      <input
+                        type="checkbox"
+                        name="company"
+                        value="{{ company.registered_name }}"
+                        id="company_{{ company.id }}"
+                      />
+                      <label for="company_{{ company.id }}"
+                        >{{ company.registered_name }}</label
+                      >
+                    </div>
+                    {% endfor %}
                   </div>
-                  {% endfor %}
-                </div>
                 </div>
                 <div class="subscribe-btn">
                   <i class="fas fa-bell"></i>
@@ -989,18 +996,6 @@
           }
         });
 
-        subscribeButton.addEventListener("click", function (event) {
-          event.preventDefault(); // Prevent form submission
-          //const emailInput = document.getElementById("email").value;
-          const categoryInput = document.getElementById("category").value;
-
-          const form = document.getElementById("subscription-form");
-          form.submit();
-
-          //console.log("Subscribing email:", emailInput, "Category:", categoryInput);
-          hidePopup();
-        });
-
         closeButton.addEventListener("click", function () {
           fetch("/update_modal_seen", {
             method: "POST",
@@ -1157,9 +1152,7 @@
       document
         .getElementById("select_all")
         .addEventListener("change", function () {
-          const checkboxes = document.querySelectorAll('input[name="company"]');
-
-          // Set all checkboxes to the same state as the "Select All" checkbox
+          var checkboxes = document.querySelectorAll("input[name='company']");
           checkboxes.forEach(function (checkbox) {
             checkbox.checked = document.getElementById("select_all").checked;
           });
