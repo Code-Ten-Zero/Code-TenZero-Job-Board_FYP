@@ -137,7 +137,7 @@
       <h1><a href="/app">DCIT Job Board</a></h1>
       <div class="topnav" id="mynav">
         <a href="/logout" >Logout</a>
-        <a href="#" >Notifications</a>
+        <a href="/admin_notifications" >Notifications</a>
         <a href="#" >My Account</a>
       </div>
     </header>
@@ -166,7 +166,7 @@
             <th>Company</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Requests</th>
+            <th>Listing Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -179,7 +179,7 @@
             <td>{{ job.company.registered_name }}</td>
             <td>{{ job.title }}</td>
             <td>{{ job.description }}</td>
-            <td>{{ job.request }}</td>
+            <td>{{ job.admin_approval_status }}</td>
             <td class="actions">
               <!-- <button onclick="editListing(0)">Edit</button> -->
               <a href="/delete_listing/{{job.id}}" class="delete">Delete</a>
@@ -282,7 +282,7 @@
       function filterByStatus(status) {
         const rows = document.querySelectorAll("#jobTable tbody tr");
         const header = document.getElementById("jobHeader");
-
+        
         // Update header text
         if (status === "APPROVED") {
           header.textContent = "Currently Displaying Published Jobs";

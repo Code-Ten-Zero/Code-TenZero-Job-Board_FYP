@@ -2,6 +2,9 @@ from datetime import datetime
 from App.models import CompanyAccount, JobListing, AlumnusAccount, AdminAccount, JobApplication, CompanySubscription, Notification
 from App.database import db
 
+from App.controllers import (
+    get_all_admins
+)
 
 def notify_subscribed_alumnus(message, company_id):
     company = CompanyAccount.query.get(company_id)
@@ -26,3 +29,37 @@ def notify_subscribed_alumnus(message, company_id):
     
     db.session.commit()
     return message
+
+#Used to send a specific company notifications
+def notify_company_account(message, company_id):
+    company = CompanyAccount.query.get(company_id)
+    
+    if company:
+        new_notification = Notification(
+            alumnus_id=None,
+            company_id=company.id,
+            admin_id=None, 
+            message=message
+            )
+        db.session.add(new_notification)
+        db.session.commit()
+    return message
+                
+#Used to send (all) admin notifications
+def notify_admins(message):
+    admins= get_all_admins()
+    if admins:
+        for admin in admins:
+            new_notification = Notification(
+            alumnus_id=None,
+            company_id=None,
+            admin_id=admin.id, 
+            message=message
+            )
+            db.session.add(new_notification)
+        db.session.commit()
+    return message
+    
+
+             
+    

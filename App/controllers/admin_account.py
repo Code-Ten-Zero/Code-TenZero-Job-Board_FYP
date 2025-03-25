@@ -1,6 +1,6 @@
 from App.models import AdminAccount, AlumnusAccount, CompanyAccount, JobListing, CompanySubscription
 from App.database import db
-
+from .job_listing import get_listing
 
 # create and add a new admin into the db
 def add_admin(password, login_email):
@@ -23,7 +23,6 @@ def add_admin(password, login_email):
             return None
 
 def delete_listing(jobListing_id):
-    from .job_listing import get_listing
 
     joblisting = get_listing(jobListing_id)
 
@@ -49,7 +48,6 @@ def get_all_admins_json():
 
 # delete other listings
 def delete_listing(listing_id):
-    from .job_listing import get_listing
 
     listing = get_listing(listing_id)
 
@@ -62,12 +60,11 @@ def delete_listing(listing_id):
 
 def toggle_listing_approval(listing_id, status):
     print("toggle listing approval function")
-    from .job_listing import get_listing
 
     listing = get_listing(listing_id)
     if not listing:
         return None
-    if status in ["APPROVED", "PENDING", "REJECTED"]:
+    if status in ["APPROVED", "PENDING", "REJECTED", "DELETION REQUESTED", "UPDATE REQUESTED"]:
         listing.admin_approval_status = status
     else:
         return None

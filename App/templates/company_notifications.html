@@ -13,16 +13,6 @@
             color: #333;
         }
 
-        header {
-            background-color: #0056b3;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            position: relative;
-        }
-
         .header-title {
             color: white;
             font-size: 20px;
@@ -49,19 +39,15 @@
             background-color: #e68900;
         }
 
-        .container {
-            max-width: 800px;
+        .notification-container {
+            max-width: 60vw;
+            max-height: 70vh;
             margin: 20px auto;
             background: white;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin: 0 0 20px;
-            color: #0056b3; 
+            overflow:auto;
         }
 
         ul {
@@ -113,12 +99,18 @@
         }
     </style>
 </head>
-<body>
-    <header>
-        <h1 class="header-title">Notifications</h1>
-        <a href="/app" class="job-listings-button">Job Listings</a>
+ <header>
+        <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
+        <h1><a href="/app">DCIT Job Board</a></h1>
+        <h1 class="header-title">Notifications for {{company.registered_name}}</h1>
+        <div class="topnav" id="mynav">
+        <a href="/logout"> Logout</a>
+        <a href="/view_my_account/{{company.id}}"> My Account</a>
+        <a href="/app"> View Listings</a>
+        </div>
     </header>
-    <div class="container">
+<body>
+    <div class="notification-container">
         {% if notifications %}
             <ul>
                 {% for notification in notifications %}

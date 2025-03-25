@@ -267,7 +267,7 @@ def apply(job_id):
     flash("Application submitted successfully!", "success")
     return redirect(url_for("index_views.index_page"))
 
-@alumni_views.route('/my_notifications', methods=['GET'])
+@alumni_views.route('/alumni_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
     

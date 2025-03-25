@@ -16,7 +16,8 @@ from App.controllers import(
     get_listing,
     delete_listing,
     toggle_listing_approval,
-    notify_subscribed_alumnus
+    notify_subscribed_alumnus,
+    notify_company_account
 )
 
 from App.models import(
@@ -76,12 +77,17 @@ def unpublish_job(job_id):
 @admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
 def delete_listing_action(job_id):
-
+    listing = get_listing(job_id)
+    #store values before listing is deleted
+    company_id= listing.company_id
+    company_name= listing.company.registered_name
+    title= listing.title
+   
     deleted = delete_listing(job_id)
-
-    response = None
-
+  
     if deleted:
+        message = f"Ahoy {company_name}! Your listing, {title} has been deleted!"
+        notify_company_account(message, company_id)
         flash('Job listing deleted!', 'success')
         response = redirect(url_for('index_views.index_page'))
     else:
@@ -90,6 +96,24 @@ def delete_listing_action(job_id):
 
     return response
 
+@admin_views.route('/admin_notifications', methods=['GET'])
+@jwt_required()
+def view_notifications_page():
+    
+    admin = current_user
+    
+    if not isinstance(admin, AdminAccount):
+        flash('Not an Alumnus', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    try:
+        # Fetch notifications for the alumnus
+        notifications = admin.notifications.all()
+        return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
+    
+    except Exception as e:
+        flash('Error retrieving notifications', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
 # @index_views.route('/delete-exercise/<int:exercise_id>', methods=['GET'])
 # @login_required

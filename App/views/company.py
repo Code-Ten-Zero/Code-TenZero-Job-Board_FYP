@@ -14,8 +14,8 @@ from App.controllers import(
     add_listing,
     add_categories,
     get_listing,
-    set_request,
-    get_listing_job_applications
+    get_listing_job_applications,
+    notify_admins
 )
 
 from App.models import(
@@ -92,10 +92,13 @@ def add_listing_action():
 @jwt_required()
 def request_delete_listing_action(job_id):
 
-    listing = set_request(job_id, 'Delete')
-    response = None
-
+    listing = get_listing (job_id)
+    message=f"{listing.company.registered_name} requested {listing.title} to be deleted"
+    
     if listing is not None:
+        listing.admin_approval_status = "REQUESTED DELETION"
+        notify_admins(message)
+        db.session.commit()
         flash('Request for deletion sent!', 'success')
         response = redirect(url_for('index_views.index_page'))
     else:
@@ -104,24 +107,24 @@ def request_delete_listing_action(job_id):
 
     return response
 
-# @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
-# @jwt_required()
-# def request_edit_listing_action(job_id):
+@company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+@jwt_required()
+def request_edit_listing_action(job_id):
 
-#     listing = set_request(job_id, 'Edit')
-#     response = None
-#     print(listing.request)
+    listing = get_listing (job_id)
 
-#     if listing is not None:
-#         flash('Request for edit sent!', 'success')
-#         response = redirect(url_for('index_views.index_page'))
-#     else:
-#         flash('Error sending request', 'unsuccessful')
-#         response = redirect(url_for('index_views.login_page'))
+    if listing is not None:
+        listing.admin_approval_status = "REQUESTED UPDATE"
+        db.session.commit()
+        flash('Request for edit sent!', 'success')
+        response = redirect(url_for('index_views.index_page'))
+    else:
+        flash('Error sending request', 'unsuccessful')
+        response = redirect(url_for('index_views.login_page'))
 
-#     return response
+    return response
 
-@company_views.route('/notifications', methods=['GET'])
+@company_views.route('/company_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
     # Assuming current_user is the logged-in company
