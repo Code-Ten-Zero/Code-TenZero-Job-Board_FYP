@@ -3,11 +3,10 @@ from .base_user_account import BaseUserAccount
 
 
 class AdminAccount(BaseUserAccount):
-
     __tablename__ = "admin_accounts"
 
     __mapper_args__ = {
-        'polymorphic_identity': 'admin',
+        'polymorphic_identity': 'admin'
     }
 
     notifications = db.relationship(
