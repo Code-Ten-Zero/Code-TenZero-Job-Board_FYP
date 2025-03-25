@@ -6,14 +6,14 @@ from App.models import BaseUserAccount, AdminAccount, AlumnusAccount
 from App.utils.db_utils import get_records_by_filter, validate_email
 
 """
------- CREATE ------
+===== CREATE =====
 """
 
 
-def add_alumnus(
+def add_alumnus_account(
         login_email: str, password: str, first_name: str, last_name: str,
         phone_number: str = None, profile_photo_file_path: str = None
-):
+) -> AlumnusAccount:
     """
     Adds a new alumnus account to the database.
 
@@ -22,21 +22,30 @@ def add_alumnus(
         password (str): The alumnus' plaintext password (hashed internally before storage).
         first_name (str): The alumnus' first name.
         last_name (str): The alumnus' last name.
-        phone_number (str, optional): The alumnus' unique phone number. Example: "+1-(868)-123-4567 ext. 8910"
+        phone_number (str, optional): The alumnus' unique phone number, which may include country codes and extensions.
         profile_photo_file_path (str, optional): The file path to the alumnus' profile photo.
 
     Returns:
-        AlumnusAccount: The newly added alumnus if successful.
+        AlumnusAccount: The newly added alumnus account if successful.
 
     Raises:
-        IntegrityError: If a database constraint is violated (e.g., duplicate login email).
-        SQLAlchemyError: For any other database-related issues.
+        ValueError: If the provided login email already exists for an account.
+        IntegrityError: If a database constraint is violated.
+        SQLAlchemyError: For other database-related issues.
     """
 
-    # Check if email exists in any subclass of BaseUserAccount dynamically
-    for subclass in BaseUserAccount.__subclasses__():
-        if subclass.query.filter_by(login_email=login_email).first():
-            return None  # Email already exists
+    # Check for existing accounts with duplicate fields
+    check_fields = {
+        "login_email": login_email, "phone_number": phone_number
+    }
+
+    for field, value in check_fields.items():
+        if value:
+            for subclass in BaseUserAccount.__subclasses__():
+                if subclass.get(**{field: value}):
+                    raise ValueError(
+                        f"{field.replace('_', ' ').title()} <'{value}'> already exists."
+                    )
 
     new_alumnus = AlumnusAccount(
         login_email=login_email,
@@ -53,27 +62,25 @@ def add_alumnus(
         return new_alumnus
 
     except IntegrityError as e:
-        print(e)
         db.session.rollback()
-        return None
+        raise IntegrityError(f"A database constraint was violated: {e}")
 
     except SQLAlchemyError as e:
-        print(e)
         db.session.rollback()
-        return None
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
 """
------- READ/GET (SINGLE RECORD) ------
+===== READ/GET (SINGLE RECORD) =====
 """
 
 
 def get_alumnus_account(id: int) -> Optional[AlumnusAccount]:
     """
-    Retrieves a alumnus account by its unique identifier.
+    Retrieves an alumnus account by its unique identifier.
 
     Args:
-        id (int): The unique ID of the alumnus account.
+        id (int): The alumnus' ID.
 
     Returns:
         Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
@@ -83,10 +90,10 @@ def get_alumnus_account(id: int) -> Optional[AlumnusAccount]:
 
 def get_alumnus_account_by_login_email(login_email: str) -> Optional[AlumnusAccount]:
     """
-    Retrieves a alumnus account by its unique login email.
+    Retrieves an alumnus account by its unique login email.
 
     Args:
-        id (int): The unique login_email of the alumnus account.
+        id (int): The alumnus' login email.
 
     Returns:
         Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
@@ -94,18 +101,34 @@ def get_alumnus_account_by_login_email(login_email: str) -> Optional[AlumnusAcco
     return AlumnusAccount.get(login_email=login_email)
 
 
+def get_alumnus_accounts_by_phone_number(phone_number: str) -> Optional[AlumnusAccount]:
+    """
+    Retrieves an alumnus accounts by its unique phone number.
+
+    Args:
+        phone number (str): The alumnus' phone number.
+
+    Returns:
+        Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
+    """
+    return AlumnusAccount.get(phone_number=phone_number)
+
+
 """
------- READ/GET (MULTIPLE RECORDS) ------
+===== READ/GET (MULTIPLE RECORDS) =====
 """
 
 
-def get_all_alumnus_accounts(jsonify_results: bool = False) -> Union[List[AlumnusAccount], List[dict]]:
+def get_all_alumnus_accounts(
+        jsonify_results: bool = False
+) -> Union[List[AlumnusAccount], List[dict]]:
     """
     Retrieves all alumnus accounts from the database.
 
     Args:
-        jsonify_results (bool, optional): If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
-                                          Defaults to False.
+        jsonify_results (bool, optional):
+            If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
+            Defaults to False.
 
     Returns:
         Union[List[AlumnusAccount], List[dict]]: 
@@ -120,14 +143,17 @@ def get_all_alumnus_accounts(jsonify_results: bool = False) -> Union[List[Alumnu
     )
 
 
-def get_alumnus_accounts_by_first_name(first_name: str, jsonify_results: bool = False) -> Union[List[AlumnusAccount], List[dict]]:
+def get_alumnus_accounts_by_first_name(
+        first_name: str, jsonify_results: bool = False
+) -> Union[List[AlumnusAccount], List[dict]]:
     """
     Retrieves all alumnus accounts with the given first name.
 
     Args:
         first_name (str): The alumnus' first name
-        jsonify_results (bool, optional): If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
-                                          Defaults to False.
+        jsonify_results (bool, optional):
+            If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
+            Defaults to False.
 
     Returns:
         Union[List[AlumnusAccount], List[dict]]: 
@@ -144,14 +170,17 @@ def get_alumnus_accounts_by_first_name(first_name: str, jsonify_results: bool = 
     )
 
 
-def get_alumnus_accounts_by_last_name(last_name: str, jsonify_results: bool = False) -> Union[List[AlumnusAccount], List[dict]]:
+def get_alumnus_accounts_by_last_name(
+        last_name: str, jsonify_results: bool = False
+) -> Union[List[AlumnusAccount], List[dict]]:
     """
     Retrieves all alumnus accounts with the given last name.
 
     Args:
         first_name (str): The alumnus' last name
-        jsonify_results (bool, optional): If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
-                                          Defaults to False.
+        jsonify_results (bool, optional):
+            If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
+            Defaults to False.
 
     Returns:
         Union[List[AlumnusAccount], List[dict]]: 
@@ -168,38 +197,17 @@ def get_alumnus_accounts_by_last_name(last_name: str, jsonify_results: bool = Fa
     )
 
 
-def get_alumnus_accounts_by_phone_number(phone_number: str, jsonify_results: bool = False) -> Union[List[AlumnusAccount], List[dict]]:
-    """
-    Retrieves all alumnus accounts with the given phone number.
-
-    Args:
-        phone number (str): The alumnus' phone number.
-        jsonify_results (bool, optional): If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
-                                          Defaults to False.
-
-    Returns:
-        Union[List[AlumnusAccount], List[dict]]: 
-            - If `jsonify_results` is False, returns a list of `AlumnusAccount` objects.
-            - If `jsonify_results` is True, returns a list of dictionaries (JSON format).
-            - Returns an empty list if no alumnus accounts are found.
-    """
-    return get_records_by_filter(
-        AlumnusAccount,
-        lambda: AlumnusAccount.query.filter_by(
-            phone_number=phone_number
-        ),
-        jsonify_results
-    )
-
-
-def get_alumnus_accounts_by_profile_photo_file_path(profile_photo_file_path: str, jsonify_results: bool = False) -> Union[List[AlumnusAccount], List[dict]]:
+def get_alumnus_accounts_by_profile_photo_file_path(
+        profile_photo_file_path: str, jsonify_results: bool = False
+) -> Union[List[AlumnusAccount], List[dict]]:
     """
     Retrieves all alumnus accounts with the given profile photo file path.
 
     Args:
         profile_photo_file_path (str): The file path to the alumnus's profile photo
-        jsonify_results (bool, optional): If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
-                                          Defaults to False.
+        jsonify_results (bool, optional):
+            If True, returns alumnus accounts as a list of JSON-serializable dictionaries.
+            Defaults to False.
 
     Returns:
         Union[List[AlumnusAccount], List[dict]]: 
@@ -217,142 +225,130 @@ def get_alumnus_accounts_by_profile_photo_file_path(profile_photo_file_path: str
 
 
 """
------- UPDATE ------
+===== UPDATE =====
 """
 
 
-def update_alumnus_login_email(id: int, password: str, new_email: str) -> bool:
+def update_alumnus_account_login_email(
+        id: int, password: str, new_login_email: str
+) -> AlumnusAccount:
     """
-    Updates the login email of an alumnus account after verifying their password.
+    Securely updates the alumnus' login email after verifying their current password.
 
     Args:
-        id (int): The ID of the alumnus whose email is being updated.
-        password (str): The current password to verify identity.
-        new_email (str): The new email address to update.
+        id (int): The alumnus' ID.
+        password (str): The alumnus' current password for authentication.
+        new_login_email (str): The new login email.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
-        ValueError: If the alumnus id, new email, or password are empty or invalid.
-        PermissionError: If the password is incorrect.
+        ValueError: If input is invalid or the alumnus was not found.
+        PermissionError: If the current password is incorrect.
         IntegrityError: If the new email is already taken.
-        SQLAlchemyError: For any other database-related issues.
+        SQLAlchemyError: For other database-related issues.
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
-    if not password:
-        raise ValueError("Invalid password <[HIDDEN]>.")
+    if not password or not alumnus.check_password(password):
+        raise PermissionError("Incorrect password.")
 
-    if not alumnus.check_password(password):
-        raise PermissionError("Incorrect password <[HIDDEN]>.")
-
-    if not (new_email and validate_email(new_email)):
-        raise ValueError(f"Invalid email <'{new_email}'>.")
+    if not (new_login_email and validate_email(new_login_email)):
+        raise ValueError(f"Invalid login email '{new_login_email}'.")
 
     try:
-        alumnus.login_email = new_email
+        alumnus.login_email = new_login_email
         db.session.commit()
-        print("Login email updated successfully.")
         return alumnus
 
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
-        raise IntegrityError("Error: Email address already in use.")
+        raise IntegrityError(f"A database constraint was violated: {e}")
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
-def update_alumnus_password(id: int, password: str, new_password: str) -> bool:
+def update_alumnus_account_password(id: int, password: str, new_password: str) -> AlumnusAccount:
     """
-    Updates the password of an alumnus account after verifying their existing password.
+    Securely updates the alumnus' password after verifying their current password.
 
     Args:
-        id (int): The ID of the alumnus whose email is being updated.
-        password (str): The current password to verify identity.
-        new_password (str): The new password to update.
+        id (int): The alumnus' ID.
+        password (str): The alumnus' current password for authentication.
+        new_password (str): The new password.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
-        ValueError: If the alumnus id, new email, or password are empty or invalid.
-        PermissionError: If the password is incorrect.
-        IntegrityError: If the new email is already taken.
-        SQLAlchemyError: For any other database-related issues.
+        ValueError: If input is invalid or the alumnus was not found.
+        PermissionError: If the current password is incorrect.
+        SQLAlchemyError: For other database-related issues.
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
-    if not password:
-        raise ValueError("Invalid password <[HIDDEN]>.")
-
-    if not alumnus.check_password(password):
-        raise PermissionError("Incorrect password <[HIDDEN]>.")
+    if not password or not alumnus.check_password(password):
+        raise PermissionError("Incorrect password.")
 
     if not (new_password):
-        raise ValueError(f"Invalid new password <'{new_password}'>.")
+        raise ValueError("New password cannot be empty.")
 
     try:
         alumnus.set_password(new_password)
         db.session.commit()
-        print("Password updated successfully.")
         return alumnus
-
-    except IntegrityError:
-        db.session.rollback()
-        raise IntegrityError("Error: Email address already in use.")
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
-def update_alumnus_first_name(id: int, new_first_name: str) -> bool:
+def update_alumnus_account_first_name(id: int, new_first_name: str) -> AlumnusAccount:
     """
-    Updates the first name of an alumnus account.
+    Updates the alumnus' first name.
 
     Args:
-        id (int): The ID of the alumnus whose email is being updated.
-        new_first_name (str): The new first name to update.
+        id (int): The alumnus' ID.
+        new_first_name (str): The new first name.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
-        ValueError: If the alumnus id is invalid.
+        ValueError: If the alumnus was not found.
         SQLAlchemyError: For any database-related issues.
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
     try:
         alumnus.first_name = new_first_name
         db.session.commit()
-        print("First name updated successfully.")
         return alumnus
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
-def update_alumnus_last_name(id: int, new_last_name: str) -> bool:
+def update_alumnus_account_last_name(id: int, new_last_name: str) -> AlumnusAccount:
     """
-    Updates the last name of an alumnus account.
+    Updates the alumnus' last name.
 
     Args:
-        id (int): The ID of the alumnus whose email is being updated.
-        new_last_name (str): The new last name to update.
+        id (int): The alumnus' ID.
+        new_last_name (str): The new last name.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
         ValueError: If the alumnus id is invalid.
@@ -360,7 +356,7 @@ def update_alumnus_last_name(id: int, new_last_name: str) -> bool:
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
     try:
         alumnus.last_name = new_last_name
@@ -370,49 +366,56 @@ def update_alumnus_last_name(id: int, new_last_name: str) -> bool:
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
-def update_alumnus_phone_number(id: int, new_phone_number: str) -> bool:
+def update_alumnus_account_phone_number(id: int, new_phone_number: str) -> AlumnusAccount:
     """
-    Updates the phone number of an alumnus account.
+    Updates the alumnus' unique phone number.
 
     Args:
         id (int): The ID of the alumnus whose email is being updated.
-        new_phone_number (str): The new phone number to update.
+        new_phone_number (str): The new, unique phone number to update.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
         ValueError: If the alumnus id is invalid.
+        IntegrityError: If the phone number is already in use.
         SQLAlchemyError: For any database-related issues.
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
     try:
         alumnus.phone_number = new_phone_number
         db.session.commit()
-        print("First name updated successfully.")
+        print("Phone number updated successfully.")
         return alumnus
+
+    except IntegrityError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"Database constraint violated: {e}")
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
-def update_alumnus_profile_photo(id: int, new_profile_photo_file_path: str) -> bool:
+def update_alumnus_account_profile_photo(
+        id: int, new_profile_photo_file_path: str
+) -> AlumnusAccount:
     """
-    Updates the profile photo of an alumnus account.
+    Updates the alumnus' profile photo.
 
     Args:
         id (int): The ID of the alumnus whose email is being updated.
         new_profile_photo_file_path (str): The new profile photo's file path to update.
 
     Returns:
-        AlumnusAccount: The updated AlumnusAccount if successful.
+        AlumnusAccount: The updated alumnus account if successful.
 
     Raises:
         ValueError: If the alumnus id is invalid.
@@ -420,7 +423,7 @@ def update_alumnus_profile_photo(id: int, new_profile_photo_file_path: str) -> b
     """
     alumnus = get_alumnus_account(id)
     if not alumnus:
-        raise ValueError(f"Alumnus with id <{id}> not found.")
+        raise ValueError(f"Alumnus with id {id} not found.")
 
     try:
         alumnus.profile_photo_file_path = new_profile_photo_file_path
@@ -430,11 +433,11 @@ def update_alumnus_profile_photo(id: int, new_profile_photo_file_path: str) -> b
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"Database error occurred: {e}")
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 
 """
------- DELETE
+===== DELETE =====
 """
 
 
@@ -443,36 +446,32 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
     Securely deletes an alumnus account if the requester is an admin.
 
     Args:
-        target_id (int): The ID of the alumnus account to delete.
+        target_id (int): The ID of the alumnus account to be deleted.
         requester_id (int): The ID of the admin requesting the deletion.
 
     Raises:
-        ValueError: If the targeted account does not exist, or the requester tries to delete themselves.
-        PermissionError: If the requester is not an admin/does not exist.
+        ValueError: If the targeted account does not exist.
+        PermissionError: If the requester does not exist or lacks permissions.
         SQLAlchemyError: For any database-related issues.
     """
-    if target_id == requester_id:
-        raise ValueError(
-            "Cannot request self-deletion. There must always be at least one alumnus.")
 
     alumnus_to_delete = get_alumnus_account(target_id)
     if not alumnus_to_delete:
         raise ValueError(
-            f"Target alumnus account with id <{target_id}> not found")
+            f"Target alumnus account with id {target_id} not found")
 
-    requesting_admin = AdminAccount.get(id=requester_id)
-    if not requesting_admin:
+    if not AdminAccount.get(id=requester_id):
         raise PermissionError(
-            f"Requester admin account with id <{requester_id}> not found")
+            f"Requester (Admin ID {requester_id}) not found or lacks permissions."
+        )
 
     try:
         db.session.delete(alumnus_to_delete)
         db.session.commit()
-        print(f"Alumnus account with id <'{id}'> deleted successfully")
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        print(f"Error deleting alumnus account with id <'{id}'>: {e}")
+        raise SQLAlchemyError(f"A database error has occured: {e}")
 
 
 # def delete_listing(jobListing_id):
@@ -522,7 +521,6 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
 #         print(f'my error: {e}')
 #         db.session.rollback()
 #         return None
-
 
 
 # def is_alumni_subscribed(id):
