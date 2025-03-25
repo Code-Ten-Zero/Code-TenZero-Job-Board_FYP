@@ -298,35 +298,6 @@ def delete_admin_account(target_id: int, requester_id: int) -> None:
         db.session.rollback()
         raise SQLAlchemyError(f"A database error has occured: {e}")
 
-
-# def delete_listing(jobListing_id):
-#     from .job_listing import get_listing
-
-#     joblisting = get_listing(jobListing_id)
-
-#     if joblisting is not None:
-#         db.session.delete(joblisting)
-#         db.session.commit()
-#         return True
-
-#     return None
-
-# # delete other listings
-
-
-# def delete_listing(listing_id):
-#     from .job_listing import get_listing
-
-#     listing = get_listing(listing_id)
-
-#     if listing is not None:
-#         db.session.delete(listing)
-#         db.session.commit()
-#         return True
-
-#     return None
-
-
 # def toggle_listing_approval(listing_id, status):
 #     print("toggle listing approval function")
 #     from .job_listing import get_listing

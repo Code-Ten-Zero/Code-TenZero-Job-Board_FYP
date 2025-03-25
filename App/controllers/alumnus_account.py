@@ -474,34 +474,6 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
         raise SQLAlchemyError(f"A database error has occured: {e}")
 
 
-# def delete_listing(jobListing_id):
-#     from .job_listing import get_listing
-
-#     joblisting = get_listing(jobListing_id)
-
-#     if joblisting is not None:
-#         db.session.delete(joblisting)
-#         db.session.commit()
-#         return True
-
-#     return None
-
-# # delete other listings
-
-
-# def delete_listing(listing_id):
-#     from .job_listing import get_listing
-
-#     listing = get_listing(listing_id)
-
-#     if listing is not None:
-#         db.session.delete(listing)
-#         db.session.commit()
-#         return True
-
-#     return None
-
-
 # def toggle_listing_approval(listing_id, status):
 #     print("toggle listing approval function")
 #     from .job_listing import get_listing
@@ -600,67 +572,6 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
 # adding and removing job categories
 
 
-# def add_categories(id, job_categories):
-#     alumni = get_alumni(id)
-#     try:
-#         for category in job_categories:
-#             # print(category)
-#             alumni.add_category(category)
-#             # print(alumni.get_categories())
-#             db.session.commit()
-#         return alumni
-#     except:
-#         db.session.rollback()
-#         return None
-
-
-# def remove_categories(id, job_categories):
-#     alumni = get_alumni(id)
-#     try:
-#         for category in job_categories:
-#             alumni.remove_category(category)
-#             db.session.commit()
-#         return alumni
-#     except:
-#         db.session.rollback()
-#         return None
-
-# # apply to an application
-# # def apply_listing(alumni_id, listing_title):
-
-
-# def apply_listing(id, joblisting_id):
-#     from App.controllers import get_listing, get_company_by_name
-
-#     alumni = get_alumni(id)
-
-#     # error check to see if alumni exists
-#     if alumni is None:
-#         # print('is none')
-#         return None
-
-#     # get the listing and then company that made the listing
-#     listing = get_listing(joblisting_id)
-
-#     if listing is None:
-#         return None
-
-#     # add the alumni to the listing applicant
-#     listing.applicant.append(alumni)
-#     alumni.listing.append(listing)
-
-#     company = get_company_by_name(listing.company_name)
-
-#     # commit changes to the database
-#     db.session.commit()
-
-#     listing.notify_observers(alumni, company)
-
-#     # add the alumni as an applicant to the company model object?
-
-#     return alumni
-
-
 # def set_alumni_modal_seen(id):
 #     alumni = get_alumni(id)
 #     alumni.has_seen_modal = True
@@ -676,55 +587,3 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
 #         if listing.alumnus_approval_status == "APPROVED":
 #             my_approved_listings.append(listing)
 #     return my_approved_listings
-
-
-# def update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password):
-#     alumni = get_alumni(id)
-#     update_made = False
-#     # print("current password:")
-#     # print (current_password)
-#     # print("new password:")
-#     # print(new_password)
-
-#     if alumni.check_password(current_password):
-#         if alumni.first_name != first_name:
-#             alumni.first_name = first_name
-#             print("first name updated")
-#             update_made = True
-
-#         if alumni.last_name != last_name:
-#             alumni.last_name = last_name
-#             print("last name updated")
-#             update_made = True
-
-#         if alumni.phone_number != phone_number:
-#             alumni.phone_number = phone_number
-#             print("phone number updated")
-#             update_made = True
-
-#         if alumni.login_email != login_email:
-#             alumni.login_email = login_email
-#             print("email updated")
-#             update_made = True
-
-#         if new_password:
-#             alumni.set_password(new_password)
-#             print("password updated")
-#             update_made = True
-
-#     if update_made:
-#         db.session.commit()
-
-#     return update_made
-
-
-# def get_saved_listings(alumnus_id):
-#     saved_listings = SavedJobListing.query.filter_by(
-#         alumnus_id=alumnus_id).all()
-#     return saved_listings
-
-
-# def get_job_applications(alumnus_id):
-#     job_applications = JobApplication.query.filter_by(
-#         alumnus_id=alumnus_id).all()
-#     return job_applications
