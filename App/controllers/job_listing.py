@@ -36,7 +36,7 @@ def add_job_listing(
         SQLAlchemyError: For other database-related issues.
     """
 
-    if not CompanyAccount.get(company_id):
+    if not db.session.get(CompanyAccount, company_id):
         raise ValueError(f"Company with id {id} not found")
 
     if monthly_salary_ttd <= 0:
@@ -82,7 +82,7 @@ def get_job_listing(id: int) -> Optional[JobListing]:
     Returns:
         Optional[JobListing]: The matching job listing if found, otherwise None.
     """
-    return JobListing.get(id=id)
+    return db.session.get(JobListing, id)
 
 
 """
@@ -661,7 +661,7 @@ def delete_job_listing(target_id: int, requester_id: int) -> None:
         raise ValueError(
             f"Target job listing with id {target_id} was not found")
 
-    if not AdminAccount.get(id=requester_id):
+    if not db.session.get(AdminAccount, requester_id):
         raise PermissionError(
             f"Requester (Admin ID {requester_id}) was was not found or lacks permissions."
         )

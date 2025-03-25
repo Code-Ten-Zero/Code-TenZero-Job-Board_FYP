@@ -46,7 +46,7 @@ def add_company_account(
     for field, value in check_fields.items():
         if value:
             for subclass in BaseUserAccount.__subclasses__():
-                if subclass.get(**{field: value}):
+                if subclass.query.filter_by(**{field: value}).first():
                     raise ValueError(
                         f"{field.replace('_', ' ').title()} <'{value}'> already exists."
                     )
@@ -91,7 +91,7 @@ def get_company_account(id: int) -> Optional[CompanyAccount]:
     Returns:
         Optional[CompanyAccount]: The matching company account if found, otherwise None.
     """
-    return CompanyAccount.get(id=id)
+    return db.session.get(CompanyAccount, id)
 
 
 def get_company_account_by_login_email(login_email: str) -> Optional[CompanyAccount]:
@@ -104,7 +104,7 @@ def get_company_account_by_login_email(login_email: str) -> Optional[CompanyAcco
     Returns:
         Optional[CompanyAccount]: The matching company account if found, otherwise None.
     """
-    return CompanyAccount.get(login_email=login_email)
+    return CompanyAccount.query.filter_by(login_email=login_email).first()
 
 
 def get_company_account_by_registered_name(registered_name: str) -> Optional[CompanyAccount]:
@@ -117,7 +117,7 @@ def get_company_account_by_registered_name(registered_name: str) -> Optional[Com
     Returns:
         Optional[CompanyAccount]: The matching company account if found, otherwise None.
     """
-    return CompanyAccount.get(registered_name=registered_name)
+    return CompanyAccount.query.filter_by(registered_name=registered_name).first()
 
 
 def get_company_account_by_phone_number(phone_number: str) -> Optional[CompanyAccount]:
@@ -130,7 +130,7 @@ def get_company_account_by_phone_number(phone_number: str) -> Optional[CompanyAc
     Returns:
         Optional[CompanyAccount]: The matching company account if found, otherwise None.
     """
-    return CompanyAccount.get(phone_number=phone_number)
+    return CompanyAccount.query.filter_by(phone_number=phone_number).first()
 
 
 def get_company_account_by_website_url(website_url: str) -> Optional[CompanyAccount]:
@@ -143,7 +143,7 @@ def get_company_account_by_website_url(website_url: str) -> Optional[CompanyAcco
     Returns:
         Optional[CompanyAccount]: The matching company account if found, otherwise None.
     """
-    return CompanyAccount.get(website_url=website_url)
+    return CompanyAccount.query.filter_by(website_url=website_url).first()
 
 
 """
@@ -529,7 +529,7 @@ def delete_company_account(target_id: int, requester_id: int) -> None:
         raise ValueError(
             f"Target company account with id {target_id} was not found")
 
-    if not AdminAccount.get(id=requester_id):
+    if not db.session.get(AdminAccount, requester_id):
         raise PermissionError(
             f"Requester (Admin ID {requester_id}) was was not found or lacks permissions."
         )

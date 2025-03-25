@@ -30,7 +30,7 @@ def add_admin_account(login_email: str, password: str, profile_photo_file_path: 
 
     # Check if unique fields exist in any subclass of BaseUserAccount dynamically
     for subclass in BaseUserAccount.__subclasses__():
-        if subclass.get(login_email=login_email):
+        if subclass.query.filter_by(login_email=login_email).first():
             raise ValueError(
                 f"Login email '{login_email}' already exists for another account."
             )
@@ -70,7 +70,7 @@ def get_admin_account(id: int) -> Optional[AdminAccount]:
     Returns:
         Optional[AdminAccount]: The matching admin account if found, otherwise None.
     """
-    return AdminAccount.get(id=id)
+    return db.session.get(AdminAccount, id)
 
 
 def get_admin_account_by_login_email(login_email: str) -> Optional[AdminAccount]:
@@ -83,7 +83,7 @@ def get_admin_account_by_login_email(login_email: str) -> Optional[AdminAccount]
     Returns:
         Optional[AdminAccount]: The matching admin account if found, otherwise None.
     """
-    return AdminAccount.get(login_email=login_email)
+    return AdminAccount.query.filter_by(login_email=login_email)
 
 
 """

@@ -42,7 +42,7 @@ def add_alumnus_account(
     for field, value in check_fields.items():
         if value:
             for subclass in BaseUserAccount.__subclasses__():
-                if subclass.get(**{field: value}):
+                if subclass.query.filter_by(**{field: value}).first():
                     raise ValueError(
                         f"{field.replace('_', ' ').title()} <'{value}'> already exists."
                     )
@@ -85,7 +85,7 @@ def get_alumnus_account(id: int) -> Optional[AlumnusAccount]:
     Returns:
         Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
     """
-    return AlumnusAccount.get(id=id)
+    return db.session.get(AlumnusAccount, id)
 
 
 def get_alumnus_account_by_login_email(login_email: str) -> Optional[AlumnusAccount]:
@@ -98,7 +98,7 @@ def get_alumnus_account_by_login_email(login_email: str) -> Optional[AlumnusAcco
     Returns:
         Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
     """
-    return AlumnusAccount.get(login_email=login_email)
+    return AlumnusAccount.query.filter_by(login_email=login_email).first()
 
 
 def get_alumnus_accounts_by_phone_number(phone_number: str) -> Optional[AlumnusAccount]:
@@ -111,7 +111,7 @@ def get_alumnus_accounts_by_phone_number(phone_number: str) -> Optional[AlumnusA
     Returns:
         Optional[AlumnusAccount]: The matching alumnus account if found, otherwise None.
     """
-    return AlumnusAccount.get(phone_number=phone_number)
+    return AlumnusAccount.query.filter_by(phone_number=phone_number).first()
 
 
 """
@@ -460,7 +460,7 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
         raise ValueError(
             f"Target alumnus account with id {target_id} not found")
 
-    if not AdminAccount.get(id=requester_id):
+    if not db.session.get(AdminAccount, requester_id):
         raise PermissionError(
             f"Requester (Admin ID {requester_id}) not found or lacks permissions."
         )
