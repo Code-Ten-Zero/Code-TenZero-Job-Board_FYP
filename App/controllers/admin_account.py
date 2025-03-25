@@ -23,7 +23,8 @@ def add_admin(login_email: str, password: str, profile_photo_file_path: str = No
         AdminAccount: The newly added admin if successful.
 
     Raises:
-        IntegrityError: If a database constraint is violated (e.g., duplicate email).
+        IntegrityError: If a database constraint is violated (e.g., duplicate login email).
+        SQLAlchemyError: For any other database-related issues.
     """
 
     # Check if email exists in any subclass of BaseUserAccount dynamically
@@ -68,7 +69,7 @@ def get_admin_account(id: int) -> Optional[AdminAccount]:
     Returns:
         Optional[AdminAccount]: The matching admin account if found, otherwise None.
     """
-    return AdminAccount.query.filter_by(id=id).first()
+    return AdminAccount.get(id=id)
 
 
 def get_admin_account_by_login_email(login_email: str) -> Optional[AdminAccount]:
@@ -81,7 +82,7 @@ def get_admin_account_by_login_email(login_email: str) -> Optional[AdminAccount]
     Returns:
         Optional[AdminAccount]: The matching admin account if found, otherwise None.
     """
-    return AdminAccount.query.filter_by(login_email=login_email).first()
+    return AdminAccount.get(login_email=login_email)
 
 
 """
@@ -139,7 +140,7 @@ def get_admin_accounts_by_profile_photo_file_path(profile_photo_file_path: str, 
 """
 
 
-def update_admin_login_email(id: int, password: str, int, new_email: str) -> bool:
+def update_admin_login_email(id: int, password: str, new_email: str) -> bool:
     """
     Updates the login email of an admin account after verifying their password.
 

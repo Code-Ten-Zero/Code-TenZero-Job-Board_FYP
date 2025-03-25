@@ -49,7 +49,7 @@ class AlumnusAccount(BaseUserAccount):
         Initializes a new alumnus account.
 
         Args:
-            login_email (str): The unique email used to log into the admin's account.
+            login_email (str): The unique email used to log into the alumnus' account.
             password (str): The alumnus' plaintext password (hashed internally before storage).
             first_name (str): The alumnus' first name.
             last_name (str): The alumnus' last name.
