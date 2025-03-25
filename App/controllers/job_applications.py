@@ -31,10 +31,10 @@ def add_job_application(
         SQLAlchemyError: For other database-related issues.
     """
 
-    if not AlumnusAccount.get(alumnus_id):
+    if not db.session.get(AlumnusAccount, alumnus_id):
         raise ValueError(f"Alumnus with id {id} not found")
 
-    if not JobListing.get(job_listing_id):
+    if not db.session.get(JobListing, job_listing_id):
         raise ValueError(f"Job listing with id {id} not found")
 
     if not resume_file_path:
@@ -256,7 +256,7 @@ def delete_job_application(
             f"Target job application with alumnus id {alumnus_id} and job listing id {job_listing_id} was not found."
         )
 
-    if not AdminAccount.get(id=requester_id):
+    if not db.session.get(AdminAccount, requester_id):
         raise PermissionError(
             f"Requester (Admin ID {requester_id}) was was not found or lacks permissions."
         )
