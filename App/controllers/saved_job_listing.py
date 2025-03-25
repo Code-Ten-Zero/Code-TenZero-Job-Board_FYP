@@ -76,7 +76,7 @@ def get_saved_job_listing(alumnus_id: int, job_listing_id: int) -> Optional[Save
 """
 
 
-def get_all_job_applications(
+def get_all_saved_job_listings(
         jsonify_results: bool = False
 ) -> Union[List[SavedJobListing], List[dict]]:
     """
@@ -100,7 +100,7 @@ def get_all_job_applications(
     )
 
 
-def get_job_applications_by_alumnus_id(
+def get_saved_job_listings_by_alumnus_id(
         alumnus_id: int, jsonify_results: bool = False
 ) -> Union[List[SavedJobListing], List[dict]]:
     """
@@ -125,7 +125,7 @@ def get_job_applications_by_alumnus_id(
     )
 
 
-def get_job_applications_by_job_listing_id(
+def get_saved_job_listings_by_job_listing_id(
         job_listing_id: int, jsonify_results: bool = False
 ) -> Union[List[SavedJobListing], List[dict]]:
     """
@@ -155,7 +155,7 @@ def get_job_applications_by_job_listing_id(
 """
 
 
-def delete_job_application(
+def delete_saved_job_listing(
         alumnus_id: int, job_listing_id: int, requester_id: int
 ) -> None:
     """
