@@ -137,7 +137,6 @@ def get_all_alumnus_accounts(
             - Returns an empty list if no alumnus accounts are found.
     """
     return get_records_by_filter(
-        AlumnusAccount,
         lambda: AlumnusAccount.query.all(),
         jsonify_results
     )
@@ -162,7 +161,6 @@ def get_alumnus_accounts_by_first_name(
             - Returns an empty list if no alumnus accounts are found.
     """
     return get_records_by_filter(
-        AlumnusAccount,
         lambda: AlumnusAccount.query.filter_by(
             first_name=first_name
         ),
@@ -189,7 +187,6 @@ def get_alumnus_accounts_by_last_name(
             - Returns an empty list if no alumnus accounts are found.
     """
     return get_records_by_filter(
-        AlumnusAccount,
         lambda: AlumnusAccount.query.filter_by(
             last_name=last_name
         ),
@@ -216,7 +213,6 @@ def get_alumnus_accounts_by_profile_photo_file_path(
             - Returns an empty list if no alumnus accounts are found.
     """
     return get_records_by_filter(
-        AlumnusAccount,
         lambda: AlumnusAccount.query.filter_by(
             profile_photo_file_path=profile_photo_file_path
         ),

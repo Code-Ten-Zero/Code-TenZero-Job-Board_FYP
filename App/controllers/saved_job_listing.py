@@ -94,7 +94,6 @@ def get_all_saved_job_listings(
             - Returns an empty list if no saved job listings are found.
     """
     return get_records_by_filter(
-        SavedJobListing,
         lambda: SavedJobListing.query.all(),
         jsonify_results
     )
@@ -119,7 +118,6 @@ def get_saved_job_listings_by_alumnus_id(
             - Returns an empty list if no saved job listings are found.
     """
     return get_records_by_filter(
-        SavedJobListing,
         lambda: SavedJobListing.query.filter_by(alumnus_id=alumnus_id),
         jsonify_results
     )
@@ -144,7 +142,6 @@ def get_saved_job_listings_by_job_listing_id(
             - Returns an empty list if no saved job listings are found.
     """
     return get_records_by_filter(
-        SavedJobListing,
         lambda: SavedJobListing.query.filter_by(alumnus_id=job_listing_id),
         jsonify_results
     )

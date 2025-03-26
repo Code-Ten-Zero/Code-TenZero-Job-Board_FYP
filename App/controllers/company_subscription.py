@@ -94,7 +94,6 @@ def get_all_company_subscriptions(
             - Returns an empty list if no company subscriptions are found.
     """
     return get_records_by_filter(
-        CompanySubscription,
         lambda: CompanySubscription.query.all(),
         jsonify_results
     )
@@ -119,7 +118,6 @@ def get_company_subscriptions_by_alumnus_id(
             - Returns an empty list if no company subscriptions are found.
     """
     return get_records_by_filter(
-        CompanySubscription,
         lambda: CompanySubscription.query.filter_by(alumnus_id=alumnus_id),
         jsonify_results
     )
@@ -144,7 +142,6 @@ def get_company_subscriptions_by_company_id(
             - Returns an empty list if no company subscriptions are found.
     """
     return get_records_by_filter(
-        CompanySubscription,
         lambda: CompanySubscription.query.filter_by(alumnus_id=company_id),
         jsonify_results
     )

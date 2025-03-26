@@ -6,6 +6,4 @@ from .company_subscription import *
 from .job_application import *
 from .job_listing import *
 from .notification import *
-from .observer import *
 from .saved_job_listing import *
-from .subject import *

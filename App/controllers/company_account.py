@@ -169,7 +169,6 @@ def get_all_company_accounts(
             - Returns an empty list if no company accounts are found.
     """
     return get_records_by_filter(
-        CompanyAccount,
         lambda: CompanyAccount.query.all(),
         jsonify_results
     )
@@ -194,7 +193,6 @@ def get_company_accounts_by_mailing_address(
             - Returns an empty list if no company accounts are found.
     """
     return get_records_by_filter(
-        CompanyAccount,
         lambda: CompanyAccount.query.filter_by(
             mailing_address=mailing_address
         ),
@@ -221,7 +219,6 @@ def get_company_accounts_by_profile_photo_file_path(
             - Returns an empty list if no company accounts are found.
     """
     return get_records_by_filter(
-        CompanyAccount,
         lambda: CompanyAccount.query.filter_by(
             profile_photo_file_path=profile_photo_file_path
         ),

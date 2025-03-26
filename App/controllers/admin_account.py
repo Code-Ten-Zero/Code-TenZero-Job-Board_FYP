@@ -107,7 +107,6 @@ def get_all_admin_accounts(jsonify_results: bool = False) -> Union[List[AdminAcc
             - Returns an empty list if no admin accounts are found.
     """
     return get_records_by_filter(
-        AdminAccount,
         lambda: AdminAccount.query.all(),
         jsonify_results
     )
@@ -132,7 +131,6 @@ def get_admin_accounts_by_profile_photo_file_path(
             - Returns an empty list if no admin accounts are found.
     """
     return get_records_by_filter(
-        AdminAccount,
         lambda: AdminAccount.query.filter_by(
             profile_photo_file_path=profile_photo_file_path
         ),

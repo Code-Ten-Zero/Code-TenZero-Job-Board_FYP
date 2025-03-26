@@ -108,7 +108,6 @@ def get_all_job_listings(
             - Returns an empty list if no job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.all(),
         jsonify_results
     )
@@ -133,7 +132,6 @@ def get_job_listings_by_company_id(
             - Returns an empty list if no job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(company_id=company_id),
         jsonify_results
     )
@@ -158,7 +156,6 @@ def get_job_listings_by_exact_title(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(title=job_title),
         jsonify_results
     )
@@ -183,7 +180,6 @@ def get_job_listings_by_exact_position_type(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(position_type=position_type),
         jsonify_results
     )
@@ -208,7 +204,6 @@ def get_job_listings_by_exact_description(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(description=description),
         jsonify_results
     )
@@ -233,7 +228,6 @@ def get_job_listings_by_monthly_salary_ttd(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(
             monthly_salary_ttd=monthly_salary_ttd
         ),
@@ -260,7 +254,6 @@ def get_job_listings_by_is_remote(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(
             is_remote=is_remote
         ),
@@ -287,7 +280,6 @@ def get_job_listings_by_job_site_address(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter_by(
             job_site_address=job_site_address
         ),
@@ -319,7 +311,6 @@ def get_job_listings_by_similar_title(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter(
             JobListing.title.ilike(f"%{job_title}%")
         ),
@@ -346,7 +337,6 @@ def get_job_listings_by_similar_position_type(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter(
             JobListing.position_type.ilike(f"%{position_type}%")
         ),
@@ -373,7 +363,6 @@ def get_job_listing_by_similar_description(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter(
             JobListing.description.ilike(f"%{description}%")),
         jsonify_results
@@ -399,7 +388,6 @@ def get_job_listing_by_similar_job_site_address(
             - Returns an empty list if no similar job listings are found.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter(
             JobListing.job_site_address.ilike(f"%{job_site_address}%")),
         jsonify_results
@@ -426,7 +414,6 @@ def get_job_listings_by_salary_range(
         List[JobListing] or List[dict]: A list of job listings within the given salary range.
     """
     return get_records_by_filter(
-        JobListing,
         lambda: JobListing.query.filter(
             JobListing.monthly_salary_ttd >= min_monthly_salary_ttd,
             JobListing.monthly_salary_ttd <= max_monthly_salary_ttd

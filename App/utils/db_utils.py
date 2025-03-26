@@ -3,15 +3,15 @@ from typing import List, Union
 from sqlalchemy.orm import Query
 
 
-def get_records_by_filter(model, filter_func, jsonify_results: bool = False) -> Union[List[object], List[dict]]:
+def get_records_by_filter(filter_func, jsonify_results: bool = False) -> Union[List[object], List[dict]]:
     """
     Generic function to search and retrieve records based on a custom filter function.
 
     Args:
-        model (SQLAlchemy Model): The SQLAlchemy model class (e.g., JobListing, User, etc.).
         filter_func (function): A function that returns a SQLAlchemy query object for filtering.
-        jsonify_results (bool, optional): If True, returns the results as JSON-serializable dictionaries.
-                                          Defaults to False, otherwise returns raw model objects.
+        jsonify_results (bool, optional):
+            If True, returns the results as JSON-serializable dictionaries.
+            Defaults to False, otherwise returns raw model objects.
 
     Returns:
         Union[List[object], List[dict]]: 

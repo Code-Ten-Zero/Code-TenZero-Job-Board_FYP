@@ -104,7 +104,6 @@ def get_all_job_applications(
             - Returns an empty list if no job applications are found.
     """
     return get_records_by_filter(
-        JobApplication,
         lambda: JobApplication.query.all(),
         jsonify_results
     )
@@ -129,7 +128,6 @@ def get_job_applications_by_alumnus_id(
             - Returns an empty list if no job applications are found.
     """
     return get_records_by_filter(
-        JobApplication,
         lambda: JobApplication.query.filter_by(alumnus_id=alumnus_id),
         jsonify_results
     )
@@ -154,7 +152,6 @@ def get_job_applications_by_job_listing_id(
             - Returns an empty list if no job applications are found.
     """
     return get_records_by_filter(
-        JobApplication,
         lambda: JobApplication.query.filter_by(alumnus_id=job_listing_id),
         jsonify_results
     )
@@ -179,7 +176,6 @@ def get_job_applications_by_resume_file_path(
             - Returns an empty list if no similar job applications are found.
     """
     return get_records_by_filter(
-        JobApplication,
         lambda: JobApplication.query.filter_by(
             resume_file_path=resume_file_path
         ),
