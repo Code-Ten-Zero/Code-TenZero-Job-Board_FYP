@@ -1,109 +1,88 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
-from App.models import db
-# from App.controllers import create_user
+from flask import Blueprint, flash, redirect, url_for
+from flask_jwt_extended import current_user, jwt_required
 
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from App.controllers.job_listing import (
+    approve_job_listing,
+    unapprove_job_listing,
+    delete_job_listing
+)
 
-from .index import index_views
+from App.controllers.company_account import (
+    get_company_account
+)
 
-
-from App.controllers import(
-    get_user_by_email,
-    get_all_listings,
-    get_company_listings,
-    add_listing,
-    add_categories,
-    get_listing,
-    delete_listing,
-    toggle_listing_approval,
+from App.controllers.notifications import (
     notify_subscribed_alumnus
 )
 
-from App.models import(
-    AlumnusAccount,
-    CompanyAccount,
-    AdminAccount,
-    JobListing,
-    Notification
+
+admin_views = Blueprint(
+    'admin_views',
+    __name__,
+    template_folder='../templates'
 )
 
-admin_views = Blueprint('admin_views', __name__, template_folder='../templates')
+INDEX_PAGE_URL = 'index_views.index_page'
 
-# handle publish
-@admin_views.route('/publish_job/<int:job_id>', methods=['POST'])
+
+@admin_views.route('/publish_job/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
-def publish_job(job_id):
-    toggled = toggle_listing_approval(job_id,status='APPROVED') # Set the job as approved
+def publish_job(job_listing_id):
+    approved_listing = approve_job_listing(job_listing_id)
 
-    if toggled:
-        
-        job_listing = JobListing.query.get(job_id)
-        if job_listing and job_listing.company:
-            # Get the company name from the job listing's associated company
-            
-            company_name = job_listing.company.registered_name
-            company_id= job_listing.company.id
-            
-            # Send the notification with company name
-            notify_subscribed_alumnus(f"{company_name} posted a new listing, {job_listing.title}!", company_id)
-            
+    if approved_listing:
+        listing_company = get_company_account(approved_listing.company_id)
+
+        if listing_company:
+            company_name = listing_company.registered_name
+            company_id = listing_company.id
+
+            notify_subscribed_alumnus(
+                f"{company_name} posted a new listing, {approved_listing.title}!",
+                company_id
+            )
+
         flash('Job published successfully!', 'success')
-        subscribed_alumni = Notification.query.all()
-        print(len(subscribed_alumni))
-        response = redirect(url_for('index_views.index_page'))
+        response = redirect(url_for(INDEX_PAGE_URL))
+
     else:
         flash('Job not found', 'unsuccessful')
-        response = redirect(url_for('index_views.index_page'))
+        response = redirect(url_for(INDEX_PAGE_URL))
+
     return response
 
 
-# handle unpublish
-@admin_views.route('/unpublish_job/<int:job_id>', methods=['POST'])
+@admin_views.route('/unpublish_job/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
-def unpublish_job(job_id):
-    toggled = toggle_listing_approval(job_id,status='PENDING')
+def unpublish_job(job_listing_id):
+    unpublished_listing = unapprove_job_listing(job_listing_id)
 
-    if not toggled:
+    if not unpublished_listing:
         flash('Job unpublished successfully!', 'success')
-        response = redirect(url_for('index_views.index_page'))
+        response = redirect(url_for(INDEX_PAGE_URL))
     else:
         flash('Job not found', 'unsuccessful')
-        response = (redirect(url_for('index_views.index_page')))
+        response = (redirect(url_for(INDEX_PAGE_URL)))
 
-    return response  # Redirect to the admin dashboard
+    return response
 
-# handle deletion
-@admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
+
+@admin_views.route('/delete_listing/<int:job_listing_id>', methods=['GET'])
 @jwt_required()
-def delete_listing_action(job_id):
+def delete_listing_action(job_listing_id):
 
-    deleted = delete_listing(job_id)
+    deleted_listing = delete_job_listing(
+        job_listing_id,
+        current_user.id
+    )
 
     response = None
 
-    if deleted:
+    if deleted_listing:
         flash('Job listing deleted!', 'success')
-        response = redirect(url_for('index_views.index_page'))
+        response = redirect(url_for(INDEX_PAGE_URL))
     else:
         flash('Error deleting job listing', 'unsuccessful')
-        response = (redirect(url_for('index_views.index_page')))
+        response = (redirect(url_for(INDEX_PAGE_URL)))
 
     return response
-
-
-# @index_views.route('/delete-exercise/<int:exercise_id>', methods=['GET'])
-# @login_required
-# def delete_exercise_action(exercise_id):
-    
-#     user = current_user
-
-#     res = delete_exerciseSet(exercise_id)
-
-#     if res == None:
-#         flash('Invalid or unauthorized')
-#     else:
-#         flash('exercise deleted!')
-#     return redirect(url_for('user_views.userInfo_page'))
-
-
-# handle updates

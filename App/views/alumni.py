@@ -202,26 +202,26 @@ def get_saved_job_listing():
 
     return jsonify([listing.job_listing_id for listing in already_saved])
 
-@alumni_views.route('/save_listing/<job_id>', methods=['POST'])
+@alumni_views.route('/save_listing/<job_listing_id>', methods=['POST'])
 @jwt_required()
-def save_job_listing(job_id):
+def save_job_listing(job_listing_id):
     alumnus_id = current_user.id
 
-    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_id).first()
+    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
 
     if not already_saved:
-        new_saved_job_listing = SavedJobListing(alumnus_id=alumnus_id, job_listing_id=job_id)
+        new_saved_job_listing = SavedJobListing(alumnus_id=alumnus_id, job_listing_id=job_listing_id)
         db.session.add(new_saved_job_listing)
         db.session.commit()
 
         return jsonify({"message": "Job saved successfully!", "status": "saved"}), 201
 
-@alumni_views.route('/remove_saved_listing/<job_id>', methods=['GET'])
+@alumni_views.route('/remove_saved_listing/<job_listing_id>', methods=['GET'])
 @jwt_required()
-def remove_listing(job_id):
+def remove_listing(job_listing_id):
     alumnus_id = current_user.id
 
-    already_saved_job = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_id).first()
+    already_saved_job = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
 
     if not already_saved_job:
         return jsonify({"message": "Job not saved!", "status": "error"}), 404
@@ -231,9 +231,9 @@ def remove_listing(job_id):
 
     return jsonify({"message": "Job Removed from saved listings", "status":"removed"}), 200
 
-@alumni_views.route('/apply_to_listing/<int:job_id>', methods=['POST'])
+@alumni_views.route('/apply_to_listing/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
-def apply(job_id):
+def apply(job_listing_id):
     # Get form data
     work_experience = request.form.get("work-experience")
     resume = request.files["resume"]
@@ -253,7 +253,7 @@ def apply(job_id):
     # Create a new JobApplication record
     new_application = JobApplication(
         alumnus_id=alumnus_id,
-        job_listing_id=job_id,
+        job_listing_id=job_listing_id,
         resume_file_path=file_path,  
         work_experience=work_experience,
     )

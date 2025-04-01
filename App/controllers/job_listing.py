@@ -549,10 +549,11 @@ def update_job_listing_monthly_salary_ttd(id: int, new_monthly_salary_ttd: int) 
     listing = get_job_listing(id)
     if not listing:
         raise ValueError(f"Job listing with id {id} was not found.")
-    
+
     if new_monthly_salary_ttd <= 0:
-        raise ValueError("Monthly salary cannot be less than or equal to $0 TTD.")
-    
+        raise ValueError(
+            "Monthly salary cannot be less than or equal to $0 TTD.")
+
     try:
         listing.monthly_salary_ttd = new_monthly_salary_ttd
         db.session.commit()
@@ -619,6 +620,62 @@ def update_job_listing_job_site_address(id: int, new_job_site_address: str = Non
     except IntegrityError as e:
         db.session.rollback()
         raise IntegrityError(f"A database constraint was violated: {e}")
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
+
+
+def approve_job_listing(id: int) -> JobListing:
+    """
+    Updates the job listing's approval status to "APPROVED".
+
+    Args:
+        id (int): The job listing's ID.
+
+    Returns:
+        JobListing: The updated job listing if successful.
+
+    Raises:
+        ValueError: If the job listing was not found.
+        SQLAlchemyError: For any database-related issues.
+    """
+    listing = get_job_listing(id)
+    if not listing:
+        raise ValueError(f"JobListing with id {id} was not found.")
+
+    try:
+        listing.admin_approval_status = "APPROVED"
+        db.session.commit()
+        return listing
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
+
+
+def unapprove_job_listing(id: int) -> JobListing:
+    """
+    Updates the job listing's approval status to "PENDING".
+
+    Args:
+        id (int): The job listing's ID.
+
+    Returns:
+        JobListing: The updated job listing if successful.
+
+    Raises:
+        ValueError: If the job listing was not found.
+        SQLAlchemyError: For any database-related issues.
+    """
+    listing = get_job_listing(id)
+    if not listing:
+        raise ValueError(f"JobListing with id {id} was not found.")
+
+    try:
+        listing.admin_approval_status = "PENDING"
+        db.session.commit()
+        return listing
 
     except SQLAlchemyError as e:
         db.session.rollback()

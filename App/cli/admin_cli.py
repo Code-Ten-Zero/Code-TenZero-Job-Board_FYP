@@ -25,6 +25,7 @@ admin_cli = AppGroup('admin', help='AdminAccount object commands')
 @click.argument("login_email")
 @click.argument("password")
 @click.option(
+    "--pfp",
     "--profile-photo",
     "profile_photo_file_path",
     default=None,

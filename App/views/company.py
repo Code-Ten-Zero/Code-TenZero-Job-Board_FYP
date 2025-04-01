@@ -88,11 +88,11 @@ def add_listing_action():
 
 
 
-@company_views.route('/request_delete_listing/<int:job_id>', methods=['GET'])
+@company_views.route('/request_delete_listing/<int:job_listing_id>', methods=['GET'])
 @jwt_required()
-def request_delete_listing_action(job_id):
+def request_delete_listing_action(job_listing_id):
 
-    listing = set_request(job_id, 'Delete')
+    listing = set_request(job_listing_id, 'Delete')
     response = None
 
     if listing is not None:
@@ -104,11 +104,11 @@ def request_delete_listing_action(job_id):
 
     return response
 
-# @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+# @company_views.route('/request_edit_listing/<int:job_listing_id>', methods=['GET'])
 # @jwt_required()
-# def request_edit_listing_action(job_id):
+# def request_edit_listing_action(job_listing_id):
 
-#     listing = set_request(job_id, 'Edit')
+#     listing = set_request(job_listing_id, 'Edit')
 #     response = None
 #     print(listing.request)
 
