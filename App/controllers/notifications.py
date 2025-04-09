@@ -1,10 +1,14 @@
+
 from datetime import datetime
+
 from App.models import CompanyAccount, JobListing, AlumnusAccount, AdminAccount, JobApplication, CompanySubscription, Notification
 from App.database import db
 
 from App.controllers import (
     get_all_admins
 )
+
+from App.utils.email import send_email
 
 def notify_subscribed_alumnus(message, company_id):
     company = CompanyAccount.query.get(company_id)
@@ -26,6 +30,7 @@ def notify_subscribed_alumnus(message, company_id):
                     message=message
                 )
                 db.session.add(new_notification)
+                send_email(alumnus.login_email, new_notification.message)
     
     db.session.commit()
     return message
@@ -43,6 +48,7 @@ def notify_company_account(message, company_id):
             )
         db.session.add(new_notification)
         db.session.commit()
+        send_email(company.login_email, new_notification.message)
     return message
                 
 #Used to send (all) admin notifications
@@ -57,9 +63,7 @@ def notify_admins(message):
             message=message
             )
             db.session.add(new_notification)
+            send_email(admin.login_email, new_notification.message)
         db.session.commit()
     return message
-    
 
-             
-    

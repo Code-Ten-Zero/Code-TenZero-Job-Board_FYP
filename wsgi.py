@@ -3,6 +3,7 @@ import pytest
 import sys
 from flask import Flask
 from flask.cli import with_appcontext, AppGroup
+import os
 
 from App.database import db, get_migrate
 from App.main import create_app
@@ -16,6 +17,7 @@ from App.controllers import (create_user, get_all_users_json, get_all_users, get
                              get_user_by_email, get_user, get_listing, delete_listing, subscribe, unsubscribe,
                              login, set_alumni_modal_seen, toggle_listing_approval, get_listing_title)
 
+from App.utils.email import send_email
 # This commands file allow you to create convenient CLI commands for testing controllers
 
 app = create_app()
@@ -387,5 +389,10 @@ def user_tests_command(type):
     else:
         sys.exit(pytest.main(["-k", "App"]))
 
+@test.command("email")
+@click.argument("reciever")
+@click.argument("message")
+def email_command(reciever, message):
+    send_email(reciever, message)
 
 app.cli.add_command(test)
