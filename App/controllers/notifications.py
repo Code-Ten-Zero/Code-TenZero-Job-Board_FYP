@@ -1,69 +1,56 @@
-
-from datetime import datetime
-
-from App.models import CompanyAccount, JobListing, AlumnusAccount, AdminAccount, JobApplication, CompanySubscription, Notification
+from App.models import AdminAccount, AlumnusAccount, CompanyAccount, Notification
 from App.database import db
-
-from App.controllers import (
-    get_all_admins
-)
-
 from App.utils.email import send_email
+from sqlalchemy.exc import SQLAlchemyError
 
-def notify_subscribed_alumnus(message, company_id):
-    company = CompanyAccount.query.get(company_id)
-    
-    if company:
-        # Get all alumni subscribed to this specific company
-        subscribed_alumni = CompanySubscription.query.filter_by(company_id=company.id).all()
-        
-        # Loop through all the subscribed alumni and send them a notification
-        for subscription in subscribed_alumni:
-            alumnus = AlumnusAccount.query.get(subscription.alumnus_id)
-            
-            if alumnus:
-                # Create a notification for each subscribed alumnus
-                new_notification = Notification(
-                    alumnus_id=alumnus.id,
-                    company_id=None,
-                    admin_id=None, 
-                    message=message
-                )
-                db.session.add(new_notification)
-                send_email(alumnus.login_email, new_notification.message)
-    
-    db.session.commit()
-    return message
 
-#Used to send a specific company notifications
-def notify_company_account(message, company_id):
-    company = CompanyAccount.query.get(company_id)
-    
-    if company:
-        new_notification = Notification(
-            alumnus_id=None,
-            company_id=company.id,
-            admin_id=None, 
-            message=message
-            )
-        db.session.add(new_notification)
-        db.session.commit()
-        send_email(company.login_email, new_notification.message)
-    return message
-                
-#Used to send (all) admin notifications
-def notify_admins(message):
-    admins= get_all_admins()
-    if admins:
-        for admin in admins:
+def notify_users(message: str, user_type: str, user_ids=None) -> str:
+    """
+    Creates in-app notifications and sends email copies to the appropriate user(s).
+
+    Args:
+        message (str): The message to be sent to users.
+        user_type (str): The type of user to notify. Options: 'alumnus', 'company', 'admin'.
+        user_ids (list): Optional list of user IDs. If None, all users of the specified type will be notified.
+
+    Returns:
+        str: The message that was sent.
+    """
+    user_models = {
+        'alumnus': (AlumnusAccount, 'alumnus_id'),
+        'company': (CompanyAccount, 'company_id'),
+        'admin': (AdminAccount, 'admin_id')
+    }
+
+    if user_type:
+        user_type = user_type.lower()
+    if user_type not in user_models:
+        raise ValueError(
+            "Invalid user type. Must be 'alumnus', 'company', or 'admin'."
+        )
+
+    model, id_field = user_models[user_type]
+    try:
+        # Get users based on provided IDs or all users if user_ids is None
+        users = model.query.filter(
+            model.id.in_(user_ids) if user_ids else model.query
+        ).all()
+
+        for user in users:
             new_notification = Notification(
-            alumnus_id=None,
-            company_id=None,
-            admin_id=admin.id, 
-            message=message
+                alumnus_id=None, company_id=None, admin_id=None,
+                message=message
             )
+            setattr(new_notification, id_field, user.id)
             db.session.add(new_notification)
-            send_email(admin.login_email, new_notification.message)
-        db.session.commit()
-    return message
+            send_email(user.login_email, "subject", message)
 
+            db.session.commit()
+            return message
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return f"Database error: {str(e)}"
+
+    except Exception as e:
+        return f"An error occurred: {str(e)}"

@@ -15,7 +15,7 @@ from App.controllers import(
     add_categories,
     get_listing,
     get_listing_job_applications,
-    notify_admins
+    notify_users
 )
 
 from App.models import(
@@ -97,7 +97,7 @@ def request_delete_listing_action(job_id):
     
     if listing is not None:
         listing.admin_approval_status = "REQUESTED DELETION"
-        notify_admins(message)
+        notify_users(message, "admin")
         db.session.commit()
         flash('Request for deletion sent!', 'success')
         response = redirect(url_for('index_views.index_page'))
