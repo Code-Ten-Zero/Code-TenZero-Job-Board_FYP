@@ -22,8 +22,8 @@ Each email template should have the following structure:
 
 ```txt
 emails/
-  └── job_posted.html.j2
-  └── job_posted.txt.j2
+  └── job_published.html.j2
+  └── job_published.txt.j2
 ```
 
 The two files should have matching base names and live in the `templates/emails/` directory (or wherever Flask/Jinja templates are located).
@@ -48,7 +48,7 @@ Variables passed into these templates will come from your Flask views or email-s
 
 ## ✨ Example Templates
 
-`job_posted.html.j2` (HTML version)
+`job_published.html.j2` (HTML version)
 
 ```html
 <!DOCTYPE html>
@@ -80,7 +80,7 @@ Variables passed into these templates will come from your Flask views or email-s
 </html>
 ```
 
-`job_posted.txt.j2` (Plain text version)
+`job_published.txt.j2` (Plain text version)
 
 ```txt
 New Job Listing: {{ job_title }}
@@ -116,7 +116,7 @@ context = {
 }
 ```
 
-HTML version (`job_posted.html.j2`):
+HTML version (`job_published.html.j2`):
 
 ```html
 <!DOCTYPE html>
@@ -148,7 +148,7 @@ HTML version (`job_posted.html.j2`):
 </html>
 ```
 
-Plain Text version (job_posted.txt.j2):
+Plain Text version (job_published.txt.j2):
 
 ```txt
 New Job Listing: Software Engineer

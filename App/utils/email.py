@@ -67,7 +67,7 @@ def send_email(recipient_email: str, subject: str, template_name: str, message: 
 """
 
 
-def send_job_posted_email(recipient, listing, posting_company, is_company=False):
+def send_job_published_email(recipient, listing, posting_company, is_company=False):
     """
     Sends an email notification when a new job listing is posted.
 
@@ -107,7 +107,7 @@ def send_job_posted_email(recipient, listing, posting_company, is_company=False)
 
         return send_email(
             recipient_email=recipient.login_email,
-            template_name="job_posted",
+            template_name="job_published",
             subject=subject,
             message=message,
             recipient_name=recipient_name,
