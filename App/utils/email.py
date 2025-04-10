@@ -1,7 +1,11 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from flask import render_template
+from flask import render_template, url_for
+
+"""
+====== MAIN EMAIL FUNCTION ======
+"""
 
 
 def send_email(recipient_email: str, subject: str, template_name: str, message: str = "", **kwargs) -> bool:
@@ -55,4 +59,63 @@ def send_email(recipient_email: str, subject: str, template_name: str, message: 
 
     except Exception as e:
         print(f"Failed to send email to {recipient_email}: {e}")
+        return False
+
+
+"""
+====== HELPERS FOR VARIOUS TEMPLATES ======
+"""
+
+
+def send_job_posted_email(recipient, listing, posting_company, is_company=False):
+    """
+    Sends an email notification when a new job listing is posted.
+
+    This helper function wraps the `send_email` function to send a notification 
+    to either the company or the alumni. It includes the job title, company name, 
+    location, and a link to the job posting.
+
+    Args:
+        recipient (object): The recipient of the email (either a CompanyAccount or AlumnusAccount).
+        listing (JobListing): The job listing object containing details about the job.
+        posting_company (CompanyAccount): The company posting the job.
+        is_company (bool): Flag to indicate if the recipient is a subscribed alumnus
+            (False; default value), or the posting company (True).
+
+    Returns:
+        bool: True if the email was sent successfully, False otherwise.
+    """
+    try:
+        recipient_name = None
+        message = None
+        subject = None
+        
+        if is_company:
+            recipient_name = recipient.registered_name
+            message = f"You job listing, {listing.title}, has been published!",
+            subject = "Your Listing Has Been Published"
+        else:
+            recipient_name = f"{recipient.first_name} {recipient.last_name}"
+            message=f"{posting_company.registered_name} posted a new job: {listing.title}",
+            subject = "New Job Listing"
+        
+        job_url = url_for(
+            'index_views.view_listing',
+            listing_id=listing.id,
+            _external=True
+        )
+
+        return send_email(
+            recipient_email=recipient.login_email,
+            template_name="job_posted",
+            subject=subject,
+            message=message,
+            recipient_name=recipient_name,
+            job_title=listing.title,
+            company_name=posting_company.registered_name,
+            job_location=listing.location,
+            job_url=job_url
+        )
+    except Exception as e:
+        print(f"[Email Helper Error] {e}")
         return False

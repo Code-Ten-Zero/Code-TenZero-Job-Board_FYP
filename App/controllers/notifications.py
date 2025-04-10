@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 def notify_users(message: str, user_type: str, user_ids=None) -> str:
     """
-    Creates in-app notifications and sends email copies to the appropriate user(s).
+    Sends notifications to users, both in-app and via email.
 
     Args:
         message (str): The message to be sent to users.

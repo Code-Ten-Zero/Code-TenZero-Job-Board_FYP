@@ -1,18 +1,13 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
+from flask import Blueprint, flash, redirect, render_template, url_for
 from App.models import db
-# from App.controllers import create_user
 
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from flask_jwt_extended import jwt_required, current_user
 
 from .index import index_views
 
 
 from App.controllers import (
-    get_user_by_email,
-    get_all_listings,
-    get_company_listings,
-    add_listing,
-    add_categories,
+    get_company_by_id,
     get_listing,
     delete_listing,
     toggle_listing_approval,
@@ -20,121 +15,109 @@ from App.controllers import (
 )
 
 from App.models import (
-    AlumnusAccount,
-    CompanyAccount,
-    AdminAccount,
-    JobListing,
-    Notification
+    CompanySubscription,
+    AdminAccount
 )
 
-admin_views = Blueprint('admin_views', __name__,
-                        template_folder='../templates')
+admin_views = Blueprint(
+    'admin_views',
+    __name__,
+    template_folder='../templates'
+)
 
-# handle publish
+# ---------- JOB ACTION ROUTES ----------
 
 
 @admin_views.route('/publish_job/<int:job_id>', methods=['POST'])
 @jwt_required()
 def publish_job(job_id):
-    toggled = toggle_listing_approval(
-        job_id, status='APPROVED')  # Set the job as approved
+    """
+    Approves a job listing and notifies both the posting company and subscribed alumni.
+    """
+    listing = toggle_listing_approval(job_id, status='APPROVED')
 
-    if toggled:
-
-        job_listing = JobListing.query.get(job_id)
-        if job_listing and job_listing.company:
-            # Get the company name from the job listing's associated company
-
-            company_name = job_listing.company.registered_name
-            company_id = job_listing.company.id
-
-            # Send the notification with company name
-            message = f"{company_name} posted a new listing, {job_listing.title}!"
-            notify_users(message, "company", company_id)
+    if listing and listing.company_id:   
+        company = get_company_by_id(listing.company_id)   
+        
+        if not company:
+            flash('Company not found for this listing.', 'unsuccessful')
+            return redirect(url_for('index_views.index_page'))
 
         flash('Job published successfully!', 'success')
-        subscribed_alumni = Notification.query.all()
-        print(len(subscribed_alumni))
-        response = redirect(url_for('index_views.index_page'))
+
+        # Notify company
+        company_msg = f"You job listing, {listing.title} has been published!"
+        notify_users(company_msg, "company", company.id)
+
+        # Notify subscribed alumni
+        subscriptions = CompanySubscription.query.filter_by(company_id=company.id).all()
+        alumnus_ids = [sub.id for sub in subscriptions if sub.alumnus_id]
+
+        if alumnus_ids:
+            subscriber_notification = f"{company.registered_name} posted a new listing, {listing.title}!"
+            notify_users(subscriber_notification, "alumni", alumnus_ids)
     else:
-        flash('Job not found', 'unsuccessful')
-        response = redirect(url_for('index_views.index_page'))
-    return response
+        flash('Job not found or could not be published.', 'unsuccessful')
+
+    return redirect(url_for('index_views.index_page'))
 
 
-# handle unpublish
 @admin_views.route('/unpublish_job/<int:job_id>', methods=['POST'])
 @jwt_required()
 def unpublish_job(job_id):
-    toggled = toggle_listing_approval(job_id, status='PENDING')
+    """
+    Unpublishes a job listing (sets status to PENDING).
+    """
+    result = toggle_listing_approval(job_id, status='PENDING')
 
-    if not toggled:
+    if not result:
         flash('Job unpublished successfully!', 'success')
-        response = redirect(url_for('index_views.index_page'))
     else:
-        flash('Job not found', 'unsuccessful')
-        response = (redirect(url_for('index_views.index_page')))
+        flash('Job not found or unpublishing failed.', 'unsuccessful')
 
-    return response  # Redirect to the admin dashboard
-
-# handle deletion
+    return redirect(url_for('index_views.index_page'))
 
 
 @admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
 def delete_listing_action(job_id):
+    """
+    Deletes a job listing and notifies the associated company.
+    """
     listing = get_listing(job_id)
-    # store values before listing is deleted
-    company_id = listing.company_id
-    company_name = listing.company.registered_name
-    title = listing.title
 
-    deleted = delete_listing(job_id)
+    if not listing:
+        flash('Job listing not found.', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
-    if deleted:
-        message = f"Ahoy {company_name}! Your listing, {title} has been deleted!"
-        notify_users(message, "company", company_id)
+    message = f"Ahoy {listing.company.registered_name}! Your listing, {listing.title}, has been deleted!"
+
+    if delete_listing(job_id):
+        notify_users(message, "company", listing.company_id)
         flash('Job listing deleted!', 'success')
-        response = redirect(url_for('index_views.index_page'))
     else:
         flash('Error deleting job listing', 'unsuccessful')
-        response = (redirect(url_for('index_views.index_page')))
 
-    return response
+    return redirect(url_for('index_views.index_page'))
+
+# ---------- ADMIN NOTIFICATIONS ----------
 
 
 @admin_views.route('/admin_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
-
-    admin = current_user
-
-    if not isinstance(admin, AdminAccount):
-        flash('Not an Alumnus', 'unsuccessful')
+    """
+    Displays notifications for the currently logged-in admin.
+    """
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
     try:
-        # Fetch notifications for the alumnus
-        notifications = admin.notifications.all()
+        notifications = current_user.notifications.all()
         return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
 
     except Exception as e:
-        flash('Error retrieving notifications', 'unsuccessful')
+        print(f"[ERROR] Failed to retrieve admin notifications: {e}")
+        flash('Error retrieving notifications.', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-
-# @index_views.route('/delete-exercise/<int:exercise_id>', methods=['GET'])
-# @login_required
-# def delete_exercise_action(exercise_id):
-
-#     user = current_user
-
-#     res = delete_exerciseSet(exercise_id)
-
-#     if res == None:
-#         flash('Invalid or unauthorized')
-#     else:
-#         flash('exercise deleted!')
-#     return redirect(url_for('user_views.userInfo_page'))
-
-
-# handle updates
