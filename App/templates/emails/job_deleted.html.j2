@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ job_title }} - Job Deleted</title>
+        <style>
+            body { font-family: Arial, sans-serif; color: #333; }
+            h1 { color: #F44336; }
+            .footer { font-size: 12px; color: #aaa; }
+        </style>
+    </head>
+    <body>
+        <h1>Job Deleted: {{ job_title }}</h1>
+        <p>Hello {{ recipient_name }},</p>
+        <p>We wanted to inform you that the job listing below has been deleted:</p>
+        <ul>
+            <li><strong>Title:</strong> {{ job_title }}</li>
+            <li><strong>Company:</strong> {{ company_name }}</li>
+            <li><strong>Location:</strong> {{ job_location }}</li>
+        </ul>
+        <p><a href="{{ job_url }}" style="color: #F44336;">Click here</a> to view the job listing.</p>
+        <p>Best regards,<br>Your Job Board Team</p>
+        <hr>
+        <p class="footer">This email was sent to you because you are subscribed to job notifications.</p>
+    </body>
+</html>
