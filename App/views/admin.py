@@ -19,6 +19,12 @@ from App.models import (
     AdminAccount
 )
 
+from App.utils.email import (
+    send_job_published_email,
+    send_job_unpublished_email,
+    send_job_deleted_email
+)
+
 admin_views = Blueprint(
     'admin_views',
     __name__,
@@ -36,26 +42,28 @@ def publish_job(job_id):
     """
     listing = toggle_listing_approval(job_id, status='APPROVED')
 
-    if listing and listing.company_id:   
-        company = get_company_by_id(listing.company_id)   
-        
-        if not company:
-            flash('Company not found for this listing.', 'unsuccessful')
-            return redirect(url_for('index_views.index_page'))
+    if listing:
+        company = get_company_by_id(listing.company_id)
 
-        flash('Job published successfully!', 'success')
-
-        # Notify company
+        # Notify company about successful publication
         company_msg = f"You job listing, {listing.title} has been published!"
         notify_users(company_msg, "company", company.id)
+        send_job_published_email(company, listing, company, is_company=True)
 
         # Notify subscribed alumni
-        subscriptions = CompanySubscription.query.filter_by(company_id=company.id).all()
-        alumnus_ids = [sub.id for sub in subscriptions if sub.alumnus_id]
+        subscribed_alumni = CompanySubscription.query.filter_by(
+            company_id=company.id).all()
 
-        if alumnus_ids:
+        if subscribed_alumni:
+            subscribed_ids = [sub.id for sub in subscribed_alumni]
             subscriber_notification = f"{company.registered_name} posted a new listing, {listing.title}!"
-            notify_users(subscriber_notification, "alumni", alumnus_ids)
+            notify_users(subscriber_notification, "alumni", subscribed_ids)
+
+            for alumnus in subscribed_alumni:
+                send_job_published_email(
+                    alumnus, listing, company, is_company=False)
+
+        flash('Job published successfully!', 'success')
     else:
         flash('Job not found or could not be published.', 'unsuccessful')
 
