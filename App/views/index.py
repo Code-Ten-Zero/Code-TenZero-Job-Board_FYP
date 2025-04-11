@@ -1,33 +1,33 @@
 import os
 from flask import Blueprint, abort, redirect, render_template, request, send_from_directory, jsonify, url_for, flash, send_file
 from App.models import db
-
-# from App.controllers import create_user
-
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
-
 from App.controllers import(
-    get_all_listings,
-    get_company_listings,
-    add_listing,
-    apply_listing,
-    add_alumni,
-    add_admin,
-    add_company,
-    get_listing,
+    get_job_listing,
+    get_all_job_listings,
+    get_job_listings_by_company_id,
+    add_job_listing,
+    add_alumnus_account,
+    add_admin_account,
+    add_company_account,
     get_approved_listings,
-    get_all_companies,
-    get_user_by_email,
-    get_saved_listings,
-    get_job_applications
+    get_all_company_accounts,
+    get_user_by_email
+)
+
+from App.controllers.saved_job_listing import(
+    get_saved_job_listings_by_alumnus_id
+)
+
+from App.controllers.job_applications import (
+    get_job_applications_by_alumnus_id
 )
 
 from App.models import(
     AlumnusAccount,
     CompanyAccount,
     AdminAccount,
-    SavedJobListing
 )
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
@@ -39,12 +39,12 @@ index_views = Blueprint('index_views', __name__, template_folder='../templates')
 @jwt_required()
 def index_page():
     # return render_template('index.html')
-    jobs = get_all_listings()
-    companies= get_all_companies()
+    jobs = get_all_job_listings()
+    companies= get_all_company_accounts()
     approved_jobs = get_approved_listings() # retrieve approved jobs
     user= get_user_by_email(current_user.login_email)
-    saved_alumni_listings = get_saved_listings(user.id)
-    alumni_job_applications = get_job_applications(user.id)
+    saved_alumni_listings = get_saved_job_listings_by_alumnus_id(user.id)
+    alumni_job_applications = get_job_applications_by_alumnus_id(user.id)
 
     if isinstance(current_user, AlumnusAccount):
 
@@ -59,7 +59,7 @@ def index_page():
 
     
     if isinstance(current_user, CompanyAccount):
-        company_listings = get_company_listings(current_user.id)
+        company_listings = get_job_listings_by_company_id(current_user.id)
         return render_template('company-view.html', company_listings=company_listings,jobs=approved_jobs, companies=companies)
 
     if isinstance(current_user, AdminAccount):
@@ -73,22 +73,20 @@ def init():
     db.create_all()
 
     # add in the first admin
-    add_admin('bobpass','bob@mail')
+    add_admin_account('bobpass','bob@mail')
 
     # add in alumni
-    add_alumni('robpass','rob@mail', 'robfname', 'roblname', '1868-333-4444')
+    add_alumnus_account('robpass','rob@mail', 'robfname', 'roblname', '1868-333-4444')
 
     # add in companies
-    add_company('company1', 'compass', 'company@mail',  'company_address', 'contact', 'public@email','company_website.com')
-    add_company('company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'public@email2' ,'company_website2.com')
-
-    # add in listings
-    # listing1 = add_listing('listing1', 'job description', 'company2')
-    # print(listing1, 'test')
-    add_listing('1','listing1', 'Full-time' ,'job description1', 'company1',
+    add_company_account('company1', 'compass', 'company@mail',  'company_address', 'contact', 'public@email','company_website.com')
+    add_company_account('company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'public@email2' ,'company_website2.com')
+    
+    # add in job listings
+    add_job_listing('1','listing1', 'Full-time' ,'job description1', 'company1',
                 8000, True, 'Curepe')
 
-    add_listing('2','listing2', 'job description', 'company2',
+    add_job_listing('2','listing2', 'job description', 'company2',
                 4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
 
 

@@ -469,28 +469,6 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
         db.session.rollback()
         raise SQLAlchemyError(f"A database error has occured: {e}")
 
-
-# def toggle_listing_approval(listing_id, status):
-#     print("toggle listing approval function")
-#     from .job_listing import get_listing
-
-#     listing = get_listing(listing_id)
-#     if not listing:
-#         return None
-#     if status in ["APPROVED", "PENDING", "REJECTED"]:
-#         listing.alumnus_approval_status = status
-#     else:
-#         return None
-
-#     try:
-#         db.session.commit()
-#         return True
-#     except Exception as e:
-#         print(f'my error: {e}')
-#         db.session.rollback()
-#         return None
-
-
 # def is_alumni_subscribed(id):
 #     # alumni = get_alumni(id)
 #     # if(alumni.subscribed == True):
@@ -565,21 +543,9 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
 #     db.session.commit()
 #     return alumni
 
-# adding and removing job categories
-
 
 # def set_alumni_modal_seen(id):
 #     alumni = get_alumni(id)
 #     alumni.has_seen_modal = True
 #     db.session.commit()
 
-# # To be re written - CTZ
-
-
-# def get_approved_listings():
-#     all_listings = JobListing.query.all()
-#     my_approved_listings = []
-#     for listing in all_listings:
-#         if listing.alumnus_approval_status == "APPROVED":
-#             my_approved_listings.append(listing)
-#     return my_approved_listings

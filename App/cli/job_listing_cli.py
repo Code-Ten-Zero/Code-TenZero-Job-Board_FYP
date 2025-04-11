@@ -31,7 +31,7 @@ def list_listing_command(jsonify_results):
 @click.argument("datetime_last_mmodified", default="dd-mm-yy")
 @click.argument("admin_approval_status", default="PENDING")
 def add_listing_command(company_id, title, position_type, description, monthly_salary_ttd, is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status):
-    listing = add_listing(company_id, title, position_type, description, monthly_salary_ttd,
+    listing = add_job_listing(company_id, title, position_type, description, monthly_salary_ttd,
                           is_remote, job_site_address, datetime_created, datetime_last_modified, admin_approval_status)
 
     if listing is None:

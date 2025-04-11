@@ -1,22 +1,20 @@
 from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
 from App.models import db
-# from App.controllers import create_user
 from datetime import date, datetime
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 
 from .index import index_views
 
-
 from App.controllers import(
     get_user_by_email,
-    get_all_listings,
-    get_company_listings,
-    add_listing,
-    add_categories,
-    get_listing,
+    get_all_job_listings,
+    get_job_listings_by_company_id,
+    add_job_listing,
+    get_job_listing,
     set_request,
     get_listing_job_applications
 )
+
 
 from App.models import(
     AlumnusAccount,
@@ -31,7 +29,7 @@ company_views = Blueprint('company_views', __name__, template_folder='../templat
 def view_applications_page(id):
 
     # get the listing
-    listing = get_listing(id)
+    listing = get_job_listing(id)
 
     print(listing)
 
@@ -64,7 +62,7 @@ def add_listing_action():
         
         job_site_address = "N/A" if is_remote else data.get('job_site_address', "(Not specified)")
       
-        listing = add_listing(
+        listing = add_job_listing(
             current_user.id,
             data['title'],
             data['position_type'],
@@ -85,8 +83,6 @@ def add_listing_action():
         response = redirect(url_for('index_views.index_page'))
     
     return response
-
-
 
 @company_views.route('/request_delete_listing/<int:job_listing_id>', methods=['GET'])
 @jwt_required()

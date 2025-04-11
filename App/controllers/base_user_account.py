@@ -3,11 +3,11 @@ from App.database import db
 
 # from sqlalchemy.orm import with_polymorphic
 
-# def create_user(password, login_email):
-#     newuser = BaseUserAccount(password=password, login_email=login_email)
-#     db.session.add(newuser)
-#     db.session.commit()
-#     return newuser
+def create_user(password, login_email):
+    newuser = BaseUserAccount(password=password, login_email=login_email)
+    db.session.add(newuser)
+    db.session.commit()
+    return newuser
 
 def get_user_by_email(login_email):
     # return User.query.filter_by(username=username).first()

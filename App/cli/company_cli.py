@@ -2,9 +2,12 @@ import click
 from flask.cli import AppGroup
 from App.controllers.company_account import (
     add_company_account,
-    get_all_company_accounts
+    get_all_company_accounts,
 )
 
+from App.controllers.job_listing import (
+     get_job_listings_by_company_id,
+)
 company_cli = AppGroup('company', help='Company object commands')
 
 
@@ -36,8 +39,9 @@ def add_company_account_command(registered_name, password, login_email, mailing_
 
 @company_cli.command("notifications", help="Show all notifications for a company")
 @click.argument("registered_name", default="company1")
-def show_notifications(registered_name):
-    listings = get_company_listings(registered_name)
+def show_notifications(company_id):
+    listings = get_job_listings_by_company_id (company_id)
+
     notifications = []
 
     for listing in listings:
@@ -48,4 +52,4 @@ def show_notifications(registered_name):
             print(
                 f"Notification: {notification.message} (Timestamp: {notification.created_at})")
     else:
-        print(f"No notifications found for {registered_name}.")
+        print(f"No notifications found for {listings.company.registered_name}.")

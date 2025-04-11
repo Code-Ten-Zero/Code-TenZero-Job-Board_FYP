@@ -12,15 +12,17 @@ from .index import index_views
 
 from App.controllers import(
     get_user_by_email,
-    is_alumni_subscribed,
-    subscribe,
+    # is_alumni_subscribed,
+    # subscribe,
     unsubscribe,
     set_alumni_modal_seen,
     update_alumni_info,
-    get_listing,
-    get_all_listings,
+    get_job_listing,
+    get_all_job_listings,
     get_approved_listings,
-    get_saved_listings
+    get_saved_job_listings_by_alumnus_id
+    
+    
 )
 
 from App.models import(
@@ -180,8 +182,8 @@ def update_modal_seen():
 @alumni_views.route('/view_listing_alumni/<id>', methods=["GET"])
 @jwt_required()
 def view_listing_page(id):
-    listing=get_listing(id)
-    saved_listings=get_saved_listings(current_user.id)
+    listing=get_job_listing(id)
+    saved_listings=get_saved_job_listings_by_alumnus_id(current_user.id)
     
     try:
         return render_template('view-listing-alumni.html', listing=listing, saved_listings=saved_listings)

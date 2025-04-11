@@ -5,16 +5,15 @@ from App.main import create_app
 from App.database import db, create_db
 from App.models import BaseUserAccount, AdminAccount, AlumnusAccount, CompanyAccount, CompanySubscription, JobApplication, JobListing
 from App.controllers import (
-    create_user,
     get_all_users_json,
     login,
     get_user,
     get_user_by_email,
     update_user,
-    add_admin,
-    add_alumni,
-    add_company,
-    add_listing,
+    add_admin_account,
+    add_alumnus_account,
+    add_company_account,
+    add_job_listing,
     subscribe,
     unsubscribe,
     add_categories,
@@ -123,28 +122,28 @@ def empty_db():
 class UserIntegrationTests(unittest.TestCase):
 
     def test_authenticate(self):
-        user = add_admin("bobpass", 'bob@mail')
+        user = add_admin_account("bobpass", 'bob@mail')
         assert login("bob@mail", "bobpass") != None
 
     def test_create_admin(self):
-        add_admin("bobpass", 'bob@mail')
-        admin = add_admin("bobpass", 'rick@mail')
+        add_admin_account("bobpass", 'bob@mail')
+        admin = add_admin_account("bobpass", 'rick@mail')
         assert admin.login_email == "rick@mail"
 
     def test_create_alumni(self):
-        my_alumni = add_alumni('robpass', 'robby2@mail', 'robfname', 'roblname', '1868-399-9944')
+        my_alumni = add_alumnus_account('robpass', 'robby2@mail', 'robfname', 'roblname', '1868-399-9944')
         assert my_alumni.login_email == "robby2@mail"
 
     def test_create_company(self):
-        #add_company(registered_name, password, login_email, mailing_address, phone_number, public_email, website_url)
-        company = add_company('company10', 'compass', 'company10@mail',  'mailing_address',
+        #add_company_account(registered_name, password, login_email, mailing_address, phone_number, public_email, website_url)
+        company = add_company_account('company10', 'compass', 'company10@mail',  'mailing_address',
                 'phone10_number', 'public10@email', 'company10_website.com')
         assert company.login_email == 'company10@mail' and company.public_email == 'public10@email'
 
     # cz at the beginning so that it runs after create company
     def test_czadd_listing(self):
         company1 = get_user_by_email('company@mail')
-        listing =add_listing(company1.id, 'listing1','Part-time', 'job description1',
+        listing =add_job_listing(company1.id, 'listing1','Part-time', 'job description1',
         8000, False, 'Curepe', '02-01-2025', '10-01-2025', 'PENDING')
         assert listing.description == 'job description1' and listing.monthly_salary_ttd == 8000
 
@@ -214,14 +213,14 @@ class UserIntegrationTests(unittest.TestCase):
         
     def test_initial_isapproved(self):
         company2 = get_user_by_email('company@mail2')
-        job = add_listing(company2.id, 'listing2', 'Full-time', 'job description2',
+        job = add_job_listing(company2.id, 'listing2', 'Full-time', 'job description2',
                 4000, False, 'Port-Of-Spain', '04-02-2025', '05-02-2025', 'PENDING')
         assert job.admin_approval_status == "PENDING"
 
     def test_toggle_listing_approval(self):
         #job = add_listing("Test Job2", "Test Description", "company1", 8000, "Full-time", True, True, "huzz", "Test Area")
         company2 = get_user_by_email('company@mail2')
-        job = add_listing(company2.id, 'listing4', 'Full-time', 'job description3',
+        job = add_job_listing(company2.id, 'listing4', 'Full-time', 'job description3',
                 4000, False, 'San-Fernando', '04-04-2025', '05-01-2025', 'PENDING')
         toggle_listing_approval(job.id, "APPROVED")
         toggled_job = get_listing(job.id)
@@ -229,7 +228,7 @@ class UserIntegrationTests(unittest.TestCase):
 
     def test_get_approved_listings(self):
         company2 = get_user_by_email('company@mail2')
-        job = add_listing(company2.id, 'listing5', 'Full-time', 'job description3',
+        job = add_job_listing(company2.id, 'listing5', 'Full-time', 'job description3',
                 4000, False, 'San-Fernando', '04-04-2025', '05-01-2025', 'APPROVED')
         #job1 = add_listing("Approved Job", "Approved Job Description", "company1", 9000, "Full-time", True, True, "zach", "Approved Area")
         # job2 = add_listing("Unapproved Job", "Unapproved Job Description", "company1", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
@@ -243,7 +242,7 @@ class UserIntegrationTests(unittest.TestCase):
 
 #ctz removed till subscriptions and notifications fixed
     # def test_notify_observers(self):
-    #     company = add_company('compaknee', 'compaknee', 'compassknee', 'compaknee@mail',  'compaknee_address', 'contactee', 'compaknee_website.com')
+    #     company = add_company_account('compaknee', 'compaknee', 'compassknee', 'compaknee@mail',  'compaknee_address', 'contactee', 'compaknee_website.com')
     #     alumni = add_alumni('alutest4', 'alupass4', 'alu4@email.com', '9114', '1800-274-8255', 'alufname4', 'alulname4')
     #     job2 = add_listing("Unapproved Job", "Unapproved Job Description", "compaknee", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
     #     apply_listing(alumni.alumni_id, job2.id)

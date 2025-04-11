@@ -8,8 +8,8 @@ from App.controllers import (
     login_user,
     get_user_by_email,
     get_all_users,
-    add_alumni,
-    add_company
+    add_alumnus_account,
+    add_company_account
 )
 
 
@@ -80,7 +80,7 @@ def alumni_signup_action():
   response = None
 
   try:
-    newAlumni = add_alumni(data['password'], data['login_email'], data['first_name'],  data['last_name'],
+    newAlumni = add_alumnus_account(data['password'], data['login_email'], data['first_name'],  data['last_name'],
                           data['phone_number'])
 
     token = login(data['login_email'], data['password'])
@@ -108,9 +108,9 @@ def company_signup_action():
   response = None
 
   try:
-    # newAlumni = add_alumni(data['username'], data['password'], data['email'],
+    # newAlumni = add_alumnus_account(data['username'], data['password'], data['email'],
     #                       data['alumni_id'], data['contact'], data['firstname'], data['lastname'])
-    newCompany = add_company(data['registered_name'], data['password'], data['login_email'], data['mailing_address'],
+    newCompany = add_company_account(data['registered_name'], data['password'], data['login_email'], data['mailing_address'],
                              data['phone_number'], data['public_email'], data['website_url'])
 
     token = login(data['login_email'], data['password'])
