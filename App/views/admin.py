@@ -8,6 +8,7 @@ from .index import index_views
 
 from App.controllers import (
     get_company_by_id,
+    get_alumni,
     get_listing,
     delete_listing,
     toggle_listing_approval,
@@ -47,7 +48,7 @@ def publish_job(job_id):
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
-    
+
     listing = toggle_listing_approval(job_id, status='APPROVED')
 
     if not listing:
@@ -59,20 +60,21 @@ def publish_job(job_id):
     # Notify company
     company_msg = f"Your job listing, {listing.title} has been published!"
     notify_users(company_msg, "company", company.id)
-    send_job_published_email(company, listing, company, is_company=True)
+    send_job_published_email(company, listing, company)
 
     # Notify subscribed alumni
-    subscribed_alumni = CompanySubscription.query.filter_by(
+    subscriptions = CompanySubscription.query.filter_by(
         company_id=company.id).all()
 
-    if subscribed_alumni:
-        subscribed_ids = [sub.id for sub in subscribed_alumni]
+    if subscriptions:
+        subscribed_alumni_ids = [sub.alumnus_id for sub in subscriptions]
         subscriber_notification = f"{company.registered_name} posted a new listing, {listing.title}!"
-        notify_users(subscriber_notification, "alumni", subscribed_ids)
+        notify_users(subscriber_notification, "alumnus", subscribed_alumni_ids)
 
-        for alumnus in subscribed_alumni:
+        for subscription in subscriptions:
+            alumnus_obj = get_alumni(subscription.alumnus_id)
             send_job_published_email(
-                alumnus, listing, company, is_company=False)
+                alumnus_obj, listing, company)
 
     flash('Job published successfully!', 'success')
     return redirect(url_for(INDEX_PAGE_ROUTE))
@@ -87,7 +89,7 @@ def unpublish_job(job_id):
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
-    
+
     listing = toggle_listing_approval(job_id, status='PENDING')
 
     if not listing:
@@ -99,20 +101,21 @@ def unpublish_job(job_id):
     # Notify company
     company_msg = f"Your job listing, {listing.title} has been temporarily unpublished!"
     notify_users(company_msg, "company", company.id)
-    send_job_published_email(company, listing, company, is_company=True)
+    send_job_published_email(company, listing, company)
 
     # Notify subscribed alumni
-    subscribed_alumni = CompanySubscription.query.filter_by(
+    subscriptions = CompanySubscription.query.filter_by(
         company_id=company.id).all()
 
-    if subscribed_alumni:
-        subscribed_ids = [sub.id for sub in subscribed_alumni]
+    if subscriptions:
+        subscribed_alumni_ids = [sub.alumnus_id for sub in subscriptions]
         subscriber_notification = f"The job listing {listing.title} by company {company.registered_name} has been temporarily unpublished."
-        notify_users(subscriber_notification, "alumni", subscribed_ids)
+        notify_users(subscriber_notification, "alumnus", subscribed_alumni_ids)
 
-        for alumnus in subscribed_alumni:
+        for subscription in subscriptions:
+            alumunus_obj = get_alumni(subscription.alumnus_id)
             send_job_published_email(
-                alumnus, listing, company, is_company=False)
+                alumunus_obj, listing, company)
 
     flash('Job unpublished successfully!', 'success')
     return redirect(url_for(INDEX_PAGE_ROUTE))
@@ -140,20 +143,22 @@ def delete_listing_action(job_id):
         # Notify company
         company_msg = f"Your job listing, {listing.title} has been published!"
         notify_users(company_msg, "company", company.id)
-        send_job_deleted_email(company, listing, company, is_company=True)
+        send_job_deleted_email(company, listing, company)
 
         # Notify subscribed alumni
-        subscribed_alumni = CompanySubscription.query.filter_by(
+        subscriptions = CompanySubscription.query.filter_by(
             company_id=company.id).all()
 
-        if subscribed_alumni:
-            subscribed_ids = [sub.id for sub in subscribed_alumni]
+        if subscriptions:
+            subscribed_alumni_ids = [sub.alumnus_id for sub in subscriptions]
             subscriber_notification = f"{company.registered_name} posted a new listing, {listing.title}!"
-            notify_users(subscriber_notification, "alumni", subscribed_ids)
+            notify_users(subscriber_notification,
+                         "alumnus", subscribed_alumni_ids)
 
-            for alumnus in subscribed_alumni:
+            for subscription in subscriptions:
+                alumnus_obj = get_alumni(subscription.alumnus_id)
                 send_job_deleted_email(
-                    alumnus, listing, company, is_company=False)
+                    alumnus_obj, listing, company)
 
         flash('Job listing deleted!', 'success')
     else:

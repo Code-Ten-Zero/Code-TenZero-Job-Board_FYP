@@ -10,6 +10,8 @@ from App.models import (
     JobListing
 )
 
+LISTING_PAGE_ROUTE = 'alumni_views.view_listing_page'
+
 """
 ====== MAIN EMAIL FUNCTION ======
 """
@@ -77,41 +79,47 @@ def send_email(recipient_email: str, subject: str, template_name: str, message: 
 def send_job_published_email(
         recipient: Union[CompanyAccount, AlumnusAccount],
         listing: JobListing,
-        posting_company: CompanyAccount,
-        is_company: bool = False
+        posting_company: CompanyAccount
 ):
     """
     Sends an email notification when a job listing is published.
 
-    This helper function wraps the `send_email` function to send a notification 
-    to either the company or subscribed alumni via the `job_published` templates.
+    Depending on the recipient type, this function customizes the message:
+    - To the company that posted the job (CompanyAccount), confirming their listing is live.
+    - To subscribed alumni (AlumnusAccount), informing them of the new opportunity.
 
     Args:
-        recipient (Union[CompanyAccount, AlumnusAccount]): The recipient of the email.
-        listing (JobListing): The job listing object containing details about the job.
-        posting_company (CompanyAccount): The company posting the job.
-        is_company (bool): Flag to indicate if the recipient is a company (default is False).
+        recipient (Union[CompanyAccount, AlumnusAccount]): The email recipient.
+        listing (JobListing): The job listing that was published.
+        posting_company (CompanyAccount): The company responsible for posting the job.
 
     Returns:
         bool: True if the email was sent successfully, False otherwise.
+
+    Raises:
+        ValueError: If the recipient is not an instance of CompanyAccount or AlumnusAccount.
     """
     try:
         recipient_name = None
         message = None
         subject = None
 
-        if is_company:
+        if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
             message = f"You job listing, {listing.title}, has been published!",
             subject = "Your Listing Has Been Published"
-        else:
+
+        elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
             message = f"{posting_company.registered_name} posted a new job: {listing.title}",
             subject = "New Job Listing"
+        else:
+            raise ValueError(
+                "Recipient must be a CompanyAccount or AlumnusAccount.")
 
         job_url = url_for(
-            'index_views.view_listing',
-            listing_id=listing.id,
+            LISTING_PAGE_ROUTE,
+            id=listing.id,
             _external=True
         )
 
@@ -123,7 +131,7 @@ def send_job_published_email(
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
-            job_location=listing.location,
+            job_location=listing.job_site_address,
             job_url=job_url
         )
     except Exception as e:
@@ -132,44 +140,43 @@ def send_job_published_email(
 
 
 def send_job_unpublished_email(
-        recipient: Union[CompanyAccount, AlumnusAccount],
-        listing: JobListing,
-        posting_company: CompanyAccount,
-        is_company: bool = False
-):
+    recipient: Union[CompanyAccount, AlumnusAccount],
+    listing: JobListing,
+    posting_company: CompanyAccount
+) -> bool:
     """
     Sends an email notification when a job listing is unpublished.
 
-    This helper function wraps the `send_email` function to send a notification 
-    to either the company or subscribed alumni via the `job_unpublished` templates.
+    Depending on the recipient type, this function customizes the message:
+    - To the company that posted the job (CompanyAccount), notifying them their job is unpublished.
+    - To subscribed alumni (AlumnusAccount), informing them the job is temporarily unavailable.
 
     Args:
-        recipient (Union[CompanyAccount, AlumnusAccount]): The recipient of the email.
-        listing (JobListing): The job listing object containing details about the job.
-        posting_company (CompanyAccount): The company posting the job.
-        is_company (bool): Flag to indicate if the recipient is a company (default is False).
+        recipient (Union[CompanyAccount, AlumnusAccount]): The email recipient.
+        listing (JobListing): The job listing that was unpublished.
+        posting_company (CompanyAccount): The company that posted the job.
 
     Returns:
         bool: True if the email was sent successfully, False otherwise.
+
+    Raises:
+        ValueError: If the recipient is not an instance of CompanyAccount or AlumnusAccount.
     """
     try:
-        recipient_name = None
-        message = None
-
-        if is_company:
+        if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
             message = f"Your job listing, {listing.title}, has been temporarily unpublished."
             subject = "Your Job Listing Has Been Unpublished"
-        else:
+        elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
-            message = f"The job listing {listing.title} by company {posting_company.registered_name} has been temporarily unpublished."
+            message = f"The job listing {listing.title} by {posting_company.registered_name} has been temporarily unpublished."
             subject = "Job Listing Unpublished"
+        else:
+            raise ValueError(
+                "Recipient must be a CompanyAccount or AlumnusAccount.")
 
-        job_url = url_for(
-            'index_views.view_listing',
-            listing_id=listing.id,
-            _external=True
-        )
+        job_url = url_for(LISTING_PAGE_ROUTE,
+                          listing_id=listing.id, _external=True)
 
         return send_email(
             recipient_email=recipient.login_email,
@@ -179,7 +186,7 @@ def send_job_unpublished_email(
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
-            job_location=listing.location,
+            job_location=listing.job_site_address,
             job_url=job_url
         )
     except Exception as e:
@@ -188,45 +195,43 @@ def send_job_unpublished_email(
 
 
 def send_job_deleted_email(
-        recipient: Union[CompanyAccount, AlumnusAccount],
-        listing: JobListing,
-        posting_company: CompanyAccount,
-        is_company: bool = False
-):
+    recipient: Union[CompanyAccount, AlumnusAccount],
+    listing: JobListing,
+    posting_company: CompanyAccount
+) -> bool:
     """
-    Sends an email notification when a new job listing is deleted.
+    Sends an email notification when a job listing is deleted.
 
-    This helper function wraps the `send_email` function to send a notification 
-    to either the company or subscribed alumni via the `job_deleted` templates.
+    Depending on the recipient type, this function customizes the message:
+    - To the company that posted the job (CompanyAccount), confirming deletion.
+    - To subscribed alumni (AlumnusAccount), informing them the listing is no longer available.
 
     Args:
-        recipient (Union[CompanyAccount, AlumnusAccount]): The recipient of the email.
-        listing (JobListing): The job listing object containing details about the job.
-        posting_company (CompanyAccount): The company posting the job.
-        is_company (bool): Flag to indicate if the recipient is a company (default is False).
+        recipient (Union[CompanyAccount, AlumnusAccount]): The email recipient.
+        listing (JobListing): The job listing that was deleted.
+        posting_company (CompanyAccount): The company that posted the job.
 
     Returns:
         bool: True if the email was sent successfully, False otherwise.
+
+    Raises:
+        ValueError: If the recipient is not an instance of CompanyAccount or AlumnusAccount.
     """
     try:
-        recipient_name = None
-        message = None
-        subject = None
-
-        if is_company:
+        if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
             message = f"Your job listing, {listing.title}, has been deleted!"
             subject = "Your Listing Has Been Deleted"
-        else:
+        elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
-            message = f"The job listing {listing.title} by company {posting_company.registered_name} has been deleted."
+            message = f"The job listing {listing.title} by {posting_company.registered_name} has been deleted."
             subject = "Job Listing Deleted"
+        else:
+            raise ValueError(
+                "Recipient must be a CompanyAccount or AlumnusAccount.")
 
-        job_url = url_for(
-            'index_views.view_listing',
-            listing_id=listing.id,
-            _external=True
-        )
+        job_url = url_for(LISTING_PAGE_ROUTE,
+                          listing_id=listing.id, _external=True)
 
         return send_email(
             recipient_email=recipient.login_email,
@@ -236,7 +241,7 @@ def send_job_deleted_email(
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
-            job_location=listing.location,
+            job_location=listing.job_site_address,
             job_url=job_url
         )
     except Exception as e:

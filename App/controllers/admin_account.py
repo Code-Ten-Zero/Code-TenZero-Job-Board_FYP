@@ -62,16 +62,14 @@ def toggle_listing_approval(listing_id, status):
     print("toggle listing approval function")
 
     listing = get_listing(listing_id)
-    if not listing:
-        return None
-    if status in ["APPROVED", "PENDING", "REJECTED", "DELETION REQUESTED", "UPDATE REQUESTED"]:
+    if listing and status in ["APPROVED", "PENDING", "REJECTED", "DELETION REQUESTED", "UPDATE REQUESTED"]:
         listing.admin_approval_status = status
     else:
         return None
 
     try:
         db.session.commit()
-        return True
+        return listing
     except Exception as e:
         print(f'my error: {e}')
         db.session.rollback()
