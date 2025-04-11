@@ -3,7 +3,6 @@ from flask.cli import AppGroup
 from App.controllers.job_listing import (
     add_job_listing,
     get_all_job_listings,
-    # delete_listing
 )
 
 job_listing_cli = AppGroup('listing', help='Listing object commands')

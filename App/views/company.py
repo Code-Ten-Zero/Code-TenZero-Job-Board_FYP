@@ -2,19 +2,17 @@ from flask import Blueprint, redirect, render_template, request, send_from_direc
 from App.models import db
 from datetime import date, datetime
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
-
 from .index import index_views
 
+from App.controllers.notifications import notify_admins
+from App.controllers.job_applications import get_job_applications_by_job_listing_id
 from App.controllers import(
     get_user_by_email,
     get_all_job_listings,
     get_job_listings_by_company_id,
     add_job_listing,
     get_job_listing,
-    set_request,
-    get_listing_job_applications
 )
-
 
 from App.models import(
     AlumnusAccount,
@@ -34,7 +32,7 @@ def view_applications_page(id):
     print(listing)
 
     try:
-        applications = get_listing_job_applications(listing.id)
+        applications = get_job_applications_by_job_listing_id(listing.id)
         print(applications)
         return render_template('viewapp-company.html', applications=applications)
 
@@ -84,14 +82,17 @@ def add_listing_action():
     
     return response
 
-@company_views.route('/request_delete_listing/<int:job_listing_id>', methods=['GET'])
+@company_views.route('/request_delete_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
-def request_delete_listing_action(job_listing_id):
+def request_delete_listing_action(job_id):
 
-    listing = set_request(job_listing_id, 'Delete')
-    response = None
-
+    listing = get_job_listing (job_id)
+    message=f"{listing.company.registered_name} requested {listing.title} to be deleted"
+    
     if listing is not None:
+        listing.admin_approval_status = "REQUESTED DELETION"
+        notify_admins(message)
+        db.session.commit()
         flash('Request for deletion sent!', 'success')
         response = redirect(url_for('index_views.index_page'))
     else:

@@ -14,17 +14,10 @@ from App.controllers import (
     add_alumnus_account,
     add_company_account,
     add_job_listing,
-    subscribe,
-    unsubscribe,
-    add_categories,
-    apply_listing,
-    #get_all_applicants,
-    get_alumni,
-    set_alumni_modal_seen,
     toggle_listing_approval,
-    get_listing,
+    get_job_listing,
     get_approved_listings,
-    get_company_by_email
+    get_company_account_by_login_email
 )
 
 
@@ -92,7 +85,7 @@ class UserUnitTests(unittest.TestCase):
     #test the retrieval of a company account
     def test_get_company_by_email(self):
         company = CompanyAccount('company@mail', 'compass',  'company1', 'mailing_address', 'public@email','company_website.com','phone_number')
-        retreived_company = get_company_by_email("company@mail")
+        retreived_company = get_company_account_by_login_email("company@mail")
         assert retreived_company.login_email == company.login_email
 
     #test the behaviour of the retrieval fucntion of a user that does not exist 
@@ -223,7 +216,7 @@ class UserIntegrationTests(unittest.TestCase):
         job = add_job_listing(company2.id, 'listing4', 'Full-time', 'job description3',
                 4000, False, 'San-Fernando', '04-04-2025', '05-01-2025', 'PENDING')
         toggle_listing_approval(job.id, "APPROVED")
-        toggled_job = get_listing(job.id)
+        toggled_job = get_job_listing(job.id)
         assert toggled_job.admin_approval_status == "APPROVED"
 
     def test_get_approved_listings(self):
