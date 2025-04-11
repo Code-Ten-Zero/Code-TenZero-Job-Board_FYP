@@ -164,8 +164,6 @@ def apply_listing(id, joblisting_id):
     #commit changes to the database
     db.session.commit()
 
-    listing.notify_observers(alumni, company)
-
     # add the alumni as an applicant to the company model object?
 
     return alumni

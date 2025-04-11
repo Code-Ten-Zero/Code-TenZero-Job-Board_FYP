@@ -31,7 +31,7 @@ admin_views = Blueprint(
     template_folder='../templates'
 )
 
-INDEX_PAGE_URL = url_for('index_views.index_page')
+INDEX_PAGE_ROUTE = 'index_views.index_page'
 
 """
 ====== JOB ACTION ROUTES ======
@@ -46,13 +46,13 @@ def publish_job(job_id):
     """
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
     
     listing = toggle_listing_approval(job_id, status='APPROVED')
 
     if not listing:
         flash('Job not found or could not be published.', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
 
     company = get_company_by_id(listing.company_id)
 
@@ -75,7 +75,7 @@ def publish_job(job_id):
                 alumnus, listing, company, is_company=False)
 
     flash('Job published successfully!', 'success')
-    return redirect(INDEX_PAGE_URL)
+    return redirect(url_for(INDEX_PAGE_ROUTE))
 
 
 @admin_views.route('/unpublish_job/<int:job_id>', methods=['POST'])
@@ -86,13 +86,13 @@ def unpublish_job(job_id):
     """
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
     
     listing = toggle_listing_approval(job_id, status='PENDING')
 
     if not listing:
         flash('Job not found or unpublishing failed.', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
 
     company = get_company_by_id(listing.company_id)
 
@@ -115,7 +115,7 @@ def unpublish_job(job_id):
                 alumnus, listing, company, is_company=False)
 
     flash('Job unpublished successfully!', 'success')
-    return redirect(INDEX_PAGE_URL)
+    return redirect(url_for(INDEX_PAGE_ROUTE))
 
 
 @admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
@@ -126,13 +126,13 @@ def delete_listing_action(job_id):
     """
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
 
     listing = get_listing(job_id)
 
     if not listing:
         flash('Job listing not found.', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
 
     if delete_listing(job_id):
         company = get_company_by_id(listing.company_id)
@@ -159,7 +159,7 @@ def delete_listing_action(job_id):
     else:
         flash('Error deleting job listing', 'unsuccessful')
 
-    return redirect(INDEX_PAGE_URL)
+    return redirect(url_for(INDEX_PAGE_ROUTE))
 
 
 """
@@ -175,7 +175,7 @@ def view_notifications_page():
     """
     if not isinstance(current_user, AdminAccount):
         flash('Unauthorized access', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
 
     try:
         notifications = current_user.notifications.all()
@@ -184,4 +184,4 @@ def view_notifications_page():
     except Exception as e:
         print(f"[ERROR] Failed to retrieve admin notifications: {e}")
         flash('Error retrieving notifications.', 'unsuccessful')
-        return redirect(INDEX_PAGE_URL)
+        return redirect(url_for(INDEX_PAGE_ROUTE))
