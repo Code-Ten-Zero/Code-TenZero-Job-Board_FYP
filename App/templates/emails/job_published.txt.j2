@@ -1,7 +1,10 @@
-New Job Listing: {{ job_title }}
+{{ "New Job Listing" if not is_company else "Listing Published" }}: {{ job_title }}
 
 Hello {{ recipient_name }},
 
+{% if is_company %}
+Your job listing has been successfully published and is now live on the job board.
+{% else %}
 We are excited to inform you about a new job posting:
 
 Title: {{ job_title }}
@@ -9,9 +12,14 @@ Company: {{ company_name }}
 Location: {{ job_location }}
 
 Click here to view the job listing and apply: {{ job_url }}
+{% endif %}
 
 Best regards,
 Your Job Board Team
 
 --------------------------------------------------
+{% if is_company %}
+You are receiving this message because you posted a job listing.
+{% else %}
 This email was sent to you because you are subscribed to job notifications.
+{% endif %}

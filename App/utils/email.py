@@ -17,7 +17,7 @@ LISTING_PAGE_ROUTE = 'alumni_views.view_listing_page'
 """
 
 
-def send_email(recipient_email: str, subject: str, template_name: str, message: str = "", **kwargs) -> bool:
+def send_email(recipient_email: str, subject: str, template_name: str, **kwargs) -> bool:
     """
     Sends an email with both plain text and HTML content using Jinja2 templates.
 
@@ -25,7 +25,6 @@ def send_email(recipient_email: str, subject: str, template_name: str, message: 
         recipient_email (str): Recipient's email address.
         subject (str): Subject of the email.
         template_name (str): Base filename of the email templates (without extension).
-        message (str): Optional message content to pass to the template.
         **kwargs: Any additional variables passed into the templates.
 
     Returns:
@@ -43,10 +42,10 @@ def send_email(recipient_email: str, subject: str, template_name: str, message: 
 
         # Render email content from templates
         html_content = render_template(
-            f'emails/{template_name}.html.j2', message=message, **kwargs
+            f'emails/{template_name}.html.j2', **kwargs
         )
         text_content = render_template(
-            f'emails/{template_name}.txt.j2', message=message, **kwargs
+            f'emails/{template_name}.txt.j2', **kwargs
         )
 
         # Create email message object
@@ -101,18 +100,15 @@ def send_job_published_email(
     """
     try:
         recipient_name = None
-        message = None
         subject = None
 
         if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
-            message = f"You job listing, {listing.title}, has been published!",
-            subject = "Your Listing Has Been Published"
+            subject = f"Your Job Listing Is Live: {listing.title}"
 
         elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
-            message = f"{posting_company.registered_name} posted a new job: {listing.title}",
-            subject = "New Job Listing"
+            subject = f"New Job Listing: {listing.title}"
         else:
             raise ValueError(
                 "Recipient must be a CompanyAccount or AlumnusAccount.")
@@ -127,7 +123,6 @@ def send_job_published_email(
             recipient_email=recipient.login_email,
             template_name="job_published",
             subject=subject,
-            message=message,
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
@@ -162,27 +157,29 @@ def send_job_unpublished_email(
     Raises:
         ValueError: If the recipient is not an instance of CompanyAccount or AlumnusAccount.
     """
+    recipient_name = None
+    subject = None
     try:
         if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
-            message = f"Your job listing, {listing.title}, has been temporarily unpublished."
-            subject = "Your Job Listing Has Been Unpublished"
+            subject = f"Your Job Listing Was Unpublished: {listing.title}"
         elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
-            message = f"The job listing {listing.title} by {posting_company.registered_name} has been temporarily unpublished."
-            subject = "Job Listing Unpublished"
+            subject = f"Job Listing Unpublished: {listing.title}"
         else:
             raise ValueError(
                 "Recipient must be a CompanyAccount or AlumnusAccount.")
 
-        job_url = url_for(LISTING_PAGE_ROUTE,
-                          listing_id=listing.id, _external=True)
+        job_url = url_for(
+            LISTING_PAGE_ROUTE,
+            listing_id=listing.id,
+            _external=True
+        )
 
         return send_email(
             recipient_email=recipient.login_email,
             template_name="job_unpublished",
             subject=subject,
-            message=message,
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
@@ -217,27 +214,29 @@ def send_job_deleted_email(
     Raises:
         ValueError: If the recipient is not an instance of CompanyAccount or AlumnusAccount.
     """
+    recipient_name = None
+    subject = None
     try:
         if isinstance(recipient, CompanyAccount):
             recipient_name = recipient.registered_name
-            message = f"Your job listing, {listing.title}, has been deleted!"
-            subject = "Your Listing Has Been Deleted"
+            subject = f"Your Listing Has Been Deleted: {listing.title}"
         elif isinstance(recipient, AlumnusAccount):
             recipient_name = f"{recipient.first_name} {recipient.last_name}"
-            message = f"The job listing {listing.title} by {posting_company.registered_name} has been deleted."
-            subject = "Job Listing Deleted"
+            subject = f"Job Listing Deleted: {listing.title}"
         else:
             raise ValueError(
                 "Recipient must be a CompanyAccount or AlumnusAccount.")
 
-        job_url = url_for(LISTING_PAGE_ROUTE,
-                          listing_id=listing.id, _external=True)
+        job_url = url_for(
+            LISTING_PAGE_ROUTE,
+            listing_id=listing.id,
+            _external=True
+        )
 
         return send_email(
             recipient_email=recipient.login_email,
             template_name="job_deleted",
             subject=subject,
-            message=message,
             recipient_name=recipient_name,
             job_title=listing.title,
             company_name=posting_company.registered_name,
