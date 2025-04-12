@@ -34,12 +34,12 @@ def initialize():
     db.create_all()
 
     # add in the first admin
-    add_admin_account('bobpass', 'bob@mail')
+    add_admin_account('bob@mail', 'bobpass')
 
     # add in alumnus
     add_alumnus_account(
-        'robpass',
         'rob@mail',
+        'robpass',
         'robfname',
         'roblname',
         phone_number='1868-333-4444'
@@ -47,22 +47,22 @@ def initialize():
 
     # add in companies
     company1 = add_company_account(
-        'company1',
-        'compass',
         'company@mail',
+        'compass',
+        'company1',
         'mailing_address',
-        'phone_number',
         'public@email',
-        'company_website.com'
+        'company_website.com',
+        'phone_number'
     )
     company2 = add_company_account(
-        'company2',
-        'compass',
         'company@mail2',
+        'compass',
+        'company2',
         'mailing_address2',
-        'phone_number2',
         'public2@email',
-        'company_website2.com'
+        'company_website2.com',
+        'phone_number2'
     )
 
     # add in listings
