@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_jwt_extended import current_user, jwt_required
 
 from App.controllers.job_listing import (
@@ -15,6 +15,9 @@ from App.controllers.notifications import (
     notify_subscribed_alumnus
 )
 
+from App.models import(
+    AdminAccount
+)
 
 admin_views = Blueprint(
     'admin_views',
@@ -86,3 +89,22 @@ def delete_listing_action(job_listing_id):
         response = (redirect(url_for(INDEX_PAGE_URL)))
 
     return response
+
+@admin_views.route('/admin_notifications', methods=['GET'])
+@jwt_required()
+def view_notifications_page():
+    
+    admin = current_user
+    
+    if not isinstance(admin, AdminAccount):
+        flash('Not an Alumnus', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    try:
+        # Fetch notifications for the alumnus
+        notifications = admin.notifications.all()
+        return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
+    
+    except Exception as e:
+        flash('Error retrieving notifications', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))

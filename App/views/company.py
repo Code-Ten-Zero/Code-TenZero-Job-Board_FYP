@@ -119,7 +119,7 @@ def request_delete_listing_action(job_id):
 
 #     return response
 
-@company_views.route('/notifications', methods=['GET'])
+@company_views.route('/company_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
     # Assuming current_user is the logged-in company
