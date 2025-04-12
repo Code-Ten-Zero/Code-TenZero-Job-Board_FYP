@@ -685,7 +685,7 @@ def get_approved_listings():
     all_listings = JobListing.query.all()
     my_approved_listings = []
     for listing in all_listings:
-        if listing.alumnus_approval_status == "APPROVED":
+        if listing.admin_approval_status == "APPROVED":
             my_approved_listings.append(listing)
     return my_approved_listings
 
@@ -697,7 +697,7 @@ def toggle_listing_approval(listing_id, status):
     if not listing:
         return None
     if status in ["APPROVED", "PENDING", "REJECTED"]:
-        listing.alumnus_approval_status = status
+        listing.admin_approval_status = status
     else:
         return None
 

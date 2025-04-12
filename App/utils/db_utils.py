@@ -19,7 +19,7 @@ def get_records_by_filter(filter_func, jsonify_results: bool = False) -> Union[L
             - If `jsonify_results` is True, returns a list of dictionaries (JSON format).
     """
     # Apply the filter function and execute the query
-    records = filter_func().all()
+    records = filter_func()
 
     return [record.__json__() for record in records] if jsonify_results else records
 

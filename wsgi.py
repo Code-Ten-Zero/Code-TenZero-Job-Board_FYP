@@ -34,38 +34,43 @@ def initialize():
     db.create_all()
 
     # add in the first admin
-    add_admin_account('bobpass', 'bob@mail')
+    print("Adding debug admin account: bob@mail")
+    add_admin_account('bob@mail', 'bobpass')
 
     # add in alumnus
+    print("Adding debug alumnus account: rob@mail")
     add_alumnus_account(
-        'robpass',
         'rob@mail',
+        'robpass',
         'robfname',
         'roblname',
         phone_number='1868-333-4444'
     )
 
     # add in companies
+    print("Adding debug company account: company@mail")
     company1 = add_company_account(
-        'company1',
-        'compass',
         'company@mail',
-        'mailing_address',
-        'phone_number',
-        'public@email',
-        'company_website.com'
-    )
-    company2 = add_company_account(
-        'company2',
         'compass',
+        'company1',
+        'mailing_address',
+        'public@email',
+        'company_website.com',
+        'phone_number'
+    )
+    print("Adding debug company account: company@mail2")
+    company2 = add_company_account(
         'company@mail2',
+        'compass',
+        'company2',
         'mailing_address2',
-        'phone_number2',
         'public2@email',
-        'company_website2.com'
+        'company_website2.com',
+        'phone_number2'
     )
 
     # add in listings
+    print("Adding debug job listing: listing1")
     add_job_listing(
         company1.id,
         'listing1',
@@ -75,6 +80,7 @@ def initialize():
         False,
         'Curepe'
     )
+    print("Adding debug job listing: listing2")
     add_job_listing(
         company2.id,
         'listing2',
@@ -84,6 +90,7 @@ def initialize():
         False,
         'Port-Of-Spain'
     )
+    print("Adding debug job listing: listing3")
     add_job_listing(
         company2.id,
         'listing3',
@@ -93,6 +100,7 @@ def initialize():
         False,
         'Port-Of-Spain'
     )
+    print("Adding debug job listing: listing4")
     add_job_listing(
         company1.id,
         'listing4',
