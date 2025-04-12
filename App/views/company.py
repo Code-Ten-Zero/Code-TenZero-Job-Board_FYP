@@ -101,15 +101,16 @@ def request_delete_listing_action(job_id):
 
     return response
 
-# @company_views.route('/request_edit_listing/<int:job_listing_id>', methods=['GET'])
-# @jwt_required()
-# def request_edit_listing_action(job_listing_id):
 
-#     listing = set_request(job_listing_id, 'Edit')
-#     response = None
-#     print(listing.request)
+# @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+# @jwt_required()
+# def request_edit_listing_action(job_id):
+
+#     listing = get_job_listing (job_id)
 
 #     if listing is not None:
+#         listing.admin_approval_status = "REQUESTED UPDATE"
+#         db.session.commit()
 #         flash('Request for edit sent!', 'success')
 #         response = redirect(url_for('index_views.index_page'))
 #     else:
