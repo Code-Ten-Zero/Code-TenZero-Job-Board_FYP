@@ -46,7 +46,8 @@ def add_company_account(
     for field, value in check_fields.items():
         if value:
             for subclass in BaseUserAccount.__subclasses__():
-                if subclass.query.filter_by(**{field: value}).first():
+                # Only check for existing value if the field exists
+                if hasattr(subclass, field) and subclass.query.filter_by(**{field: value}).first():
                     raise ValueError(
                         f"{field.replace('_', ' ').title()} <'{value}'> already exists."
                     )
