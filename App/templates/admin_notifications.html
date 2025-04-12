@@ -39,7 +39,7 @@
             background-color: #e68900;
         }
 
-        .notification-container {
+        .container {
             max-width: 60vw;
             max-height: 70vh;
             margin: 20px auto;
@@ -102,15 +102,15 @@
  <header>
         <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo">
         <h1><a href="/app">DCIT Job Board</a></h1>
-        <h1 class="header-title">Notifications for {{company.registered_name}}</h1>
+        <h1 class="header-title">Notifications for Admin</h1>
         <div class="topnav" id="mynav">
         <a href="/logout"> Logout</a>
-        <a href="/view_my_account/{{company.id}}"> My Account</a>
+        <a href="#"> My Account</a>
         <a href="/app"> View Listings</a>
         </div>
     </header>
 <body>
-    <div class="notification-container">
+    <div class="container">
         {% if notifications %}
             <ul>
                 {% for notification in notifications %}

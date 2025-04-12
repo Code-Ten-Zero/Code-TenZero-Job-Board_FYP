@@ -18,7 +18,7 @@
         margin: 0;
         padding: 0;
         background-color: rgb(225, 227, 231);
-        max-height: 100%;
+        height: 100vh;
         overflow: hidden;
       }
 
@@ -27,7 +27,7 @@
         border-radius: 10px;
         padding-right: 5px;
         overflow-y: scroll;
-        height: 70%;
+        height: 77vh;
         padding-top: 0;
       }
 
@@ -272,6 +272,7 @@
         background-color: none;
         gap: 20px;
         overflow: none;
+        height: 100vh;
       }
 
       .container {
@@ -438,6 +439,14 @@
         font-weight: normal;
       }
 
+      .no-listings {
+            text-align: center;
+            color: #d5d1d1;
+            font-style: italic;
+            margin-top: 20px;
+          
+        }
+
       #resume-view {
         height: 40px;
         width: 20px;
@@ -568,18 +577,11 @@
           overflow: scroll;
         }
 
-        .aside {
-          width: 100%;
-          height: 60vh;
-          margin-top: 0;
-          overflow-y: auto;
-        }
-
         .body-container {
           overflow: scroll;
           padding: 2%;
           align-items: center;
-          height: 70vh;
+          height: 100vh;
         }
         .btn-group {
           display: flex;
@@ -605,7 +607,7 @@
       <h1>DCIT Job Board</h1>
       <div class="topnav" id="mynav">
         <a href="/logout" class="logout">Logout</a>
-        <a href="/my_notifications" id="notifications-link">
+        <a href="/alumni_notifications" id="notifications-link">
           Notifications
           <span id="notification-dot"></span>
         </a>
@@ -708,6 +710,7 @@
           </h1>
         </div>
         <div class="listings-container" id="jobs-container">
+        {% if jobs %}
           {% for job in jobs %}
           <div class="job_card">
             <div class="job-header">
@@ -742,12 +745,18 @@
             </div>
           </div>
           {% endfor%}
+          {% else %}
+         <p>
+              No published job listings yet.
+         </p>
+          {% endif %}
         </div>
         <div
           class="listings-container"
           id="companies-container"
           style="display: none"
         >
+        {% if companies %}
           {% for company in companies %}
           <div class="job_card">
             <div class="job-header">
@@ -760,7 +769,12 @@
               />
             </div>
           </div>
-          {% endfor%}
+            {% endfor%}
+          {% else %}
+          <p>
+               No registered companies yet.
+          </p>
+        {% endif %}
         </div>
 
         <div
@@ -768,6 +782,7 @@
           id="applications-container"
           style="display: none"
         >
+        {% if applications %}
           {% for application in applications %}
           <div class="job_card">
             <div class="job-header">
@@ -791,7 +806,13 @@
               />
             </div>
           </div>
-          {% endfor%}
+           {% endfor%}
+
+          {% else %}
+          <p>
+              No submitted applications yet.
+          </p>
+          {% endif %}
         </div>
       </div>
 
@@ -799,8 +820,9 @@
       <aside>
         <div class="sticky">
           <h1>Saved Listings</h1>
+        {% if saved %}
         </div>
-        {% for listing in saved %}
+         {% for listing in saved %}
         <div class="job_card" id="saved_listing_card">
           <div class="job-header" id="saved_card_header">
             <h3>{{ listing.job_listing.title }}</h3>
@@ -820,8 +842,13 @@
             >
           </div>
         </div>
+         {% endfor%}
 
-        {% endfor%}
+        {% else %}
+        <p>
+            No saved listings yet.
+        </p>
+        {% endif %}
       </aside>
     </div>
     <script>

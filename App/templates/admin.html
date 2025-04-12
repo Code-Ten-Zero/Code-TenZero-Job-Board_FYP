@@ -137,7 +137,7 @@
       <h1><a href="/app">DCIT Job Board</a></h1>
       <div class="topnav" id="mynav">
         <a href="/logout" >Logout</a>
-        <a href="#" >Notifications</a>
+        <a href="/admin_notifications" >Notifications</a>
         <a href="#" >My Account</a>
       </div>
     </header>
@@ -166,7 +166,7 @@
             <th>Company</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Requests</th>
+            <th>Listing Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -179,7 +179,7 @@
             <td>{{ job.company.registered_name }}</td>
             <td>{{ job.title }}</td>
             <td>{{ job.description }}</td>
-            <td>{{ job.request }}</td>
+            <td id="listing-status-{{job.id}}">{{ job.admin_approval_status }}</td>
             <td class="actions">
               <!-- <button onclick="editListing(0)">Edit</button> -->
               <a href="/delete_listing/{{job.id}}" class="delete">Delete</a>
@@ -205,6 +205,8 @@
         </tbody>
         {% endfor %}
       </table>
+
+
     </div>
     <script>
       function publishJob(event, button) {
@@ -212,6 +214,7 @@
 
         const header = document.getElementById("jobHeader");
         const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
+        const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
 
         fetch(`/publish_job/${jobId}`, {
           method: "POST",
@@ -224,10 +227,11 @@
               // Move job to published section (UI only)
               const row = button.closest("tr");
               row.setAttribute("data-status", "APPROVED");
+              statusCell.textContent = "APPROVED";
               button.textContent = "Unpublish";
-              button.setAttribute("onclick", `unpublishJob(event, this)`);
-
-              // Apply filter to show the job in the "UnPublished" section
+              button.setAttribute("onclick", `unpublishJob(event, this)`)
+              
+              // Apply filter to show the job in the "Unpublished" section
               if (header.textContent.includes("Unpublished")) {
                 filterByStatus("PENDING");
               }
@@ -248,6 +252,7 @@
 
         const header = document.getElementById("jobHeader");
         const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
+        const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
 
         fetch(`/unpublish_job/${jobId}`, {
           method: "POST",
@@ -260,6 +265,7 @@
               // Move job to unpublished section (UI only)
               const row = button.closest("tr");
               row.setAttribute("data-status", "PENDING");
+              statusCell.textContent = "PENDING";
               button.textContent = "Publish";
               button.setAttribute("onclick", `publishJob(event, this)`);
 
@@ -282,7 +288,7 @@
       function filterByStatus(status) {
         const rows = document.querySelectorAll("#jobTable tbody tr");
         const header = document.getElementById("jobHeader");
-
+        
         // Update header text
         if (status === "APPROVED") {
           header.textContent = "Currently Displaying Published Jobs";
