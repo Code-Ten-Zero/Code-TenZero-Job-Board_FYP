@@ -10,7 +10,7 @@ from App.models.notification import Notification
 from .index import index_views
 
 
-from App.controllers import(
+from App.controllers import (
     get_user_by_email,
     # update_alumni_info,
     get_job_listing,
@@ -20,57 +20,57 @@ from App.controllers import(
 
 from App.controllers.company_subscription import (
     add_company_subscription,
-    get_company_subscription,
-    get_all_company_subscriptions,
-    get_company_subscriptions_by_alumnus_id,
-    delete_company_subscription
+    get_company_subscription
 )
 
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
-from App.models import(
+from App.models import (
     AlumnusAccount,
     CompanyAccount,
-    AdminAccount,
     SavedJobListing,
-    JobApplication,
-    CompanySubscription
+    JobApplication
 )
 
-alumni_views = Blueprint('alumni_views', __name__, template_folder='../templates')
+alumni_views = Blueprint(
+    'alumni_views',
+    __name__,
+    template_folder='../templates'
+)
 
-# @alumni_views.route('/update_alumni/<id>', methods=['POST'])
-# @jwt_required()
-# def update_alumni(id):
-#     user = get_user_by_email(current_user.login_email)
-#     data = request.form
-#     first_name = data['fname']
-#     last_name = data['lname']
-#     phone_number = data['contact']
-#     login_email = data['email']
 
-#     current_password = data['current_password']
-#     confirm_current_password = data['confirm_current_password']
-#     new_password = data['new_password']
-#     confirm_new_password = data['confirm_new_password']
+@alumni_views.route('/update_alumni/<id>', methods=['POST'])
+@jwt_required()
+def update_alumni(id):
+    user = get_user_by_email(current_user.login_email)
+    data = request.form
+    first_name = data['fname']
+    last_name = data['lname']
+    phone_number = data['contact']
+    login_email = data['email']
 
-#     if current_password != confirm_current_password:
-#         flash ("Current passwords do not match")
-#         return render_template('my-account-alumni.html', user=user)
+    current_password = data['current_password']
+    confirm_current_password = data['confirm_current_password']
+    new_password = data['new_password']
+    confirm_new_password = data['confirm_new_password']
 
-#     if new_password != confirm_new_password:
-#         flash ("New passwords do not match")
-#         return render_template('my-account-alumni.html', user=user)
+    if current_password != confirm_current_password:
+        flash("Current passwords do not match")
+        return render_template('my-account-alumni.html', user=user)
 
-#     update_status = update_alumni_info(id, first_name, last_name, phone_number, login_email, current_password, new_password)
+    if new_password != confirm_new_password:
+        flash("New passwords do not match")
+        return render_template('my-account-alumni.html', user=user)
 
-#     if update_status:
-#         flash ("Alumni information updated successfully")
-#         return render_template('my-account-alumni.html', user=user)
-#     else:
-#         flash("Update failed. Check your information and try again.")
-#         return render_template('my-account-alumni.html', user=user)
+    update_status = update_alumni_info(
+        id, first_name, last_name, phone_number, login_email, current_password, new_password)
 
-#     return render_template('my-account-alumni.html', user=user)
+    if update_status:
+        flash("Alumni information updated successfully")
+        return render_template('my-account-alumni.html', user=user)
+    else:
+        flash("Update failed. Check your information and try again.")
+        return render_template('my-account-alumni.html', user=user)
+
 
 @alumni_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
@@ -81,9 +81,8 @@ def view_my_account_page(id):
 
     except Exception:
         flash('Error retreiving User')
-        response = redirect(url_for('index_views.index_page'))
+        return redirect(url_for('index_views.index_page'))
 
-    return response
 
 @alumni_views.route('/subscribe', methods=['POST'])
 @jwt_required()
@@ -91,47 +90,44 @@ def subscribe_action():
     """
     Allows an alumnus to subscribe to a company to receive updates about job listings.
     """
-     # Get the list of selected companies from the form
     selected_companies = request.form.getlist('company')
-    # print(f"Selected companies: {selected_companies}")  # Test print
-    
-    
+
     if not selected_companies:
         flash('No companies selected!', 'error')
     try:
-        # Get the alumnus ID and company ID from the request
         alumnus_id = current_user.id
-        
+
         # Check if the alumnus and company exist in the database
         alumnus = AlumnusAccount.query.get(alumnus_id)
-        companies = CompanyAccount.query.filter(CompanyAccount.registered_name.in_(selected_companies)).all()
-        # print(f"Queried companies: {companies}")  # Test print
-        
+
         if not alumnus:
-           flash('Alumnus not found!', 'error') 
-           return redirect(url_for('index_views.index_page'))
-        
+            flash('Alumnus not found!', 'error')
+            return redirect(url_for('index_views.index_page'))
+
+        companies = CompanyAccount.query.filter(
+            CompanyAccount.registered_name.in_(selected_companies)).all()
+
         if not companies:
             flash('No valid companies selected!', 'error')
             return redirect(url_for('index_views.index_page'))
 
         new_subscription_added = False
-         
+
         for company in companies:
             # Check if the alumnus is already subscribed to the company
-            existing_subscription = get_company_subscription(alumnus_id=alumnus.id, company_id=company.id)
-        
+            existing_subscription = get_company_subscription(
+                alumnus_id=alumnus.id, company_id=company.id)
+
             if existing_subscription:
                 continue  # Skip if the alumnus is already subscribed to this company
 
             # Create a new subscription
-            subscription = add_company_subscription(alumnus_id=alumnus.id, company_id=company.id)
+            add_company_subscription(
+                alumnus_id=alumnus.id, company_id=company.id)
             new_subscription_added = True  # Mark that a new subscription has been added
-        
+
         db.session.commit()
-        
-        # subscriptions = CompanySubscription.query.all()
-        # print(subscriptions)  # Test print
+
         if new_subscription_added:
             flash('Successfully subscribed to selected companies!', 'success')
         else:
@@ -170,21 +166,22 @@ def subscribe_action():
 # @jwt_required()
 # def update_modal_seen():
 #     try:
-#         alumni = current_user  
-#         set_alumni_modal_seen(alumni.id)  
-#         db.session.commit() 
+#         alumni = current_user
+#         set_alumni_modal_seen(alumni.id)
+#         db.session.commit()
 #         return jsonify(message="Modal seen status updated successfully"), 200
-        
+
 #     except Exception as e:
-#         db.session.rollback()  
+#         db.session.rollback()
 #         return jsonify(message="Error updating modal status"), 500
-    
+
+
 @alumni_views.route('/view_listing_alumni/<id>', methods=["GET"])
 @jwt_required()
 def view_listing_page(id):
-    listing=get_job_listing(id)
-    saved_listings=get_saved_job_listings_by_alumnus_id(current_user.id)
-    
+    listing = get_job_listing(id)
+    saved_listings = get_saved_job_listings_by_alumnus_id(current_user.id)
+
     try:
         return render_template('view-listing-alumni.html', listing=listing, saved_listings=saved_listings)
 
@@ -200,38 +197,45 @@ def view_listing_page(id):
 def get_saved_job_listing():
     alumnus_id = current_user.id
 
-    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id).all()
+    already_saved = SavedJobListing.query.filter_by(
+        alumnus_id=alumnus_id).all()
 
     return jsonify([listing.job_listing_id for listing in already_saved])
+
 
 @alumni_views.route('/save_listing/<job_listing_id>', methods=['POST'])
 @jwt_required()
 def save_job_listing(job_listing_id):
     alumnus_id = current_user.id
 
-    already_saved = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
+    already_saved = SavedJobListing.query.filter_by(
+        alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
 
     if not already_saved:
-        new_saved_job_listing = SavedJobListing(alumnus_id=alumnus_id, job_listing_id=job_listing_id)
+        new_saved_job_listing = SavedJobListing(
+            alumnus_id=alumnus_id, job_listing_id=job_listing_id)
         db.session.add(new_saved_job_listing)
         db.session.commit()
 
         return jsonify({"message": "Job saved successfully!", "status": "saved"}), 201
+
 
 @alumni_views.route('/remove_saved_listing/<job_listing_id>', methods=['GET'])
 @jwt_required()
 def remove_listing(job_listing_id):
     alumnus_id = current_user.id
 
-    already_saved_job = SavedJobListing.query.filter_by(alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
+    already_saved_job = SavedJobListing.query.filter_by(
+        alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
 
     if not already_saved_job:
         return jsonify({"message": "Job not saved!", "status": "error"}), 404
-    
+
     db.session.delete(already_saved_job)
     db.session.commit()
 
-    return jsonify({"message": "Job Removed from saved listings", "status":"removed"}), 200
+    return jsonify({"message": "Job Removed from saved listings", "status": "removed"}), 200
+
 
 @alumni_views.route('/apply_to_listing/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
@@ -244,7 +248,7 @@ def apply(job_listing_id):
     filename = secure_filename(resume.filename)
     static_folder = os.path.join(current_app.root_path, 'static')
     resume_path = os.path.join(static_folder, 'uploads', 'resumes', filename)
-    file_path =  os.path.join('uploads', 'resumes', filename)
+    file_path = os.path.join('uploads', 'resumes', filename)
 
     # Save the file to the directory
     resume.save(resume_path)  # This actually writes the file!
@@ -256,7 +260,7 @@ def apply(job_listing_id):
     new_application = JobApplication(
         alumnus_id=alumnus_id,
         job_listing_id=job_listing_id,
-        resume_file_path=file_path,  
+        resume_file_path=file_path,
         work_experience=work_experience,
     )
 
@@ -269,13 +273,14 @@ def apply(job_listing_id):
     flash("Application submitted successfully!", "success")
     return redirect(url_for("index_views.index_page"))
 
+
 @alumni_views.route('/alumnus_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
-    
+
     alumnus = current_user
-    
-    if not isinstance(alumnus,AlumnusAccount):
+
+    if not isinstance(alumnus, AlumnusAccount):
         flash('Not an Alumnus', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
@@ -283,20 +288,19 @@ def view_notifications_page():
         # Fetch notifications for the alumnus
         notifications = alumnus.notifications.all()
         return render_template('alumnus_notifications.html', notifications=notifications, alumnus=current_user)
-    
+
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
+
 
 @alumni_views.route('/check_unread_notifications', methods=['GET'])
 @jwt_required()
 def check_notifications():
     # Fetch unread notifications for the current user
-    unread_notifications = Notification.query.filter_by(alumnus_id=current_user.id, reviewed_by_user=False).all()
+    unread_notifications = Notification.query.filter_by(
+        alumnus_id=current_user.id, reviewed_by_user=False).all()
 
     # Determine if there are new notifications
     has_new_notifications = len(unread_notifications) > 0
     return jsonify({'has_new_notifications': has_new_notifications})
-    
-
-

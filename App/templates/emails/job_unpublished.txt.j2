@@ -1,0 +1,23 @@
+Job Unpublished: {{ job_title }}
+
+Hello {{ recipient_name }},
+
+{% if is_company %}
+Your job listing has been temporarily unpublished and is no longer visible on the job board.
+{% else %}
+The job listing below has been temporarily unpublished:
+{% endif %}
+
+Title: {{ job_title }}
+Company: {{ company_name }}
+Location: {{ job_location }}
+
+Best regards,
+Your Job Board Team
+
+--------------------------------------------------
+{% if is_company %}
+You are receiving this message because you posted a job listing.
+{% else %}
+This email was sent to you because you are subscribed to job notifications.
+{% endif %}

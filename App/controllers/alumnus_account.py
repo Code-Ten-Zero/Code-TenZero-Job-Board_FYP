@@ -543,6 +543,62 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
 #     db.session.add(alumni)
 #     db.session.commit()
 #     return alumni
+        
+# adding and removing job categories 
+def add_categories(id, job_categories):
+    alumni = get_alumni(id)
+    try:
+        for category in job_categories:
+            # print(category)
+            alumni.add_category(category)
+            # print(alumni.get_categories())
+            db.session.commit()
+        return alumni
+    except:
+        db.session.rollback()
+        return None   
+
+def remove_categories(id, job_categories):
+    alumni = get_alumni(id)
+    try:
+        for category in job_categories:
+            alumni.remove_category(category)
+            db.session.commit()
+        return alumni
+    except:
+        db.session.rollback()
+        return None
+
+# apply to an application
+# def apply_listing(alumni_id, listing_title):
+def apply_listing(id, joblisting_id):
+    from App.controllers import get_listing, get_company_by_name
+
+    alumni = get_alumni(id)
+
+    # error check to see if alumni exists
+    if alumni is None:
+        # print('is none')
+        return None
+
+    # get the listing and then company that made the listing
+    listing = get_listing(joblisting_id)
+
+    if listing is None:
+        return None
+
+    # add the alumni to the listing applicant
+    listing.applicant.append(alumni)
+    alumni.listing.append(listing)
+
+    company = get_company_by_name(listing.company_name)
+
+    #commit changes to the database
+    db.session.commit()
+
+    # add the alumni as an applicant to the company model object?
+
+    return alumni
 
 
 # def set_alumni_modal_seen(id):

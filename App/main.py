@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, render_template
 from flask_uploads import DOCUMENTS, IMAGES, TEXT, UploadSet, configure_uploads
 from flask_cors import CORS
@@ -22,27 +23,41 @@ def add_views(app):
 
 
 def create_app(overrides={}):
+    # Load environment variables from .env
+    load_dotenv()
+
     app = Flask(__name__, static_url_path='/static')
+
+    # Load config from environment or override dict
     load_config(app, overrides)
+    
+    # Optional fallback config
+    app.config.from_pyfile('default_config.py', silent=True)
+
     CORS(app)
     add_auth_context(app)
-    app.config.from_pyfile('default_config.py')
+    
+    # Database setup
     init_db(app)
-    # db.init_app(app)
     with app.app_context():
-        # Ensure all tables are created
-        # db.drop_all()
         db.create_all()
 
+    # File upload setup
     photos = UploadSet('photos', TEXT + DOCUMENTS + IMAGES)
     configure_uploads(app, photos)
+
+    # Register views
     add_views(app)
-    # init_db(app)
+    
+    # JWT setup
     jwt = setup_jwt(app)
 
     @jwt.invalid_token_loader
     @jwt.unauthorized_loader
     def custom_unauthorized_response(error):
         return render_template('401.html', error=error), 401
+    
+    # Push context if needed
     app.app_context().push()
+
     return app
