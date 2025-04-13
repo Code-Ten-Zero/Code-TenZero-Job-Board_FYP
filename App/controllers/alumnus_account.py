@@ -470,83 +470,8 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
         db.session.rollback()
         raise SQLAlchemyError(f"A database error has occured: {e}")
 
-# def is_alumni_subscribed(id):
-#     # alumni = get_alumni(id)
-#     # if(alumni.subscribed == True):
-#     #     return True
-#     # else:
-#     return False
-
-
-# # also needs to be rewritten entirely -CTZ
-# def get_all_subscribed_alumni():
-#     return get_all_alumni()
-#     # all_alumni = AlumnusAccount.query.filter_by(subscribed=True).all()
-#     # return all_alumni
-
-
-# # Also needs to be re written -CTZ
-# # handle subscribing and unsubscribing, this needs to be changed to handle subscribing to companies
-# def subscribe(id, job_category=None):
-#     alumni = get_alumni(id)
-
-#     # if alumni is None:
-#     #     print('nah')
-    #     return None
-
-    # alumni.subscribed = True
-
-    # if job_category is not None:
-    #     # add_categories(alumni_id, job_category)
-    #     alumni.add_category(job_category)
-
-    # db.session.add(alumni)
-    # db.session.commit()
-    # return alumni
-
-# rewrite me -CTZ
-
-
-# def unsubscribe(id):
-#     alumni = get_alumni(id)
-
-#     # if not alumni:
-#     #     # print('nah')
-#     #     return None
-
-#     # alumni.subscribed = False
-#     # remove_categories(id, alumni.get_categories())
-
-#     # db.session.add(alumni)
-#     # db.session.commit()
-#     return alumni
-
-# def subscribe_action(alumni_id, job_category=None):
-#     alumni = get_alumni(alumni_id)
-
-#     if not alumni:
-#         # print('nah')
-#         return None
-
-#     # if they are already susbcribed then unsubscribe them
-#     if is_alumni_subscribed(alumni_id):
-#         alumni.subscribed = False
-#         remove_categories(alumni_id, alumni.get_categories())
-
-#     else:
-#         alumni.subscribed = True
-
-#         if job_category is not None:
-#             add_categories(alumni_id, job_category)
-#         # set their jobs list to job_category ?
-
-#     db.session.add(alumni)
-#     db.session.commit()
-#     return alumni
-
 
 # def set_alumni_modal_seen(id):
 #     alumni = get_alumni(id)
 #     alumni.has_seen_modal = True
 #     db.session.commit()
-

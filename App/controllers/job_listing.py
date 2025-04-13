@@ -681,6 +681,7 @@ def unapprove_job_listing(id: int) -> JobListing:
         db.session.rollback()
         raise SQLAlchemyError(f"A database error has occurred: {e}")
 
+
 def get_approved_listings():
     all_listings = JobListing.query.all()
     my_approved_listings = []
@@ -688,6 +689,7 @@ def get_approved_listings():
         if listing.admin_approval_status == "APPROVED":
             my_approved_listings.append(listing)
     return my_approved_listings
+
 
 def toggle_listing_approval(listing_id, status):
     print("toggle listing approval function")
@@ -708,7 +710,8 @@ def toggle_listing_approval(listing_id, status):
         print(f'my error: {e}')
         db.session.rollback()
         return None
-    
+
+
 """
 ===== DELETE
 """

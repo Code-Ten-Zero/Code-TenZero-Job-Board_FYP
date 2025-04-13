@@ -101,23 +101,22 @@ def request_delete_listing_action(job_id):
 
     return response
 
+@company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
+@jwt_required()
+def request_edit_listing_action(job_id):
 
-# @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
-# @jwt_required()
-# def request_edit_listing_action(job_id):
+    listing = get_listing (job_id)
 
-#     listing = get_job_listing (job_id)
+    if listing is not None:
+        listing.admin_approval_status = "REQUESTED UPDATE"
+        db.session.commit()
+        flash('Request for edit sent!', 'success')
+        response = redirect(url_for('index_views.index_page'))
+    else:
+        flash('Error sending request', 'unsuccessful')
+        response = redirect(url_for('index_views.login_page'))
 
-#     if listing is not None:
-#         listing.admin_approval_status = "REQUESTED UPDATE"
-#         db.session.commit()
-#         flash('Request for edit sent!', 'success')
-#         response = redirect(url_for('index_views.index_page'))
-#     else:
-#         flash('Error sending request', 'unsuccessful')
-#         response = redirect(url_for('index_views.login_page'))
-
-#     return response
+    return response
 
 @company_views.route('/company_notifications', methods=['GET'])
 @jwt_required()

@@ -15,7 +15,7 @@ from App.controllers.notifications import (
     notify_subscribed_alumnus
 )
 
-from App.models import(
+from App.models import (
     AdminAccount
 )
 
@@ -31,6 +31,10 @@ INDEX_PAGE_URL = 'index_views.index_page'
 @admin_views.route('/publish_job/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
 def publish_job(job_listing_id):
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access.', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
     approved_listing = approve_job_listing(job_listing_id)
 
     if approved_listing:
@@ -58,6 +62,10 @@ def publish_job(job_listing_id):
 @admin_views.route('/unpublish_job/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
 def unpublish_job(job_listing_id):
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access.', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
     unpublished_listing = unapprove_job_listing(job_listing_id)
 
     if not unpublished_listing:
@@ -73,6 +81,9 @@ def unpublish_job(job_listing_id):
 @admin_views.route('/delete_listing/<int:job_listing_id>', methods=['GET'])
 @jwt_required()
 def delete_listing_action(job_listing_id):
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access.', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
     deleted_listing = delete_job_listing(
         job_listing_id,
@@ -90,21 +101,19 @@ def delete_listing_action(job_listing_id):
 
     return response
 
+
 @admin_views.route('/admin_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
-    
-    admin = current_user
-    
-    if not isinstance(admin, AdminAccount):
-        flash('Not an Alumnus', 'unsuccessful')
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access.', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
     try:
         # Fetch notifications for the alumnus
-        notifications = admin.notifications.all()
+        notifications = current_user.notifications.all()
         return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
-    
+
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
