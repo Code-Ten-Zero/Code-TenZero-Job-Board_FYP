@@ -10,11 +10,11 @@ def create_user(password, login_email):
 
 
 def get_user_by_email(login_email):
-    alumni = AlumnusAccount.query.filter_by(login_email=login_email).first()
+    alumnus = AlumnusAccount.query.filter_by(login_email=login_email).first()
 
-    if alumni:
-        print("got alumni by email")
-        return alumni
+    if alumnus:
+        print("got alumnus by email")
+        return alumnus
 
     admin = AdminAccount.query.filter_by(login_email=login_email).first()
     if admin:

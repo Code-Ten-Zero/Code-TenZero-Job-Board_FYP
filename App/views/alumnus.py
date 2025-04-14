@@ -23,14 +23,14 @@ from App.controllers.job_listing import get_job_listing
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
 
 
-alumni_views = Blueprint(
-    'alumni_views',
+alumnus_views = Blueprint(
+    'alumnus_views',
     __name__,
     template_folder='../templates'
 )
 
 
-@alumni_views.route('/update_alumnus/<id>', methods=['POST'])
+@alumnus_views.route('/update_alumnus/<id>', methods=['POST'])
 @jwt_required()
 def update_alumnus(id):
     if not isinstance(current_user, AlumnusAccount):
@@ -51,11 +51,11 @@ def update_alumnus(id):
 
     if current_password != confirm_current_password:
         flash("Current passwords do not match")
-        return render_template('my-account-alumni.html', user=user)
+        return render_template('my-account-alumnus.html', user=user)
 
     if new_password != confirm_new_password:
         flash("New passwords do not match")
-        return render_template('my-account-alumni.html', user=user)
+        return render_template('my-account-alumnus.html', user=user)
 
     update_status = update_alumnus_account(
         id,
@@ -68,26 +68,26 @@ def update_alumnus(id):
     )
 
     if update_status:
-        flash("Alumni information updated successfully")
+        flash("Alumnus' information updated successfully")
     else:
         flash("Update failed. Check your information and try again.")
 
-    return render_template('my-account-alumni.html', user=user)
+    return render_template('my-account-alumnus.html', user=user)
 
 
-@alumni_views.route('/view_my_account/<id>', methods=["GET"])
+@alumnus_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
 def view_my_account_page(id):
     user = get_user_by_email(current_user.login_email)
     try:
-        return render_template('my-account-alumni.html', user=user)
+        return render_template('my-account-alumnus.html', user=user)
 
     except Exception:
         flash('Error retreiving User')
         return redirect(url_for('index_views.index_page'))
 
 
-@alumni_views.route('/subscribe', methods=['POST'])
+@alumnus_views.route('/subscribe', methods=['POST'])
 @jwt_required()
 def subscribe_action():
     """
@@ -147,12 +147,12 @@ def subscribe_action():
         return redirect(url_for('index_views.index_page'))
 
 
-# @alumni_views.route('/update_modal_seen', methods=['POST'])
+# @alumnus_views.route('/update_modal_seen', methods=['POST'])
 # @jwt_required()
 # def update_modal_seen():
 #     try:
-#         alumni = current_user
-#         set_alumni_modal_seen(alumni.id)
+#         alumnus = current_user
+#         set_alumnus_modal_seen(alumnus.id)
 #         db.session.commit()
 #         return jsonify(message="Modal seen status updated successfully"), 200
 
@@ -161,14 +161,14 @@ def subscribe_action():
 #         return jsonify(message="Error updating modal status"), 500
 
 
-@alumni_views.route('/view_listing_alumni/<id>', methods=["GET"])
+@alumnus_views.route('/view_listing_alumnus/<id>', methods=["GET"])
 @jwt_required()
 def view_listing_page(id):
     listing = get_job_listing(id)
     saved_listings = get_saved_job_listings_by_alumnus_id(current_user.id)
 
     try:
-        return render_template('view-listing-alumni.html', listing=listing, saved_listings=saved_listings)
+        return render_template('view-listing-alumnus.html', listing=listing, saved_listings=saved_listings)
 
     except Exception:
         flash('Error retreiving Listing')
@@ -177,7 +177,7 @@ def view_listing_page(id):
     return response
 
 
-@alumni_views.route('/get_saved_listing', methods=['GET'])
+@alumnus_views.route('/get_saved_listing', methods=['GET'])
 @jwt_required()
 def get_saved_job_listing():
     if not isinstance(current_user, AlumnusAccount):
@@ -190,7 +190,7 @@ def get_saved_job_listing():
     return jsonify([listing.job_listing_id for listing in already_saved])
 
 
-@alumni_views.route('/save_listing/<job_listing_id>', methods=['POST'])
+@alumnus_views.route('/save_listing/<job_listing_id>', methods=['POST'])
 @jwt_required()
 def save_job_listing(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
@@ -211,7 +211,7 @@ def save_job_listing(job_listing_id):
         return jsonify({"message": "Job saved successfully!", "status": "saved"}), 201
 
 
-@alumni_views.route('/remove_saved_listing/<job_listing_id>', methods=['GET'])
+@alumnus_views.route('/remove_saved_listing/<job_listing_id>', methods=['GET'])
 @jwt_required()
 def remove_listing(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
@@ -230,7 +230,7 @@ def remove_listing(job_listing_id):
     return jsonify({"message": "Job Removed from saved listings", "status": "removed"}), 200
 
 
-@alumni_views.route('/apply_to_listing/<int:job_listing_id>', methods=['POST'])
+@alumnus_views.route('/apply_to_listing/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
 def apply(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
@@ -271,7 +271,7 @@ def apply(job_listing_id):
     return redirect(url_for("index_views.index_page"))
 
 
-@alumni_views.route('/alumnus_notifications', methods=['GET'])
+@alumnus_views.route('/alumnus_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
     if not isinstance(current_user, AlumnusAccount):
@@ -289,7 +289,7 @@ def view_notifications_page():
         return redirect(url_for('index_views.index_page'))
 
 
-@alumni_views.route('/check_unread_notifications', methods=['GET'])
+@alumnus_views.route('/check_unread_notifications', methods=['GET'])
 @jwt_required()
 def check_notifications():
     if not isinstance(current_user, AlumnusAccount):

@@ -211,7 +211,7 @@
       <h1 class="header-title"> My Account</h1>
       <div class="topnav" id="mynav">
         <a href="/logout"> Logout</a>
-        <a href="/alumni_notifications"> Notifications</a>
+        <a href="/alumnus_notifications"> Notifications</a>
         <a href="/app"> View Listings</a>
       </div>
     </header>
@@ -238,13 +238,13 @@
           >
           <!-- </form> -->
           <p class="image-text">{{user.first_name}} {{user.last_name}}</p>
-          <p class="image-text">Alumni</p>
+          <p class="image-text">Alumnus</p>
           <p class="image-text">{{user.login_email}}</p>
           <p class="image-text">{{user.phone_number}}</p>
         </div>
 
         <!-- Form -->
-        <form method="POST" action="/update_alumni/{{user.id}}">
+        <form method="POST" action="/update_alumnus/{{user.id}}">
           <!-- First Name and Last Name row -->
           <div class="form-row">
             <div class="col">

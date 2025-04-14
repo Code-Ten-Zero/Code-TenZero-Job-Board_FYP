@@ -10,7 +10,7 @@ from App.models import (
     JobListing
 )
 
-LISTING_PAGE_ROUTE = 'alumni_views.view_listing_page'
+LISTING_PAGE_ROUTE = 'alumnus_views.view_listing_page'
 
 """
 ====== MAIN EMAIL FUNCTION ======
@@ -32,12 +32,12 @@ def send_email(recipient_email: str, subject: str, template_name: str, **kwargs)
     """
     try:
         # Load credentials from environment
-        sender_email = os.getenv("EMAIL_USER")
-        sender_password = os.getenv("EMAIL_PASS")
+        sender_email = os.getenv("GMAIL_SENDER_ADDRESS")
+        sender_password = os.getenv("GMAIL_APPLICATION_PASSWORD")
 
         if not sender_email or not sender_password:
             raise EnvironmentError(
-                "Missing EMAIL_USER or EMAIL_PASS in environment."
+                "Missing GMAIL_SENDER_ADDRESS or GMAIL_APPLICATION_PASSWORD in environment."
             )
 
         # Render email content from templates

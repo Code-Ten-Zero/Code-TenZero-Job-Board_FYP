@@ -35,15 +35,15 @@ class UserUnitTests(unittest.TestCase):
         admin = AdminAccount('bob@mail', 'bobpass')
         assert admin.login_email == "bob@mail"
 
-    def test_new_alumni(self):
-        alumni = AlumnusAccount(
+    def test_new_alumnus(self):
+        alumnus = AlumnusAccount(
             'rob@mail',
             'robpass',
             'robfname',
             'roblname',
             '1868-333-4444'
         )
-        assert alumni.login_email == 'rob@mail'
+        assert alumnus.login_email == 'rob@mail'
 
     def test_new_company(self):
         company = CompanyAccount(
@@ -97,15 +97,15 @@ class UserUnitTests(unittest.TestCase):
 
     # test the retrieval of an alumnus account
     def test_get_almunus_by_email(self):
-        alumni = AlumnusAccount(
+        alumnus = AlumnusAccount(
             'rob@mail',
             'robpass',
             'robfname',
             'roblname',
             '1868-333-4444'
         )
-        retreived_alumni = get_user_by_email("rob@mail")
-        assert retreived_alumni.login_email == 'rob@mail'
+        retreived_alumnus = get_user_by_email("rob@mail")
+        assert retreived_alumnus.login_email == 'rob@mail'
 
     # test the retrieval of a company account
     def test_get_company_by_email(self):
@@ -160,15 +160,15 @@ class UserIntegrationTests(unittest.TestCase):
         admin = add_admin_account('rick@mail', "bobpass")
         assert admin.login_email == "rick@mail"
 
-    def test_create_alumni(self):
-        my_alumni = add_alumnus_account(
+    def test_create_alumnus(self):
+        my_alumnus = add_alumnus_account(
             'robby2@mail',
             'robpass',
             'robfname',
             'roblname',
             '1868-399-9944'
         )
-        assert my_alumni.login_email == "robby2@mail"
+        assert my_alumnus.login_email == "robby2@mail"
 
     def test_create_company(self):
         company = add_company_account(
@@ -198,17 +198,17 @@ class UserIntegrationTests(unittest.TestCase):
 
     # this was removed -CTZ
     # def test_czsubscribe(self):
-    #     alumni = subscribe('123456789', 'Database Manager')
-    #     assert alumni.subscribed == True
+    #     alumnus = subscribe('123456789', 'Database Manager')
+    #     assert alumnus.subscribed == True
 
     # def test_czadd_categories(self):
-    #     alumni = add_categories('123456789', ['Database'])
-    #     assert alumni.get_categories() == ['Database']
+    #     alumnus = add_categories('123456789', ['Database'])
+    #     assert alumnus.get_categories() == ['Database']
 
     # apply method to be updated
     # def test_czapply_listing(self):
-    #     alumni = apply_listing('123456789', 1)
-    #     assert get_all_applicants('1')  == [get_alumni('123456789')]
+    #     alumnus = apply_listing('123456789', 1)
+    #     assert get_all_applicants('1')  == [get_alumnus('123456789')]
 
     # def get_all_applicants(self):
     #     applicants = get_all_applicants('1')
@@ -285,13 +285,13 @@ class UserIntegrationTests(unittest.TestCase):
         )
 
     # def test_initial_has_seen_modal(self):
-    #     alumni = add_alumni('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
-    #     assert alumni.has_seen_modal == False
+    #     alumnus = add_alumnus('alutest', 'alupass', 'alu@email.com', '911', '1800-273-8255', 'alufname', 'alulname')
+    #     assert alumnus.has_seen_modal == False
 
     # def test_set_modal_seen(self):
-    #     alumni = add_alumni('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
-    #     set_alumni_modal_seen(alumni.alumni_id)
-    #     assert alumni.has_seen_modal == True
+    #     alumnus = add_alumnus('alutest2', 'alupass2', 'alu2@email.com', '912', '1868-273-8255', 'alu2fname', 'alu2lname')
+    #     set_alumnus_modal_seen(alumnus.alumnus_id)
+    #     assert alumnus.has_seen_modal == True
 
     # def test_create_user(self):
     #     user = create_user("rick", "bobpass")
@@ -357,11 +357,11 @@ class UserIntegrationTests(unittest.TestCase):
 # ctz removed till subscriptions and notifications fixed
     # def test_notify_observers(self):
     #     company = add_company_account('compaknee', 'compaknee', 'compassknee', 'compaknee@mail',  'compaknee_address', 'contactee', 'compaknee_website.com')
-    #     alumni = add_alumni('alutest4', 'alupass4', 'alu4@email.com', '9114', '1800-274-8255', 'alufname4', 'alulname4')
+    #     alumnus = add_alumnus('alutest4', 'alupass4', 'alu4@email.com', '9114', '1800-274-8255', 'alufname4', 'alulname4')
     #     job2 = add_listing("Unapproved Job", "Unapproved Job Description", "compaknee", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
-    #     apply_listing(alumni.alumni_id, job2.id)
+    #     apply_listing(alumnus.alumnus_id, job2.id)
     #     company = get_company_by_email(job2.company.login_email)
     #     # Check if the notification was created
     #     notifications = company.notifications
     #     assert len(notifications) == 1
-    #     assert notifications[0].message == f"Alumni {alumni.login_email} applied to your listing '{job2.title}'."
+    #     assert notifications[0].message == f"Alumnus {alumnus.login_email} applied to your listing '{job2.title}'."

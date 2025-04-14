@@ -55,20 +55,20 @@ def add_alumnus_account_command(
 """
 
 
-@alumnus_cli.command("list", help="Lists alumnis in the database")
+@alumnus_cli.command("list", help="Lists all alumni in the database")
 @click.option("--jsonify-results", is_flag=True, help="Return results in JSON format")
 def list_listing_command(jsonify_results):
     print(get_all_alumnus_accounts(jsonify_results))
 
 
-@alumnus_cli.command("add", help="Add an alumni object to the database")
+@alumnus_cli.command("add", help="Add an alumnus object to the database")
 @click.argument("login_email", default="rob@mail2")
 @click.argument("password_hash", default="robpass")
 @click.argument("firstname", default="rob2fname")
 @click.argument("lastname", default="rob2lname")
 @click.argument("phone_number", default="(555)-555-5555")
-def add_alumni_command(password, login_email, phone_number, firstname, lastname):
-    alumni = add_alumnus_account(
+def add_alumnus_command(password, login_email, phone_number, firstname, lastname):
+    alumnus = add_alumnus_account(
         login_email,
         password,
         firstname,
@@ -76,63 +76,63 @@ def add_alumni_command(password, login_email, phone_number, firstname, lastname)
         phone_number=phone_number
     )
 
-    if alumni is None:
-        print("Error creating alumni")
+    if alumnus is None:
+        print("Error creating alumnus")
     else:
-        print(f"{alumni} created!")
+        print(f"{alumnus} created!")
 
-# flask alumni subscribe
+# flask alumnus subscribe
 # add in better error checking for subscribe_action - try except that the user exists
 
 
-# @alumnus_cli.command("subscribe", help="Subscribe an alumni object")
-# @click.argument("alumni_id", default="123456789")
-# def subscribe_alumni_command(alumni_id):
-#     alumni = subscribe(alumni_id)
+# @alumnus_cli.command("subscribe", help="Subscribe an alumnus object")
+# @click.argument("alumnus_id", default="123456789")
+# def subscribe_alumnus_command(alumnus_id):
+#     alumnus = subscribe(alumnus_id)
 
-#     if alumni is None:
-#         print("Error subscribing alumni")
+#     if alumnus is None:
+#         print("Error subscribing alumnus")
 #     else:
-#         if is_alumni_subscribed(alumni_id):
-#             print(f"{alumni} subscribed!")
+#         if is_alumnus_subscribed(alumnus_id):
+#             print(f"{alumnus} subscribed!")
 #         else:
-#             print(f"{alumni} unsubscribed!")
+#             print(f"{alumnus} unsubscribed!")
 
-# flask alumni add_categories
-# note, must manually add in job_categories in the cli command eg: flask alumni add_categories 123456789 Database,Programming
+# flask alumnus add_categories
+# note, must manually add in job_categories in the cli command eg: flask alumnus add_categories 123456789 Database,Programming
 # @alumnus_cli.command("add_categories", help="Add job categories for the user")
 # @click.argument("job_categories", nargs=-1, type=str)
-# def add_categories_command(alumni_id, job_categories):
-#     alumni = add_categories(alumni_id, job_categories)
+# def add_categories_command(alumnus_id, job_categories):
+#     alumnus = add_categories(alumnus_id, job_categories)
 
-#     if alumni is None:
+#     if alumnus is None:
 #         print(f"Error adding categories")
 #     else:
-#         print(f"{alumni} categories added!")
+#         print(f"{alumnus} categories added!")
 
-# flask alumni apply
+# flask alumnus apply
 
 
-# @alumnus_cli.command("apply", help="Applies an alumni to a job listing")
+# @alumnus_cli.command("apply", help="Applies an alumnus to a job listing")
 # @click.argument("listing_id", default="1")
 # def apply_listing_command(listing_title):
 #     listing = get_listing_title(listing_title)
 
-#     alumni = apply_listing(listing.id)
+#     alumnus = apply_listing(listing.id)
 
-#     if alumni is None or job_listing is None:
+#     if alumnus is None or job_listing is None:
 #         print(f"Error applying to job listing listing {listing_id}")
 #     else:
-#         print(f"{alumni} applied to listing {listing_title}")
+#         print(f"{alumnus} applied to listing {listing_title}")
 
-# flask alumni set_modal_seen
+# flask alumnus set_modal_seen
 
 # have to fix
-# @alumnus_cli.command("set_modal_seen", help="Sets the "has_seen_modal" field for an alumni")
-# @click.argument("alumni_id", default="123456789")
-# def set_modal_seen_command(alumni_id):
+# @alumnus_cli.command("set_modal_seen", help="Sets the "has_seen_modal" field for an alumnus")
+# @click.argument("alumnus_id", default="123456789")
+# def set_modal_seen_command(alumnus_id):
 #     try:
-#         set_alumni_modal_seen(alumni_id)
-#         print(f"Alumni {alumni_id} has seen the modal.")
+#         set_alumnus_modal_seen(alumnus_id)
+#         print(f"Alumnus {alumnus_id} has seen the modal.")
 #     except Exception as e:
-#         print(f"Error setting modal seen for alumni {alumni_id}: {e}")
+#         print(f"Error setting modal seen for alumnus {alumnus_id}: {e}")

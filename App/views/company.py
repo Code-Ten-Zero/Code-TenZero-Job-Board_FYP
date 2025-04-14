@@ -70,7 +70,7 @@ def add_listing_action():
             data['title'],
             data['position_type'],
             data['description'],
-            data['monthly_salary_ttd'],
+            int(data['monthly_salary_ttd']),
             is_remote,  # Pass correct is_remote value
             job_site_address
         )

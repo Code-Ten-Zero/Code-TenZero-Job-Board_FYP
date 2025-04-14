@@ -546,7 +546,7 @@ def delete_alumnus_account(target_id: int, requester_id: int) -> None:
         raise SQLAlchemyError(f"A database error has occured: {e}")
 
 
-# def set_alumni_modal_seen(id):
-#     alumni = get_alumni(id)
-#     alumni.has_seen_modal = True
+# def set_alumnus_modal_seen(id):
+#     alumnus = get_alumnus(id)
+#     alumnus.has_seen_modal = True
 #     db.session.commit()

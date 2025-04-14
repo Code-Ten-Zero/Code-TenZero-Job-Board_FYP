@@ -60,14 +60,12 @@ def publish_job(job_id):
 
     company = get_company_account(approved_listing.company_id)
 
-    # Notify company
     notify_company_account(
         f"Your job listing, {approved_listing.title} has been published!",
         company.id
     )
     send_job_published_email(company, approved_listing, company)
 
-    # Notify subscribed alumni
     notify_subscribed_alumni(
         f"{company.registered_name} posted a new listing, {approved_listing.title}!",
         company.id
@@ -102,7 +100,6 @@ def unpublish_job(job_id):
 
     company = get_company_account(unapproved_listing.company_id)
 
-    # Notify company
     notify_company_account(
         f"Your job listing, {unapproved_listing.title} has been temporarily unpublished!",
         company.id
@@ -113,7 +110,6 @@ def unpublish_job(job_id):
         company
     )
 
-    # Notify subscribed alumni
     notify_subscribed_alumni(
         f"The job listing {unapproved_listing.title} by company {company.registered_name} has been temporarily unpublished.",
         company.id
@@ -153,14 +149,12 @@ def delete_listing_action(job_id):
     else:
         company = get_company_account(temp_listing_copy.company_id)
 
-        # Notify company
         notify_company_account(
             f"Your job listing, {temp_listing_copy.title} has been deleted!",
             company.id
         )
         send_job_deleted_email(company, temp_listing_copy, company)
 
-        # Notify subscribed alumni
         notify_subscribed_alumni(
             f"{company.registered_name}'s listing, {temp_listing_copy.title} has been deleted!",
             company.id

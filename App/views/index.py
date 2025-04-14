@@ -1,10 +1,8 @@
-import os
-from flask import Blueprint, abort, redirect, render_template, request, send_from_directory, jsonify, url_for, flash, send_file
+from flask import Blueprint, redirect, render_template, jsonify, url_for
 from App.models import db
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from flask_jwt_extended import current_user, jwt_required
 
-from App.controllers import(
-    get_job_listing,
+from App.controllers import (
     get_all_job_listings,
     get_job_listings_by_company_id,
     add_job_listing,
@@ -16,82 +14,128 @@ from App.controllers import(
     get_user_by_email
 )
 
-from App.controllers.saved_job_listing import(
-    get_saved_job_listings_by_alumnus_id
-)
-
 from App.controllers.job_applications import (
     get_job_applications_by_alumnus_id
 )
 
-from App.models import(
+from App.controllers.saved_job_listing import (
+    get_saved_job_listings_by_alumnus_id
+)
+
+from App.models import (
     AlumnusAccount,
     CompanyAccount,
     AdminAccount,
 )
 
-index_views = Blueprint('index_views', __name__, template_folder='../templates')
+index_views = Blueprint(
+    'index_views',
+    __name__,
+    template_folder='../templates'
+)
 
 
-
-# @index_views.route('/', methods=['GET'])
 @index_views.route('/app', methods=['GET'])
 @jwt_required()
 def index_page():
-    # return render_template('index.html')
     jobs = get_all_job_listings()
-    companies= get_all_company_accounts()
-    approved_jobs = get_approved_listings() # retrieve approved jobs
-    user= get_user_by_email(current_user.login_email)
-    saved_alumni_listings = get_saved_job_listings_by_alumnus_id(user.id)
-    alumni_job_applications = get_job_applications_by_alumnus_id(user.id)
+    companies = get_all_company_accounts()
+    approved_jobs = get_approved_listings()
 
-    if isinstance(current_user, AlumnusAccount):
+    # Use current_user directly if already loaded
+    user = current_user
 
-        #show_modal = current_user.has_seen_modal
-        show_modal = True
-        if not show_modal:
-            # Pass True to the template to show modal
-            return render_template('alumni.html', jobs=approved_jobs, show_modal=True, companies=companies, user=user, saved=saved_alumni_listings, applications= alumni_job_applications)
-        
-        # Pass False to the modal if already seen
-        return render_template('alumni.html', jobs=approved_jobs, show_modal=False, companies=companies, user=user, saved=saved_alumni_listings, applications= alumni_job_applications)
+    if isinstance(user, AlumnusAccount):
+        saved = get_saved_job_listings_by_alumnus_id(user.id)
+        applications = get_job_applications_by_alumnus_id(user.id)
 
-    
-    if isinstance(current_user, CompanyAccount):
-        company_listings = get_job_listings_by_company_id(current_user.id)
-        return render_template('company-view.html', company_listings=company_listings,jobs=approved_jobs, companies=companies)
+        show_modal = False  # TODO: Replace with `user.has_seen_modal`
+        return render_template(
+            'alumnus.html',
+            jobs=approved_jobs,
+            show_modal=show_modal,
+            companies=companies,
+            user=user,
+            saved=saved,
+            applications=applications
+        )
 
-    if isinstance(current_user, AdminAccount):
+    if isinstance(user, CompanyAccount):
+        company_listings = get_job_listings_by_company_id(user.id)
+        return render_template(
+            'company-view.html',
+            company_listings=company_listings,
+            jobs=approved_jobs,
+            companies=companies
+        )
+
+    if isinstance(user, AdminAccount):
         return render_template('admin.html', jobs=jobs)
-    
-    return redirect('/login')
+
+    return redirect(url_for('auth_views.login'))
+
 
 @index_views.route('/init', methods=['GET'])
 def init():
     db.drop_all()
     db.create_all()
 
+    # Add debug records
+
     # add in the first admin
-    add_admin_account('bobpass','bob@mail')
+    add_admin_account('bobpass', 'bob@mail')
 
     # add in alumni
-    add_alumnus_account('robpass','rob@mail', 'robfname', 'roblname', '1868-333-4444')
+    add_alumnus_account(
+        'robpass',
+        'rob@mail',
+        'robfname',
+        'roblname',
+        '1868-333-4444'
+    )
 
     # add in companies
-    add_company_account('company1', 'compass', 'company@mail',  'company_address', 'contact', 'public@email','company_website.com')
-    add_company_account('company2', 'compass', 'company@mail2',  'company_address2', 'contact2', 'public@email2' ,'company_website2.com')
-    
+    company1 = add_company_account(
+        'company@mail',
+        'compass',
+        'company1',
+        'company_address',
+        'public@email',
+        'company_website.com',
+        'contact'
+    )
+    company2 = add_company_account(
+        'company@mail2',
+        'compass',
+        'company2',
+        'company_address2',
+        'public@email2',
+        'company_website2.com',
+        'contact2',
+    )
+
     # add in job listings
-    add_job_listing('1','listing1', 'Full-time' ,'job description1', 'company1',
-                8000, True, 'Curepe')
+    add_job_listing(
+        company1.id,
+        'listing1',
+        'Full-time',
+        'job description1',
+        8000,
+        True
+    )
 
-    add_job_listing('2','listing2', 'job description', 'company2',
-                4000, 'Full-time', True, True, 'desiredCandidate?', 'Curepe', ['Database Manager', 'Programming', 'butt'])
-
+    add_job_listing(
+        company2.id,
+        'listing2',
+        'Full-time',
+        'job description',
+        4000,
+        True
+    )
 
     return jsonify(message='db initialized!')
 
+
 @index_views.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({'status':'healthy'})
+    return jsonify({'status': 'healthy'})
