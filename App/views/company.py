@@ -17,8 +17,11 @@ from App.models import (
     AdminAccount
 )
 
-company_views = Blueprint('company_views', __name__,
-                          template_folder='../templates')
+company_views = Blueprint(
+    'company_views',
+    __name__,
+    template_folder='../templates'
+)
 
 
 @company_views.route('/view_applications/<int:id>', methods=['GET'])
@@ -103,6 +106,7 @@ def request_delete_listing_action(job_id):
     return response
 
 
+
 @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
 def request_edit_listing_action(job_id):
@@ -113,12 +117,10 @@ def request_edit_listing_action(job_id):
         listing.admin_approval_status = "REQUESTED UPDATE"
         db.session.commit()
         flash('Request for edit sent!', 'success')
-        response = redirect(url_for('index_views.index_page'))
+        return redirect(url_for('index_views.index_page'))
     else:
         flash('Error sending request', 'unsuccessful')
-        response = redirect(url_for('index_views.login_page'))
-
-    return response
+        return redirect(url_for('index_views.login_page'))
 
 
 @company_views.route('/company_notifications', methods=['GET'])
@@ -134,6 +136,7 @@ def view_notifications_page():
         # Assuming the Company model has a notifications relationship
         notifications = current_user.notifications
         return render_template('company_notifications.html', notifications=notifications, company=current_user)
+
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))

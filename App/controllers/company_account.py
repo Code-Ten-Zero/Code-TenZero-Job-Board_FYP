@@ -539,32 +539,3 @@ def delete_company_account(target_id: int, requester_id: int) -> None:
     except SQLAlchemyError as e:
         db.session.rollback()
         raise SQLAlchemyError(f"A database error has occured: {e}")
-
-# def send_notification(job_categories=None):
-#     # get all the subscribed users who have the job categories
-#     subbed = get_all_subscribed_alumni()
-
-#     # turn the job categories into a set for intersection
-#     job_categories = set(job_categories)
-
-#     # list of alumni to be notified
-#     notif_alumni = []
-#     # print(job_categories)
-
-#     for alumni in subbed:
-#         # print('alumni')
-#         # get a set of all the job categories the alumni is subscribed for
-#         jobs = set(alumni.get_categories())
-#         common_jobs = []
-#         # perform an intersection of the jobs an alumni is subscribed for and the job categories of the listing
-#         common_jobs = list(jobs.intersection(job_categories))
-
-#         # if there are common jobs shared in the intersection, then add that alumni the list to notify
-#         if common_jobs:
-#             notif_alumni.append(alumni)
-#         # else:
-#         #     print('no commmon jobs: ', alumni, ' and ', job_categories)
-
-#     # do notification send here? use mail chimp?
-#     print(notif_alumni, job_categories)
-#     return notif_alumni, job_categories

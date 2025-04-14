@@ -1,35 +1,27 @@
 import os
-from flask import Blueprint, app, current_app, redirect, render_template, request, send_from_directory, jsonify, url_for, flash
+from flask import Blueprint, current_app, flash,  jsonify, redirect, render_template, request, url_for
 from App.models import db
 from werkzeug.utils import secure_filename
 
-from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
+from flask_jwt_extended import current_user, jwt_required
 
-from App.models.notification import Notification
-
-from .index import index_views
-
-
-from App.controllers import (
-    get_user_by_email,
-    # update_alumni_info,
-    get_job_listing,
-    get_all_job_listings,
-    get_approved_listings,
+from App.models import (
+    AlumnusAccount,
+    CompanyAccount,
+    Notification,
+    SavedJobListing,
+    JobApplication
 )
 
+from App.controllers.alumnus_account import update_alumnus_info
+from App.controllers.base_user_account import get_user_by_email
 from App.controllers.company_subscription import (
     add_company_subscription,
     get_company_subscription
 )
-
+from App.controllers.job_listing import get_job_listing
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
-from App.models import (
-    AlumnusAccount,
-    CompanyAccount,
-    SavedJobListing,
-    JobApplication
-)
+
 
 alumni_views = Blueprint(
     'alumni_views',
@@ -41,6 +33,10 @@ alumni_views = Blueprint(
 @alumni_views.route('/update_alumni/<id>', methods=['POST'])
 @jwt_required()
 def update_alumni(id):
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+    
     user = get_user_by_email(current_user.login_email)
     data = request.form
     first_name = data['fname']
@@ -61,15 +57,15 @@ def update_alumni(id):
         flash("New passwords do not match")
         return render_template('my-account-alumni.html', user=user)
 
-    update_status = update_alumni_info(
+    update_status = update_alumnus_info(
         id, first_name, last_name, phone_number, login_email, current_password, new_password)
 
     if update_status:
         flash("Alumni information updated successfully")
-        return render_template('my-account-alumni.html', user=user)
     else:
         flash("Update failed. Check your information and try again.")
-        return render_template('my-account-alumni.html', user=user)
+
+    return render_template('my-account-alumni.html', user=user)
 
 
 @alumni_views.route('/view_my_account/<id>', methods=["GET"])
@@ -90,6 +86,10 @@ def subscribe_action():
     """
     Allows an alumnus to subscribe to a company to receive updates about job listings.
     """
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+    
     selected_companies = request.form.getlist('company')
 
     if not selected_companies:
@@ -99,13 +99,12 @@ def subscribe_action():
 
         # Check if the alumnus and company exist in the database
         alumnus = AlumnusAccount.query.get(alumnus_id)
+        companies = CompanyAccount.query.filter(
+            CompanyAccount.registered_name.in_(selected_companies)).all()
 
         if not alumnus:
             flash('Alumnus not found!', 'error')
             return redirect(url_for('index_views.index_page'))
-
-        companies = CompanyAccount.query.filter(
-            CompanyAccount.registered_name.in_(selected_companies)).all()
 
         if not companies:
             flash('No valid companies selected!', 'error')
@@ -140,27 +139,6 @@ def subscribe_action():
         flash(f"An error occurred: {str(e)}", 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
-# @alumni_views.route('/unsubscribe', methods=['POST'])
-# @jwt_required()
-# def unsubscribe_action():
-#     # get form data
-#     # data = request.form
-#     response = None
-
-#     # print(data)
-
-#     try:
-#         alumni = delete_company_subscription(current_user.id)
-#         # print(alumni.get_json())
-#         response = redirect(url_for('index_views.index_page'))
-#         flash('Unsubscribed!', 'success')
-
-#     except Exception:
-#         # db.session.rollback()
-#         flash('Error unsubscribing', 'unsuccessful')
-#         response = redirect(url_for('auth_views.login_page'))
-
-#     return response
 
 # @alumni_views.route('/update_modal_seen', methods=['POST'])
 # @jwt_required()
@@ -195,10 +173,12 @@ def view_listing_page(id):
 @alumni_views.route('/get_saved_listing', methods=['GET'])
 @jwt_required()
 def get_saved_job_listing():
-    alumnus_id = current_user.id
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
     already_saved = SavedJobListing.query.filter_by(
-        alumnus_id=alumnus_id).all()
+        alumnus_id=current_user.id).all()
 
     return jsonify([listing.job_listing_id for listing in already_saved])
 
@@ -206,6 +186,10 @@ def get_saved_job_listing():
 @alumni_views.route('/save_listing/<job_listing_id>', methods=['POST'])
 @jwt_required()
 def save_job_listing(job_listing_id):
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+    
     alumnus_id = current_user.id
 
     already_saved = SavedJobListing.query.filter_by(
@@ -223,10 +207,12 @@ def save_job_listing(job_listing_id):
 @alumni_views.route('/remove_saved_listing/<job_listing_id>', methods=['GET'])
 @jwt_required()
 def remove_listing(job_listing_id):
-    alumnus_id = current_user.id
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
 
     already_saved_job = SavedJobListing.query.filter_by(
-        alumnus_id=alumnus_id, job_listing_id=job_listing_id).first()
+        alumnus_id=current_user.id, job_listing_id=job_listing_id).first()
 
     if not already_saved_job:
         return jsonify({"message": "Job not saved!", "status": "error"}), 404
@@ -240,6 +226,10 @@ def remove_listing(job_listing_id):
 @alumni_views.route('/apply_to_listing/<int:job_listing_id>', methods=['POST'])
 @jwt_required()
 def apply(job_listing_id):
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+    
     # Get form data
     work_experience = request.form.get("work-experience")
     resume = request.files["resume"]
@@ -277,26 +267,28 @@ def apply(job_listing_id):
 @alumni_views.route('/alumnus_notifications', methods=['GET'])
 @jwt_required()
 def view_notifications_page():
-
-    alumnus = current_user
-
-    if not isinstance(alumnus, AlumnusAccount):
-        flash('Not an Alumnus', 'unsuccessful')
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
     try:
         # Fetch notifications for the alumnus
-        notifications = alumnus.notifications.all()
+        notifications = current_user.notifications.all()
         return render_template('alumnus_notifications.html', notifications=notifications, alumnus=current_user)
 
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
+        print(f'Error retrieving notifications: {e}')
         return redirect(url_for('index_views.index_page'))
 
 
 @alumni_views.route('/check_unread_notifications', methods=['GET'])
 @jwt_required()
 def check_notifications():
+    if not isinstance(current_user, AlumnusAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+    
     # Fetch unread notifications for the current user
     unread_notifications = Notification.query.filter_by(
         alumnus_id=current_user.id, reviewed_by_user=False).all()

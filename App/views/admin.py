@@ -55,18 +55,18 @@ def publish_job(job_id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
-    listing = toggle_listing_approval(job_id, status='APPROVED')
+    approved_listing = approve_job_listing(job_id)
 
-    if not listing:
+    if not approved_listing:
         flash('Job not found or could not be published.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
     company = get_company_by_id(listing.company_id)
 
     # Notify company
-    company_msg = f"Your job listing, {listing.title} has been published!"
+    company_msg = f"Your job listing, {approved_listing.title} has been published!"
     notify_users(company_msg, "company", company.id)
-    send_job_published_email(company, listing, company)
+    send_job_published_email(company, approved_listing, company)
 
     # Notify subscribed alumni
     subscriptions = CompanySubscription.query.filter_by(
@@ -96,18 +96,18 @@ def unpublish_job(job_id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
-    listing = toggle_listing_approval(job_id, status='PENDING')
+    unpublished_listing = unapprove_job_listing(job_id)
 
-    if not listing:
+    if not unpublished_listing:
         flash('Job not found or unpublishing failed.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
-    company = get_company_by_id(listing.company_id)
+    company = get_company_by_id(unpublished_listing.company_id)
 
     # Notify company
-    company_msg = f"Your job listing, {listing.title} has been temporarily unpublished!"
+    company_msg = f"Your job listing, {unpublished_listing.title} has been temporarily unpublished!"
     notify_users(company_msg, "company", company.id)
-    send_job_published_email(company, listing, company)
+    send_job_published_email(company, unpublished_listing, company)
 
     # Notify subscribed alumni
     subscriptions = CompanySubscription.query.filter_by(
@@ -115,13 +115,13 @@ def unpublish_job(job_id):
 
     if subscriptions:
         subscribed_alumni_ids = [sub.alumnus_id for sub in subscriptions]
-        subscriber_notification = f"The job listing {listing.title} by company {company.registered_name} has been temporarily unpublished."
+        subscriber_notification = f"The job listing {unpublished_listing.title} by company {company.registered_name} has been temporarily unpublished."
         notify_users(subscriber_notification, "alumnus", subscribed_alumni_ids)
 
         for subscription in subscriptions:
             alumunus_obj = get_alumni(subscription.alumnus_id)
             send_job_published_email(
-                alumunus_obj, listing, company)
+                alumunus_obj, unpublished_listing, company)
 
     flash('Job unpublished successfully!', 'success')
     return redirect(url_for(INDEX_PAGE_ROUTE))
@@ -137,13 +137,17 @@ def delete_listing_action(job_id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
+    # Store a temp. copy of the listing to populate deletion message
     listing = get_listing(job_id)
 
     if not listing:
         flash('Job listing not found.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
-    if delete_listing(job_id):
+    if not delete_listing(job_id):
+        flash('Error deleting job listing', 'unsuccessful')
+
+    else:
         company = get_company_by_id(listing.company_id)
 
         # Notify company
@@ -158,8 +162,11 @@ def delete_listing_action(job_id):
         if subscriptions:
             subscribed_alumni_ids = [sub.alumnus_id for sub in subscriptions]
             subscriber_notification = f"{company.registered_name} posted a new listing, {listing.title}!"
-            notify_users(subscriber_notification,
-                         "alumnus", subscribed_alumni_ids)
+            notify_users(
+                subscriber_notification,
+                "alumnus",
+                subscribed_alumni_ids
+            )
 
             for subscription in subscriptions:
                 alumnus_obj = get_alumni(subscription.alumnus_id)
@@ -167,8 +174,6 @@ def delete_listing_action(job_id):
                     alumnus_obj, listing, company)
 
         flash('Job listing deleted!', 'success')
-    else:
-        flash('Error deleting job listing', 'unsuccessful')
 
     return redirect(url_for(INDEX_PAGE_ROUTE))
 
@@ -189,6 +194,7 @@ def view_notifications_page():
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
     try:
+        # Fetch notifications for the alumnus
         notifications = current_user.notifications.all()
         return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
 
