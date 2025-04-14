@@ -4,17 +4,17 @@ from datetime import date, datetime
 from flask_jwt_extended import current_user, jwt_required
 
 from App.controllers.job_applications import get_job_applications_by_job_listing_id
-from App.controllers import (
+from App.controllers.job_listing import (
     add_job_listing,
     get_job_listing,
-    get_listing,
-    notify_users
 )
-
+from App.controllers.notifications import (
+    notify_admins,
+    notify_company_account,
+    notify_subscribed_alumni
+)
 from App.models import (
-    AlumnusAccount,
-    CompanyAccount,
-    AdminAccount
+    CompanyAccount
 )
 
 company_views = Blueprint(
@@ -91,36 +91,41 @@ def add_listing_action():
 def request_delete_listing_action(job_id):
 
     listing = get_job_listing(job_id)
-    message = f"{listing.company.registered_name} requested {listing.title} to be deleted"
 
-    if listing is not None:
-        listing.admin_approval_status = "REQUESTED DELETION"
-        notify_users(message, "admin")
-        db.session.commit()
-        flash('Request for deletion sent!', 'success')
-        response = redirect(url_for('index_views.index_page'))
-    else:
+    if not listing:
         flash('Error sending request', 'unsuccessful')
-        response = redirect(url_for('index_views.login_page'))
-
-    return response
-
+        return redirect(url_for('index_views.login_page'))
+    
+    try:
+        listing.admin_approval_status = "REQUESTED DELETION"
+        db.session.commit()
+        notify_admins(
+            f"{listing.company.registered_name} requested {listing.title} to be deleted"
+        )
+        flash('Request for deletion sent!', 'success')
+        return redirect(url_for('index_views.index_page'))
+    
+    except Exception as e:
+        flash('Could not send deletion request.', 'unsuccessful')
+        print(f"Error requesting listing deletion: {e}")
+        return redirect(url_for('index_views.index_page'))
 
 
 @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
 def request_edit_listing_action(job_id):
 
-    listing = get_listing(job_id)
+    listing = get_job_listing(job_id)
 
-    if listing is not None:
-        listing.admin_approval_status = "REQUESTED UPDATE"
-        db.session.commit()
-        flash('Request for edit sent!', 'success')
-        return redirect(url_for('index_views.index_page'))
-    else:
+    if not listing:
         flash('Error sending request', 'unsuccessful')
         return redirect(url_for('index_views.login_page'))
+    
+    listing.admin_approval_status = "REQUESTED UPDATE"
+    db.session.commit()
+    flash('Request for edit sent!', 'success')
+    return redirect(url_for('index_views.index_page'))
+        
 
 
 @company_views.route('/company_notifications', methods=['GET'])

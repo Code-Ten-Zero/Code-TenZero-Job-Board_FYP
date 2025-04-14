@@ -6,7 +6,7 @@ from App.controllers.admin_account import get_all_admin_accounts
 from App.models import CompanySubscription
 
 
-def notify_subscribed_alumnus(message, company_id):
+def notify_subscribed_alumni(message, company_id):
     company = CompanyAccount.query.get(company_id)
 
     if company:
