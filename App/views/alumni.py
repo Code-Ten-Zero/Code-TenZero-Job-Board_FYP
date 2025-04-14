@@ -13,7 +13,7 @@ from App.models import (
     JobApplication
 )
 
-from App.controllers.alumnus_account import update_alumnus_info
+from App.controllers.alumnus_account import update_alumnus_account
 from App.controllers.base_user_account import get_user_by_email
 from App.controllers.company_subscription import (
     add_company_subscription,
@@ -30,13 +30,13 @@ alumni_views = Blueprint(
 )
 
 
-@alumni_views.route('/update_alumni/<id>', methods=['POST'])
+@alumni_views.route('/update_alumnus/<id>', methods=['POST'])
 @jwt_required()
-def update_alumni(id):
+def update_alumnus(id):
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-    
+
     user = get_user_by_email(current_user.login_email)
     data = request.form
     first_name = data['fname']
@@ -57,8 +57,15 @@ def update_alumni(id):
         flash("New passwords do not match")
         return render_template('my-account-alumni.html', user=user)
 
-    update_status = update_alumnus_info(
-        id, first_name, last_name, phone_number, login_email, current_password, new_password)
+    update_status = update_alumnus_account(
+        id,
+        first_name,
+        last_name,
+        phone_number,
+        login_email,
+        current_password,
+        new_password
+    )
 
     if update_status:
         flash("Alumni information updated successfully")
@@ -89,7 +96,7 @@ def subscribe_action():
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-    
+
     selected_companies = request.form.getlist('company')
 
     if not selected_companies:
@@ -189,7 +196,7 @@ def save_job_listing(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-    
+
     alumnus_id = current_user.id
 
     already_saved = SavedJobListing.query.filter_by(
@@ -229,7 +236,7 @@ def apply(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-    
+
     # Get form data
     work_experience = request.form.get("work-experience")
     resume = request.files["resume"]
@@ -288,7 +295,7 @@ def check_notifications():
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-    
+
     # Fetch unread notifications for the current user
     unread_notifications = Notification.query.filter_by(
         alumnus_id=current_user.id, reviewed_by_user=False).all()

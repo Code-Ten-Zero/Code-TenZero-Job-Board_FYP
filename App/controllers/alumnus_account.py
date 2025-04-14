@@ -226,6 +226,81 @@ def get_alumnus_accounts_by_profile_photo_file_path(
 """
 
 
+def update_alumnus_account(
+        id: int,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        login_email: Optional[str] = None,
+        current_password: Optional[str] = None,
+        new_password: Optional[str] = None
+) -> AlumnusAccount:
+    """
+    Updates multiple fields of an alumnus' account in a single transaction.
+
+    Args:
+        id (int): The alumnus' ID.
+        first_name (Optional[str]): New first name.
+        last_name (Optional[str]): New last name.
+        phone_number (Optional[str]): New phone number.
+        login_email (Optional[str]): New login email.
+        current_password (Optional[str]): Current password for verification (if changing email or password).
+        new_password (Optional[str]): New password.
+
+    Returns:
+        AlumnusAccount: The updated alumnus account if successful.
+
+    Raises:
+        ValueError: If input is invalid or the alumnus was not found.
+        PermissionError: If password verification fails.
+        IntegrityError: If email is already taken.
+        SQLAlchemyError: For other database-related issues.
+    """
+    alumnus = get_alumnus_account(id)
+    if not alumnus:
+        raise ValueError(f"Alumnus with id {id} not found.")
+
+    try:
+        # Update first name
+        if first_name:
+            alumnus.first_name = first_name
+
+        # Update last name
+        if last_name:
+            alumnus.last_name = last_name
+
+        # Update phone number
+        if phone_number:
+            alumnus.phone_number = phone_number
+
+        # Update email (requires password verification)
+        if login_email:
+            if not current_password or not alumnus.check_password(current_password):
+                raise PermissionError(
+                    "Incorrect password. Cannot update email.")
+            if not validate_email(login_email):
+                raise ValueError(f"Invalid login email '{login_email}'.")
+            alumnus.login_email = login_email
+
+        # Update password (requires current password verification)
+        if new_password:
+            if not current_password or not alumnus.check_password(current_password):
+                raise PermissionError(
+                    "Incorrect password. Cannot update password.")
+            alumnus.set_password(new_password)
+
+        db.session.commit()
+        return alumnus
+
+    except IntegrityError as e:
+        db.session.rollback()
+        raise IntegrityError(f"A database constraint was violated: {e}")
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
+
+
 def update_alumnus_account_login_email(
         id: int, password: str, new_login_email: str
 ) -> AlumnusAccount:
