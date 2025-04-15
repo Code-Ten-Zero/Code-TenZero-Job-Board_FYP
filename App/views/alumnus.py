@@ -1,9 +1,9 @@
 import os
-from flask import Blueprint, current_app, flash,  jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash,  jsonify, make_response, redirect, render_template, request, url_for
 from App.models import db
 from werkzeug.utils import secure_filename
 
-from flask_jwt_extended import current_user, jwt_required
+from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
 
 from App.models import (
     AlumnusAccount,
@@ -36,7 +36,7 @@ def update_alumnus(id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
-    user = get_user_by_email(current_user.login_email)
+    user = get_alumnus_account(current_user.id)
     data = request.form
     first_name = data['fname']
     last_name = data['lname']
@@ -47,6 +47,10 @@ def update_alumnus(id):
     confirm_current_password = data['confirm_current_password']
     new_password = data['new_password']
     confirm_new_password = data['confirm_new_password']
+    
+    if not current_password or not confirm_current_password:
+        flash('Current password fields are required', 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
 
     if current_password != confirm_current_password:
         flash('Current passwords do not match', 'unsuccessful')
@@ -55,7 +59,9 @@ def update_alumnus(id):
     if new_password != confirm_new_password:
         flash('New passwords do not match', 'unsuccessful') 
         return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
-
+    
+    original_email = current_user.login_email
+    
     update_status = update_alumnus_account(
         id,
         first_name,
@@ -65,10 +71,16 @@ def update_alumnus(id):
         current_password,
         new_password
     )
-
+       
     if update_status:
-        flash("Alumnus' information updated successfully", 'success')
-        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
+        if login_email != original_email or new_password:
+            flash("Email or password updated successfully. Please log in again.", 'success')
+            response = make_response(redirect(url_for('auth_views.login_page')))
+            unset_jwt_cookies(response)
+            return response
+        else:
+            flash("Alumnus' information updated successfully", 'success')
+            return redirect(url_for('alumnus_views.view_my_account_page'))
     else:
         flash("Update failed. Check your information and try again.", 'unsuccessful')
         return redirect(url_for('alumnus_views.view_my_account_page', id=id))
@@ -122,7 +134,7 @@ def update_profile_photo(id):
 @alumnus_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
 def view_my_account_page(id):
-    user = get_user_by_email(current_user.login_email)
+    user = get_alumnus_account(current_user.id)
     try:
         return render_template('my-account-alumnus.html', user=user)
 

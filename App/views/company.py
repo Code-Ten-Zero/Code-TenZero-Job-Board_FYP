@@ -1,10 +1,10 @@
 import os
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for
 from App.controllers.base_user_account import get_user_by_email
 from App.models import db
 from datetime import date, datetime
 from werkzeug.utils import secure_filename
-from flask_jwt_extended import current_user, jwt_required
+from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
 
 from App.controllers.company_account import get_company_account, update_company_account
 from App.controllers.job_applications import get_job_applications_by_job_listing_id
@@ -32,7 +32,6 @@ company_views = Blueprint(
 ====== COMPANY ACCOUNT INFO ======
 """
 
-
 @company_views.route('/update_company/<id>', methods=['POST'])
 @jwt_required()
 def update_company(id):
@@ -50,6 +49,10 @@ def update_company(id):
     confirm_current_password = data['confirm_current_password']
     new_password = data['new_password']
     confirm_new_password = data['confirm_new_password']
+    
+    if not current_password or not confirm_current_password:
+        flash('Current password fields are required', 'unsuccessful')
+        return redirect(url_for('company_views.view_my_account_page', id=id, user=user))
 
     if current_password != confirm_current_password:
         flash('Current passwords do not match', 'unsuccessful')
@@ -59,6 +62,8 @@ def update_company(id):
         flash('New passwords do not match', 'unsuccessful') 
         return redirect(url_for('company_views.view_my_account_page', id=id, user=user))
 
+    original_email = current_user.login_email
+    
     update_status = update_company_account(
         id,
         registered_name,
@@ -69,11 +74,17 @@ def update_company(id):
     )
 
     if update_status:
-        flash("Company information updated successfully", 'success')
-        return redirect(url_for('company_views.view_my_account_page', id=id))
+        if login_email != original_email or new_password:
+            flash("Email or password updated successfully. Please log in again.", 'success')
+            response = make_response(redirect(url_for('auth_views.login_page')))
+            unset_jwt_cookies(response)
+            return response
+        else:
+            flash("Company information updated successfully", 'success')
+            return redirect(url_for('company_views.view_my_account_page', id=id))
     else:
         flash("Update failed. Check your information and try again.", 'unsuccessful')
-        return redirect(url_for('company_views.view_my_account_page', id=id))
+        return redirect(url_for('company.view_my_account_page', id=id))
 
 
 @company_views.route('/update_company_profile_photo/<int:id>', methods=['POST'])
