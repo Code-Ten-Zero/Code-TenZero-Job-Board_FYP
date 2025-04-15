@@ -17,7 +17,6 @@ LOGIN_PAGE_ROUTE = 'auth_views.login_page'
 Page/Action Routes
 '''
 
-
 @auth_views.route('/users', methods=['GET'])
 def get_user_page():
     users = get_all_users()
