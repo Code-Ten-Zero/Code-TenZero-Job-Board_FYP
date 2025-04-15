@@ -112,7 +112,6 @@
       /* Label as Upload Button */
       .upload-label {
         display: block;
-        text-align: center;
         color: rgb(57, 97, 185);
         cursor: pointer;
         margin-top: 5px;
@@ -215,10 +214,12 @@
         <a href="/view_my_account/{{user.id}}"> My Account</a>
       </div>
     </header>
-    <br />
-    <br />
-    <!-- <button onclick="goBack()" style="font-size: 24px">
-      <i class="fa fa-long-arrow-left"></i> Go Back -->
+    <div id="flash-messages">
+			{% with messages = get_flashed_messages(with_categories=true) %} {%
+			if messages %} {% for category, message in messages %}
+			<div class="alert alert-{{ category }}">{{ message }}</div>
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
     </button>
     <div class="card">
       <br />
@@ -231,12 +232,12 @@
             src="{{ url_for('static', filename=user.profile_photo_file_path) }}"
             alt="Profile Image"
           />
-          <!-- <form method="POST" action="/update_profile_photo/{{user.id}}">      -->
-          <input type="file" id="profile_pic_input" accept="image/*" />
-          <label class="upload-label" for="profile_pic_input"
-            >Change Photo</label
-          >
-          <!-- </form> -->
+          <form id="profile_photo_form" method="POST" action="/update_profile_photo/{{ user.id }}" enctype="multipart/form-data">
+            <!-- Hidden file input field to upload photo -->
+            <input type="file" name="profile_pic" id="profile_pic_input" accept="image/*" style="display: none;" onchange="autoSubmitForm()" />
+            <!-- Label triggers file input -->
+            <label class="upload-label" for="profile_pic_input"> Change Photo</label>
+          </form>
           <p class="image-text">{{user.first_name}} {{user.last_name}}</p>
           <p class="image-text">Alumnus</p>
           <p class="image-text">{{user.login_email}}</p>
@@ -347,9 +348,14 @@
       <br />
     </div>
     <script>
-      function goBack() {
+    function goBack() {
         window.history.back();
       }
+    // Automatically submit the form when a file is selected
+    function autoSubmitForm() {
+      // Trigger the form submission as soon as a file is selected
+      document.getElementById('profile_photo_form').submit();
+     }
     </script>
   </body>
 </html>
