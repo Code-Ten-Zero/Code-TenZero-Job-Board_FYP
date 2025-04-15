@@ -294,6 +294,14 @@ def apply(job_listing_id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
+    existing_application = JobApplication.query.filter_by(
+    alumnus_id=current_user.id,
+    job_listing_id=job_listing_id).first()
+    
+    if existing_application:
+        flash("You have already applied to this job listing.", "unsuccessful")
+        return redirect(url_for('index_views.index_page'))
+   
     # Get form data
     work_experience = request.form.get("work-experience")
     resume = request.files["resume"]
