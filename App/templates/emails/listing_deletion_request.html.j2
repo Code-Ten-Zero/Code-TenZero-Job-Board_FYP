@@ -31,7 +31,7 @@
 @jwt_required()
 def request_delete_listing_action(job_id):
 
-    listing = get_listing (job_id)
+    listing = get_job_listing (job_id)
     message=f"{listing.company.registered_name} requested {listing.title} to be deleted"
     
     if listing is not None:

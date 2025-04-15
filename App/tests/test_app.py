@@ -1,7 +1,7 @@
 import pytest
 import logging
 import unittest
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash,check_password_hash
 
 from App.main import create_app
 from App.database import db, create_db
@@ -73,15 +73,15 @@ class UserUnitTests(unittest.TestCase):
                 "id": None,
                 "login_email": "bob@mail",
                 "password_hash": "[HIDDEN]",
-                "profile_photo_file_path": None
+                "profile_photo_file_path":"profile-images/anonymous-profile.png"
             }
         )
 
-    def test_generate_hashed_password(self):
-        password = "mypass"
-        hashed_password = generate_password_hash(password, method='sha256')
-        user = AdminAccount("bob@mail", password)
-        assert user.password_hash == hashed_password
+    
+def test_generate_hashed_password():
+    password = "bobpass"
+    user = AdminAccount("bob@mail.com", password)
+    assert check_password_hash(user.password_hash, password)
 
     def test_check_password(self):
         password = "mypass"
@@ -152,13 +152,13 @@ def empty_db():
 class UserIntegrationTests(unittest.TestCase):
 
     def test_authenticate(self):
-        add_admin_account('bob@mail', "bobpass")
-        assert login("bob@mail", "bobpass") != None
+        add_admin_account('bob2@mail', "bobpass")
+        assert login("bob2@mail", "bobpass") != None
 
     def test_create_admin(self):
-        add_admin_account('bob@mail', "bobpass")
-        admin = add_admin_account('rick@mail', "bobpass")
-        assert admin.login_email == "rick@mail"
+        add_admin_account('bob3@mail', "bobpass")
+        admin = add_admin_account('rick2@mail', "bobpass")
+        assert admin.login_email == "rick2@mail"
 
     def test_create_alumnus(self):
         my_alumnus = add_alumnus_account(
@@ -217,69 +217,30 @@ class UserIntegrationTests(unittest.TestCase):
         print(get_all_users_json())
         users_json = get_all_users_json()
         self.assertListEqual([
-            {
-                'id': 1,
-                'login_email': 'bob@mail',
-                'password_hash': '[HIDDEN]',
-                'profile_photo_file_path': 'N/A'
-            },
-            {
-                'id': 2,
-                'login_email': 'rick@mail',
-                'password_hash': '[HIDDEN]',
-                'profile_photo_file_path': 'N/A'
-            },
-            {
-                'id': 1,
-                'login_email': 'rob@mail',
-                'password_hash': '[HIDDEN]',
-                'first_name': 'robfname',
-                'last_name': 'roblname',
-                'phone_number': '1868-333-4444',
-                'profile_photo_file_path': None
-            },
-            {
-                'id': 2,
-                'login_email': 'robby2@mail',
-                'password_hash': '[HIDDEN]',
-                'first_name': 'robfname',
-                'last_name': 'roblname',
-                'phone_number': '1868-399-9944',
-                'profile_photo_file_path': None
-            },
-            {
-                'id': 1,
-                'Login Email': 'company@mail',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company1',
-                'mailing_address': 'mailing_address',
-                'public_email': 'public@email',
-                'website_url': 'company_website.com',
-                'phone_number': 'phone_number',
-                'profile_photo_file_path': 'N/A'
-            },
-            {
-                'id': 2,
-                'Login Email': 'company@mail2',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company2',
-                'mailing_address': 'mailing_address2',
-                'public_email': 'public2@email',
-                'website_url': 'company_website2.com',
-                'phone_number': 'phone_number2',
-                'profile_photo_file_path': 'N/A'
-            },
-            {
-                'id': 3,
-                'Login Email': 'company10@mail',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company10',
-                'mailing_address': 'mailing_address',
-                'public_email': 'public10@email',
-                'website_url': 'company10_website.com',
-                'phone_number': 'phone10_number',
-                'profile_photo_file_path': 'N/A'
-            }
+            {'id': 1, 'login_email': 'bob@mail', 'password_hash': '[HIDDEN]', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 2, 'login_email': 'bob2@mail', 'password_hash': '[HIDDEN]', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 3, 'login_email': 'bob3@mail', 'password_hash': '[HIDDEN]', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 4, 'login_email': 'rick2@mail', 'password_hash': '[HIDDEN]', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+            {'id': 1, 'login_email': 'rob@mail', 'password_hash': '[HIDDEN]', 'first_name': 'robfname', 'last_name': 'roblname',
+             'phone_number': '1868-333-4444','profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 2, 'login_email': 'robby2@mail', 'password_hash': '[HIDDEN]', 'first_name': 'robfname', 'last_name': 'roblname',
+             'phone_number': '1868-399-9944', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 1, 'Login Email': 'company@mail', 'password_hash': '[HIDDEN]', 'registered_name': 'company1',
+             'mailing_address': 'mailing_address', 'public_email': 'public@email', 'website_url': 'company_website.com',
+              'phone_number': 'phone_number', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 2, 'Login Email': 'company@mail2', 'password_hash': '[HIDDEN]', 'registered_name': 'company2',
+             'mailing_address': 'mailing_address2', 'public_email': 'public2@email', 'website_url': 'company_website2.com',
+              'phone_number': 'phone_number2', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 3, 'Login Email': 'company10@mail', 'password_hash': '[HIDDEN]', 'registered_name': 'company10',
+             'mailing_address': 'mailing_address', 'public_email': 'public10@email', 'website_url': 'company10_website.com',
+             'phone_number': 'phone10_number', 'profile_photo_file_path': 'profile-images/anonymous-profile.png'}
         ],
             users_json
         )
@@ -347,7 +308,7 @@ class UserIntegrationTests(unittest.TestCase):
             'San-Fernando'
         )
 
-        job.admin_approval_status == "APPROVED"
+        job.admin_approval_status = "APPROVED"
 
         approved_listings = get_approved_listings()
         assert len(approved_listings) == 1

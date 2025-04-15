@@ -693,9 +693,9 @@ def get_approved_listings():
 
 def toggle_listing_approval(listing_id, status):
     print("toggle listing approval function")
-    from .job_listing import get_listing
+    from .job_listing import get_job_listing
 
-    listing = get_listing(listing_id)
+    listing = get_job_listing(listing_id)
     if not listing:
         return None
     if status in ["APPROVED", "PENDING", "REJECTED"]:
