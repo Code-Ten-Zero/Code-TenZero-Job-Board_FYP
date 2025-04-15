@@ -128,7 +128,7 @@ def unpublish_job(job_id):
     return redirect(url_for(INDEX_PAGE_ROUTE))
 
 
-@admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
+@admin_views.route('/delete_listing/<int:job_id>', methods=['POST'])
 @jwt_required()
 def delete_listing_action(job_id):
     """
