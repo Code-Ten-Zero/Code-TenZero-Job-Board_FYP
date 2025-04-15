@@ -22,7 +22,9 @@ from App.controllers import (
     toggle_listing_approval,
     company_subscription,
     add_company_subscription,
-    get_company_subscriptions_by_alumnus_id
+    get_company_subscriptions_by_alumnus_id,
+    delete_company_subscription,
+    update_alumnus_account
 )
 
 
@@ -330,10 +332,40 @@ class UserIntegrationTests(unittest.TestCase):
         #print (get_company_subscriptions_by_alumnus_id (1,True))
         company2 = get_user_by_email('company10@mail.com')
         user = get_user_by_email('robby2@mail.com')
-
         add_company_subscription(user.id,company2.id)
-
         assert get_company_subscriptions_by_alumnus_id (1,True) == [{'alumnus_id': {1}, 'company_id': {1}}]
+
+    def test_sva_delete_subscription_invalid(self):
+        company2 = get_user_by_email('company10@mail.com')
+        user = get_user_by_email('robby2@mail.com')
+        adminID = 9
+        delete_company_subscription( 9, 9, 9)
+        print (get_company_subscriptions_by_alumnus_id (1,True))
+        assert get_company_subscriptions_by_alumnus_id(1,True) == [{'alumnus_id': {1}, 'company_id': {1}}]
+
+    def test_svb_delete_subscription(self):
+        company2 = get_user_by_email('company10@mail.com')
+        user = get_user_by_email('robby2@mail.com')
+        adminID = 1
+        delete_company_subscription( 1, 1, 1)
+        print (get_company_subscriptions_by_alumnus_id (1,True))
+        assert get_company_subscriptions_by_alumnus_id(1,True) == []
+
+    def test_update_alumni(self):
+        user = get_user_by_email('robby2@mail.com')
+        update_alumnus_account (user.id,"robnewfname","","","","robpass","","")
+        updated_user = get_user_by_email('robby2@mail.com')
+        assert updated_user.first_name == "robnewfname"
+
+#    def test_delete_job_listing(self):
+
+
+
+
+
+    
+
+
 
 
 

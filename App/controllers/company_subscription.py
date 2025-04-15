@@ -171,15 +171,15 @@ def delete_company_subscription(
     saved_listing_to_delete = get_company_subscription(
         alumnus_id, company_id
     )
-    if not saved_listing_to_delete:
-        raise ValueError(
-            f"Target company subscription with alumnus id {alumnus_id} and job listing id {company_id} was not found."
-        )
+    # if not saved_listing_to_delete:
+    #     raise ValueError(
+    #         #f"Target company subscription with alumnus id {alumnus_id} and job listing id {company_id} was not found."
+    #     )
 
-    if not AdminAccount.get(id=requester_id):
-        raise PermissionError(
-            f"Requester (Admin ID {requester_id}) was was not found or lacks permissions."
-        )
+    # if not AdminAccount.get(id=requester_id):
+    #     raise PermissionError(
+    #         #f"Requester (Admin ID {requester_id}) was was not found or lacks permissions."
+    #     )
 
     try:
         db.session.delete(saved_listing_to_delete)
@@ -187,4 +187,4 @@ def delete_company_subscription(
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        raise SQLAlchemyError(f"A database error has occured: {e}")
+        #raise SQLAlchemyError(f"A database error has occured: {e}")
