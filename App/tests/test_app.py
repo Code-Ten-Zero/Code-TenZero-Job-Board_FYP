@@ -19,7 +19,10 @@ from App.controllers import (
     get_company_account_by_login_email,
     get_job_listing,
     get_user_by_email,
-    toggle_listing_approval
+    toggle_listing_approval,
+    company_subscription,
+    add_company_subscription,
+    get_company_subscriptions_by_alumnus_id
 )
 
 
@@ -226,7 +229,7 @@ class UserIntegrationTests(unittest.TestCase):
             'login_email': 'bob3@mail.com', 
             'password_hash': '[HIDDEN]', 
             'profile_photo_file_path': 'profile-images/anonymous-profile.png'}, 
-            
+
             {'id': 3, 
             'login_email': 'rick2@mail.com', 
             'password_hash': '[HIDDEN]', 
@@ -240,7 +243,8 @@ class UserIntegrationTests(unittest.TestCase):
             'phone_number': '1868-399-9944', 
             'profile_photo_file_path': 'profile-images/anonymous-profile.png'}, 
 
-            {'id': 1, 'Login Email': 'company10@mail.com', 
+            {'id': 1, 
+            'Login Email': 'company10@mail.com', 
             'password_hash': '[HIDDEN]', 
             'registered_name': 'company10', 
             'mailing_address': 'mailing_address', 
@@ -320,6 +324,18 @@ class UserIntegrationTests(unittest.TestCase):
         approved_listings = get_approved_listings()
         assert len(approved_listings) == 1
         assert approved_listings[0].id == job.id
+
+    def test_subscribe(self):
+        #print (add_company_subscription(1,1))
+        #print (get_company_subscriptions_by_alumnus_id (1,True))
+        company2 = get_user_by_email('company10@mail.com')
+        user = get_user_by_email('robby2@mail.com')
+
+        add_company_subscription(user.id,company2.id)
+
+        assert get_company_subscriptions_by_alumnus_id (1,True) == [{'alumnus_id': {1}, 'company_id': {1}}]
+
+
 
 
 # ctz removed till subscriptions and notifications fixed

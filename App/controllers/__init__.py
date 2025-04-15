@@ -6,3 +6,4 @@ from .alumnus_account import *
 from .company_account import *
 from .job_listing import *
 from .notifications import *
+from .company_subscription import *
