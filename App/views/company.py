@@ -11,6 +11,7 @@ from App.controllers.job_applications import get_job_applications_by_job_listing
 from App.controllers.job_listing import (
     add_job_listing,
     get_job_listing,
+    update_job_listing,
 )
 from App.controllers.notifications import (
     notify_admins,
@@ -205,17 +206,45 @@ def request_delete_listing_action(job_id):
 
 @company_views.route('/request_edit_listing/<int:job_id>', methods=['GET'])
 @jwt_required()
-def request_edit_listing_action(job_id):
-
+def edit_listing_page(job_id):
     listing = get_job_listing(job_id)
-
     if not listing:
         flash('Error sending request', 'unsuccessful')
-        return redirect(url_for('index_views.login_page'))
+        return redirect(url_for('index_views.index_page'))
+    return render_template('company-edit-listing.html', user=current_user, listing=listing)
+
+@company_views.route('/request_edit_listing/<int:job_id>', methods=['POST'])
+@jwt_required()
+def request_edit_listing_action(job_id):
+    if not isinstance(current_user, CompanyAccount):  # Adjust to your actual user model
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    data = request.form
+    title = data['title']
+    position_type = data['position_type']
+    description = data['description']
+    monthly_salary_ttd = data['monthly_salary_ttd']
+    is_remote = True if data.get('is_remote') == 'Yes' else False
+    job_site_address = data['job_site_address'] if not is_remote else None
+
+    update_status = update_job_listing(
+        job_id,
+        title,
+        position_type,
+        description,
+        monthly_salary_ttd,
+        is_remote,
+        job_site_address
+    )
     
-    listing.admin_approval_status = "REQUESTED UPDATE"
-    db.session.commit()
-    flash('Request for edit sent!', 'success')
+    if update_status:
+        update_status.admin_approval_status='REQUESTED UPDATE'
+        db.session.commit()
+        flash("Edit request submitted successfully", 'success')
+    else:
+        flash("Failed to request update. Please try again.", 'unsuccessful')
+
     return redirect(url_for('index_views.index_page'))
         
 

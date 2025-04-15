@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from typing import List, Optional, Union
 
@@ -426,6 +427,90 @@ def get_job_listings_by_salary_range(
 ===== UPDATE =====
 """
 
+def update_job_listing(
+        id: int,
+        title: Optional[str] = None,
+        position_type: Optional[str] = None,
+        description: Optional[str] = None,
+        monthly_salary_ttd: Optional[str] = None,
+        is_remote: Optional[str] = None,
+        job_site_address: Optional[str]=None
+) -> JobListing:
+    """
+    Updates multiple fields of an alumnus' account in a single transaction.
+
+    Args:
+        id (int): The alumnus' ID.
+        company_id (Optional[str]): New  company_id.
+        title (Optional[str]): New title.
+        position_tyoe (Optional[str]): New position_type.
+        description (Optional[str]): New description.
+        monhtly_salary_ttd (Optional[str]): New salary.
+        is_remote (Optional[str]): Whether changed from True or False.
+        job_site_address (Optional[str]): New if changed.
+
+    Returns:
+        JobListing: The updated alumnus account if successful.
+
+    Raises:
+        ValueError: If input is invalid or the alumnus was not found.
+        PermissionError: If password verification fails.
+        IntegrityError: If email is already taken.
+        SQLAlchemyError: For other database-related issues.
+    """
+    listing = get_job_listing(id)
+    if not listing:
+        raise ValueError(f"Listing with id {id} not found.")
+
+    try:    
+        has_changes = False
+        
+        # Update title
+        if title:
+            listing.title = title
+            has_changes = True
+
+        # Update position type
+        if position_type:
+            listing.position_type = position_type
+            has_changes = True
+
+        # Update description
+        if description:
+            listing.description = description
+            has_changes = True
+
+        # Update salary
+        if monthly_salary_ttd is not None:
+            listing.monthly_salary_ttd = monthly_salary_ttd
+            has_changes = True
+
+        # Update remote status
+        if is_remote is not None:
+            listing.is_remote = is_remote
+            has_changes = True
+            # If remote, clear job site address
+            if is_remote:
+                listing.job_site_address = 'N/A'
+
+        # Update job site address if not remote
+        if not is_remote and job_site_address:
+            listing.job_site_address = job_site_address
+            has_changes = True
+
+        #update last modified field
+        if has_changes:
+            listing.datetime_last_modified = datetime.utcnow()
+        db.session.commit()
+        return listing
+
+    except IntegrityError as e:
+        db.session.rollback()
+        raise IntegrityError(f"A database constraint was violated: {e}")
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
 
 def update_job_listing_title(
         id: int, new_title: str

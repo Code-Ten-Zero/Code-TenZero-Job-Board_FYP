@@ -8,6 +8,10 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
+	<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+		/>
     <title>Company View</title>
     <style>
       body {
@@ -119,6 +123,24 @@
         color: white;
       }
 
+      .edit-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        color: #007bff;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .edit-icon a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .edit-icon:hover {
+        color: #0056b3;
+      }
       /* use for content sizing */
       .listings-container {
         height: 63vh;
@@ -146,6 +168,7 @@
       }
 
       .job-listing {
+		position: relative;
         margin-bottom: 2%;
         padding: 5%;
         border: 1px solid #ddd;
@@ -274,8 +297,8 @@
     <div class="container">
       <div class="btn-group">
         <button id="browse-companies">Browse Companies</button>
-        <button class="active" id="browse-jobs">Browse Jobs</button>
-        <button id="my-company-listings">Company Listings</button>
+        <button id="browse-jobs">Browse Jobs</button>
+        <button class="active" id="my-company-listings">Company Listings</button>
       </div>
       <div class="listings-container" id="all-listings-container">
         {% for job in jobs %}
@@ -298,12 +321,19 @@
       >
         {% for listing in company_listings %}
         <div class="job-listing">
+          <!-- Edit icon at the top right -->
+          <div class="edit-icon">
+            <a href="/request_edit_listing/{{listing.id}}">
+				<i class="fa-solid fa-edit"></i>
+            </a>
+          </div>
           <h2>{{ listing.title }}</h2>
           <p>Description: {{ listing.description }}</p>
           <p>Position Type: {{ listing.position_type }}</p>
           <p>Remote: {{ listing.is_remote }}</p>
           <p>Job Site Address: {{ listing.job_site_address }}</p>
-          <p>Created: {{ listing.datetime_created }}</p>
+		      <p>Created: {{ listing.datetime_created.strftime('%B %d, %Y at %I:%M %p') }}</p>
+          <p>Last Modified: {{ listing.datetime_last_modified .strftime('%B %d, %Y at %I:%M %p') }}</p>
           <p>Status: {{ listing.admin_approval_status }}</p>
           <div class="job-actions">
             <a href="/view_applications/{{listing.id}}" class="view-app"
@@ -455,8 +485,8 @@
         myCompanyListingsBtn.classList.add("active");
       });
 
-      // Initial load (show jobs by default)
-      showContent(jobsContainer);
+      // Initial load (show company listings by default)
+        showContent(myCompanyListingsContainer);
     </script>
   </body>
 </html>
