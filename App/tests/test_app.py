@@ -152,39 +152,39 @@ def empty_db():
 class UserIntegrationTests(unittest.TestCase):
 
     def test_authenticate(self):
-        add_admin_account('bob2@mail', "bobpass")
-        assert login("bob2@mail", "bobpass") != None
+        add_admin_account('bob2@mail.com', "bobpass")
+        assert login("bob2@mail.com", "bobpass") != None
 
     def test_create_admin(self):
-        add_admin_account('bob3@mail', "bobpass")
-        admin = add_admin_account('rick2@mail', "bobpass")
-        assert admin.login_email == "rick2@mail"
+        add_admin_account('bob3@mail.com', "bobpass")
+        admin = add_admin_account('rick2@mail.com', "bobpass")
+        assert admin.login_email == "rick2@mail.com"
 
     def test_create_alumnus(self):
         my_alumnus = add_alumnus_account(
-            'robby2@mail',
+            'robby2@mail.com',
             'robpass',
             'robfname',
             'roblname',
             '1868-399-9944'
         )
-        assert my_alumnus.login_email == "robby2@mail"
+        assert my_alumnus.login_email == "robby2@mail.com"
 
     def test_create_company(self):
         company = add_company_account(
-            'company10@mail',
+            'company10@mail.com',
             'compass',
             'company10',
             'mailing_address',
-            'public10@email',
+            'public10@email.com',
             'company10_website.com',
             'phone10_number'
         )
-        assert company.login_email == 'company10@mail' and company.public_email == 'public10@email'
+        assert company.login_email == 'company10@mail.com' and company.public_email == 'public10@email.com'
 
     # cz at the beginning so that it runs after create company
     def test_czadd_listing(self):
-        company1 = get_user_by_email('company@mail')
+        company1 = get_user_by_email('company@mail.com')
         listing = add_job_listing(
             company1.id,
             'listing1',
@@ -219,79 +219,78 @@ class UserIntegrationTests(unittest.TestCase):
         self.assertListEqual([
             {
                 'id': 1,
-                'login_email': 'bob@mail',
+                'login_email': 'bob@mail.com',
                 'password_hash': '[HIDDEN]',
                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
+                },
             {
                 'id': 2,
-                'login_email': 'bob2@mail',
-                'password_hash': '[HIDDEN]',
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
+                 'login_email': 'bob2@mail.com', 
+                 'password_hash': '[HIDDEN]', 
+                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
+                 }, 
             {
-                'id': 3,
-                'login_email': 'bob3@mail',
-                'password_hash': '[HIDDEN]',
+                'id': 3, 
+                'login_email': 'bob3@mail.com', 
+                'password_hash': '[HIDDEN]', 
                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
+                }, 
             {
-                'id': 4,
-                'login_email': 'rick2@mail',
-                'password_hash': '[HIDDEN]',
+                'id': 4, 
+                'login_email': 'rick2@mail.com', 
+                'password_hash': '[HIDDEN]', 
                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
+                }, 
             {
-                'id': 1,
-                'login_email': 'rob@mail',
-                'password_hash': '[HIDDEN]',
-                'first_name': 'robfname',
-                'last_name': 'roblname',
-                'phone_number': '1868-333-4444',
+                'id': 1, 
+                'login_email': 'rob@mail.com', 
+                'password_hash': '[HIDDEN]', 
+                'first_name': 'robfname', 
+                'last_name': 'roblname', 
+                'phone_number': '1868-333-4444', 
                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
+                }, 
             {
-                'id': 2,
-                'login_email': 'robby2@mail',
-                'password_hash': '[HIDDEN]',
-                'first_name': 'robfname',
-                'last_name': 'roblname',
-                'phone_number': '1868-399-9944',
+                'id': 2, 
+                'login_email': 'robby2@mail.com', 
+                'password_hash': '[HIDDEN]', 
+                'first_name': 'robfname', 
+                'last_name': 'roblname', 
+                'phone_number': '1868-399-9944', 
                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
-            {
-                'id': 1,
-                'Login Email': 'company@mail',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company1',
-                'mailing_address': 'mailing_address',
-                'public_email': 'public@email',
-                'website_url': 'company_website.com',
-                'phone_number': 'phone_number',
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
-            {
-                'id': 2,
-                'Login Email': 'company@mail2',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company2',
-                'mailing_address': 'mailing_address2',
-                'public_email': 'public2@email',
-                'website_url': 'company_website2.com',
-                'phone_number': 'phone_number2',
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            },
-            {
-                'id': 3,
-                'Login Email': 'company10@mail',
-                'password_hash': '[HIDDEN]',
-                'registered_name': 'company10',
-                'mailing_address': 'mailing_address',
-                'public_email': 'public10@email',
-                'website_url': 'company10_website.com',
-                'phone_number': 'phone10_number',
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-            }
+                }, 
+                {
+                    'id': 1, 
+                    'Login Email': 'company@mail.com', 
+                    'password_hash': '[HIDDEN]', 
+                    'registered_name': 'company1', 
+                    'mailing_address': 'mailing_address', 
+                    'public_email': 'public@email', 
+                    'website_url': 'company_website.com', 
+                    'phone_number': 'phone_number', 
+                    'profile_photo_file_path': 'profile-images/anonymous-profile.png'
+                    },
+                 {'id': 2, 
+                 'Login Email': 'company@mail2.com', 
+                 'password_hash': '[HIDDEN]', 
+                 'registered_name': 'company2', 
+                 'mailing_address': 'mailing_address2', 
+                 'public_email': 'public2@email', 
+                 'website_url': 'company_website2.com', 
+                 'phone_number': 'phone_number2', 
+                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
+                 }, 
+                 {
+                    'id': 3, 
+                    'Login Email': 'company10@mail.com', 
+                    'password_hash': '[HIDDEN]', 
+                    'registered_name': 'company10', 
+                    'mailing_address': 'mailing_address', 
+                    'public_email': 'public10@email.com', 
+                    'website_url': 'company10_website.com', 
+                    'phone_number': 'phone10_number', 
+                    'profile_photo_file_path': 'profile-images/anonymous-profile.png'
+                    }
         ],
             users_json
         )
@@ -320,7 +319,7 @@ class UserIntegrationTests(unittest.TestCase):
     #     assert user.username == "ronnie"
 
     def test_initial_isapproved(self):
-        company2 = get_user_by_email('company@mail2')
+        company2 = get_user_by_email('company@mail2.com')
         job = add_job_listing(
             company2.id,
             'listing2',
@@ -333,7 +332,7 @@ class UserIntegrationTests(unittest.TestCase):
         assert job.admin_approval_status == "PENDING"
 
     def test_toggle_listing_approval(self):
-        company2 = get_user_by_email('company@mail2')
+        company2 = get_user_by_email('company@mail2.com')
         job = add_job_listing(
             company2.id,
             'listing4',
@@ -348,7 +347,7 @@ class UserIntegrationTests(unittest.TestCase):
         assert toggled_job.admin_approval_status == "APPROVED"
 
     def test_get_approved_listings(self):
-        company2 = get_user_by_email('company@mail2')
+        company2 = get_user_by_email('company@mail2.com')
         job = add_job_listing(
             company2.id,
             'listing5',
