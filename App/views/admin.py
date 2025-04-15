@@ -144,7 +144,7 @@ def delete_listing_action(job_id):
         flash('Job listing not found.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
-    if not delete_job_listing(job_id):
+    if not delete_job_listing(job_id,current_user.id):
         flash('Error deleting job listing', 'unsuccessful')
 
     else:

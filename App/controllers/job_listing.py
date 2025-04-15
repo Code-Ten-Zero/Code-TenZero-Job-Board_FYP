@@ -743,6 +743,7 @@ def delete_job_listing(target_id: int, requester_id: int) -> None:
     try:
         db.session.delete(listing_to_delete)
         db.session.commit()
+        return True
 
     except SQLAlchemyError as e:
         db.session.rollback()
