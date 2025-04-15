@@ -1,192 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCIT Job Board-Company</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: gainsboro;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='style.css') }}"
+		/>
+		<title>Company View</title>
+		<style>
+			body {
+				position: relative;
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				background-color: gainsboro;
+				max-height: 100%;
+				overflow-y: hidden;
+			}
 
-        header {
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center; 
-            padding-left: 5%;
-        }
+			button a {
+				padding: 10px;
+				background-color: rgb(57, 61, 185);
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+				text-decoration: none;
+			}
 
-        nav a {
-        margin-left: 20px;
-        font-size: large;
-        }
+			button,
+			a.delete {
+				padding: 10px;
+				background-color: rgb(204, 56, 56);
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+				text-decoration: none;
+			}
 
-        button, a {
-        padding: 10px;
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        text-decoration: none;
-        margin-right: 20px;
-        margin-bottom: 5px;
-        }
+			a.view-app {
+				padding: 10px;
+				background-color: rgb(56, 18, 206);
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+				text-decoration: none;
+			}
 
-        button:hover, a:hover {
-            background-color: rgb(98, 127, 191);
-        }
+			a.view-listing {
+				padding: 10px;
+				background-color: rgb(56, 18, 206);
+				color: #fff;
+				border: none;
+				border-radius: 3px;
+				cursor: pointer;
+				text-decoration: none;
+			}
 
-        .container {
-            max-width: 100%;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-            display: grid; 
-            overflow-y: scroll;
-        }
+			button:hover,
+			a.delete:hover {
+				background-color: rgb(136, 90, 90);
+			}
 
-        .job-listing {
-            max-width: 100%;
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff;
-            position: relative;
-        }
-        .job-actions {
-            position: absolute;
-            bottom: 10px; 
-            right: 10px;
-            padding-bottom: 20px;
-        }
+			button:hover,
+			a:hover {
+				background-color: rgb(98, 127, 191);
+			}
 
-        .logout{
-            position: absolute;
-            top: 20px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+			.btn-group {
+				margin-right: 7%;
+			}
 
-        .addJob {
-            position: absolute;
-            top: 20px;
-            right: 100px;
-            padding: 10px;
-            background-color: rgb(57, 97, 185);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+			.btn-group button {
+				background-color: gainsboro;
+				border: 1px;
+				color: black;
+				margin-top: 5%;
+				padding: 1%;
+				cursor: pointer;
+				border-radius: 4px;
+				float: right;
+			}
 
-        .addjob:hover, .logout:hover {
-            background-color: rgb(98, 127, 191);
-        }
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 3px;
-            font-size: 14px;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-        }
+			.btn-group button.active {
+				background-color: black;
+				border: 1px solid rgb(185, 185, 185);
+				color: rgb(255, 255, 255);
+			}
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
+			/* Clear floats (clearfix hack) */
+			.btn-group:after {
+				content: "";
+				clear: both;
+				display: table;
+			}
 
-        .alert-unsuccessful {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .notifications {
-        position: absolute;
-        top: 20px;
-        right: 200px; /* Adjust spacing as needed */
-        padding: 10px;
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration: none;
-        }
+			.btn-group button:not(:last-child) {
+				border-left: none; /* Prevent double borders */
+			}
 
-        .notifications:hover {
-            background-color: rgb(98, 127, 191);
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h2>DCIT Job Board</h2>
-        <nav>
-        <a href="/add_listing"> Add Listing</a>
-        <a href="#" >My Account</a>
-        <a href="/notifications">Notifications</a>
-        <a href="/logout">Logout</a>
-        </nav>
-    </header>
-    <div id="flash-messages">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-    <div class="container">
-        {% for job in jobs %}
-        <div class="job-listing">
-            <h3>{{ job.company_name }}</h3>
-            <h4>{{ job.title }}</h4>
-            <p>Description: {{ job.description }}</p>
-            <p>Position Type: {{ job.position }}</p>
-            <p>Remote: {{ job.remote }}</p>
-            <!-- <p>Employment Term: {{ job.employment_term }}</p> -->
-            <p>Must Be a TT National: {{ job.ttnational }}</p>
-            <p>Category: {{ job.job_category }}</p>
-            <p>Desired Candidate Type: {{ job.desiredcandidate }}</p>
-            <!-- <p>Test for job request: {{ job.request }}</p> -->
-            <div class="job-actions">
-                    <a href="/view_applications/{{job.id}}">View Applicantion</a>
-                    <!-- <input type="hidden" name="job_id" value="{{ job.id }}"> -->
-                    <!-- <a href="/request_edit_listing/{{job.id}}">Request Edits</a> -->
-                    <a href="/request_delete_listing/{{job.id}}">Request Deletion</a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <script>
-        // Hide flash messages after 3 seconds
-        setTimeout(() => {
-            const flashMessages = document.getElementById('flash-messages');
-            if (flashMessages) {
-                flashMessages.style.display = 'none';
-            }
-        }, 3000);  // 3000 milliseconds = 3 seconds
-    </script>
-</body>
+			/* Add a background color on hover */
+			.btn-group button:hover {
+				background-color: rgb(27, 27, 179);
+				color: white;
+			}
+
+			/* use for content sizing */
+			.listings-container {
+				height: 63vh;
+				display: grid;
+				gap: 5%;
+				grid-template-columns: 1fr 1fr;
+				margin-left: 5%;
+				margin-top: 0;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				background-color: #f9f9f9;
+				overflow-y: auto;
+			}
+
+			.container {
+				max-width: 100%;
+				margin-left: 5%;
+				margin-right: 10%;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				background-color: gainsboro;
+				overflow-y: none;
+			}
+
+			.job-listing {
+				margin-bottom: 2%;
+				padding: 5%;
+				border: 1px solid #ddd;
+				border-radius: 5px;
+				background-color: #fff;
+			}
+			.job-card {
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				margin: 20px;
+				padding: 15px;
+				width: 300px;
+			}
+
+			.job-actions {
+				display: flex;
+				gap: 10px;
+				justify-content: flex-end;
+			}
+
+			.logout {
+				position: absolute;
+				top: 20px;
+				right: 10px;
+				padding: 10px 20px;
+				background-color: rgb(57, 97, 185);
+				color: #fff;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+			}
+
+			.addJob {
+				position: absolute;
+				top: 20px;
+				right: 100px;
+				padding: 10px;
+				background-color: rgb(57, 97, 185);
+				color: #fff;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+			}
+			.addjob:hover,
+			.logout:hover {
+				background-color: rgb(98, 127, 191);
+			}
+
+			#flash-messages {
+				position: absolute;
+				width: 100vw;
+				display: block;
+				z-index: 100; /*ensures flash message is displayed over content */
+			}
+
+			.notifications {
+				position: absolute;
+				top: 20px;
+				right: 200px; /* Adjust spacing as needed */
+				padding: 10px;
+				background-color: rgb(57, 97, 185);
+				color: #fff;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				text-decoration: none;
+			}
+
+			.notifications:hover {
+				background-color: rgb(98, 127, 191);
+			}
+
+			/* #working on mobile view */
+			@media (max-width: 768px) {
+				body {
+					overflow-y: auto;
+					height: auto;
+				}
+
+				.container {
+					grid-template-columns: 1fr;
+					height: auto;
+				}
+
+				.listings-container {
+					grid-template-columns: 1fr;
+					height: auto;
+					padding: 1% 0;
+				}
+
+				.btn-group {
+					display: flex;
+					flex-direction: column;
+					align-items: stretch;
+				}
+
+				.btn-group button {
+					margin-right: 0;
+					margin-bottom: 10px;
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+	<header>
+		<img
+			id="uwi-logo"
+			src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
+			alt="uwi_logo"
+		/>
+		<h1><a href="/app">DCIT Job Board</a></h1>
+		<div class="topnav" id="mynav">
+			<a href="/logout">Logout</a>
+			<a href="/company_notifications">Notifications</a>
+			<a href="/view_company_account/{{user.id}}">My Account</a>
+			<a href="/add_listing"> Add Job</a>
+		</div>
+	</header>
+	<body>
+		<div id="flash-messages">
+			{% with messages = get_flashed_messages(with_categories=true) %} {%
+			if messages %} {% for category, message in messages %}
+			<div class="alert alert-{{ category }}">{{ message }}</div>
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
+		<div class="container">
+			<div class="btn-group">
+				<button id="browse-companies">Browse Companies</button>
+				<button class="active" id="browse-jobs">Browse Jobs</button>
+				<button id="my-company-listings">Company Listings</button>
+			</div>
+			<div class="listings-container" id="all-listings-container">
+				{% for job in jobs %}
+				<div class="job-listing">
+					<h2>{{ job.title }}</h2>
+					<p>Description: {{ job.description }}</p>
+					<p>Position Type: {{ job.position_type }}</p>
+					<p>Remote: {{ job.is_remote }}</p>
+					<div class="job-actions">
+						<a href="#" class="view-listing">View</a>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+
+			<div
+				class="listings-container"
+				id="my-company-listings-container"
+				style="display: none"
+			>
+				{% for listing in company_listings %}
+				<div class="job-listing">
+					<h2>{{ listing.title }}</h2>
+					<p>Description: {{ listing.description }}</p>
+					<p>Position Type: {{ listing.position_type }}</p>
+					<p>Remote: {{ listing.is_remote }}</p>
+					<p>Job Site Address: {{ listing.job_site_address }}</p>
+					<p>Created: {{ listing.datetime_created }}</p>
+					<p>Status: {{ listing.admin_approval_status }}</p>
+					<div class="job-actions">
+						<a
+							href="/view_applications/{{listing.id}}"
+							class="view-app"
+							>View Applications</a
+						>
+						<a
+							href="/request_delete_listing/{{listing.id}}"
+							class="delete"
+							>Request Deletion</a
+						>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+			<div
+				class="listings-container"
+				id="companies-container"
+				style="display: none"
+			>
+				{% for company in companies %}
+				<div class="job-listing">
+					<h3>{{ company.registered_name }}</h3>
+					<p>{{ company.phone_number }}</p>
+					<p>{{ company.website_url }}</p>
+					<div class="job-actions">
+						<a href="#" class="view-listing"
+							>View Company Listings</a
+						>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<script>
+			// Hide flash messages after 3 seconds
+			setTimeout(() => {
+				const flashMessages = document.getElementById("flash-messages");
+				if (flashMessages) {
+					flashMessages.style.display = "none";
+				}
+			}, 3000); // 3000 milliseconds = 3 seconds
+
+			// Get all the buttons and containers
+			const browseCompaniesBtn =
+				document.getElementById("browse-companies");
+			const browseJobsBtn = document.getElementById("browse-jobs");
+			const myCompanyListingsBtn = document.getElementById(
+				"my-company-listings"
+			);
+
+			const jobsContainer = document.getElementById(
+				"all-listings-container"
+			);
+			const companiesContainer = document.getElementById(
+				"companies-container"
+			);
+			const myCompanyListingsContainer = document.getElementById(
+				"my-company-listings-container"
+			);
+
+			// Function to show the content of the clicked category
+			function showContent(containerToShow) {
+				// Hide all containers
+				jobsContainer.style.display = "none";
+				companiesContainer.style.display = "none";
+				myCompanyListingsContainer.style.display = "none";
+
+				// Show the selected container
+				containerToShow.style.display = "grid";
+			}
+			// Event listeners for the buttons
+			browseCompaniesBtn.addEventListener("click", () => {
+				showContent(companiesContainer);
+				// Toggle active class
+				browseCompaniesBtn.classList.add("active");
+				browseJobsBtn.classList.remove("active");
+				myCompanyListingsBtn.classList.remove("active");
+			});
+
+			browseJobsBtn.addEventListener("click", () => {
+				showContent(jobsContainer);
+				// Toggle active class
+				browseCompaniesBtn.classList.remove("active");
+				browseJobsBtn.classList.add("active");
+				myCompanyListingsBtn.classList.remove("active");
+			});
+
+			myCompanyListingsBtn.addEventListener("click", () => {
+				showContent(myCompanyListingsContainer);
+				// Toggle active class
+				browseCompaniesBtn.classList.remove("active");
+				browseJobsBtn.classList.remove("active");
+				myCompanyListingsBtn.classList.add("active");
+			});
+
+			// Initial load (show jobs by default)
+			showContent(jobsContainer);
+		</script>
+	</body>
 </html>

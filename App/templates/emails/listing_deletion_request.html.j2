@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ job_title }} - New Job Listing</title>
+        <style>
+            body { font-family: Arial, sans-serif; color: #333; }
+            h1 { color: #4CAF50; }
+            .footer { font-size: 12px; color: #aaa; }
+        </style>
+    </head>
+    <body>
+        <h1>New Job Listing: {{ job_title }}</h1>
+        <p>Hello {{ recipient_name }},</p>
+        <p>We are excited to inform you about a new job posting:</p>
+        <ul>
+            <li><strong>Title:</strong> {{ job_title }}</li>
+            <li><strong>Company:</strong> {{ company_name }}</li>
+            <li><strong>Location:</strong> {{ job_location }}</li>
+        </ul>
+        <p><a href="{{ job_url }}" style="color: #4CAF50;">Click here</a> to view the job listing and apply.</p>
+        <p>Best regards,<br>Your Job Board Team</p>
+        <hr>
+        <p class="footer">This email was sent to you because you are subscribed to job notifications.</p>
+    </body>
+</html>
+
+
+@company_views.route('/request_delete_listing/<int:job_id>', methods=['GET'])
+@jwt_required()
+def request_delete_listing_action(job_id):
+
+    listing = get_job_listing (job_id)
+    message=f"{listing.company.registered_name} requested {listing.title} to be deleted"
+    
+    if listing is not None:
+        listing.admin_approval_status = "REQUESTED DELETION"
+        notify_users(message, "admin")
+        db.session.commit()
+        flash('Request for deletion sent!', 'success')
+        response = redirect(url_for('index_views.index_page'))
+    else:
+        flash('Error sending request', 'unsuccessful')
+        response = redirect(url_for('index_views.login_page'))
+
+    return response
