@@ -9,7 +9,6 @@ from App.utils.db_utils import get_records_by_filter, validate_email
 ===== CREATE =====
 """
 
-
 def add_alumnus_account(
         login_email: str, password: str, first_name: str, last_name: str,
         phone_number: str = None, profile_photo_file_path: str = None
@@ -225,7 +224,6 @@ def get_alumnus_accounts_by_profile_photo_file_path(
 ===== UPDATE =====
 """
 
-
 def update_alumnus_account(
         id: int,
         first_name: Optional[str] = None,
@@ -233,7 +231,8 @@ def update_alumnus_account(
         phone_number: Optional[str] = None,
         login_email: Optional[str] = None,
         current_password: Optional[str] = None,
-        new_password: Optional[str] = None
+        new_password: Optional[str] = None,
+        profile_photo_file_path: Optional[str]=None
 ) -> AlumnusAccount:
     """
     Updates multiple fields of an alumnus' account in a single transaction.
@@ -246,6 +245,7 @@ def update_alumnus_account(
         login_email (Optional[str]): New login email.
         current_password (Optional[str]): Current password for verification (if changing email or password).
         new_password (Optional[str]): New password.
+        profile_photo_file_path (Optional[str]): New profile photo
 
     Returns:
         AlumnusAccount: The updated alumnus account if successful.
@@ -272,7 +272,11 @@ def update_alumnus_account(
         # Update phone number
         if phone_number:
             alumnus.phone_number = phone_number
-
+        
+        # Update profile Photo
+        if profile_photo_file_path:
+            alumnus.profile_photo_file_path = profile_photo_file_path
+            
         # Update email (requires password verification)
         if login_email:
             if not current_password or not alumnus.check_password(current_password):
@@ -291,6 +295,7 @@ def update_alumnus_account(
 
         db.session.commit()
         return alumnus
+        
 
     except IntegrityError as e:
         db.session.rollback()

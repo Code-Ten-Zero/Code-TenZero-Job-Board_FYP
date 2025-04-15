@@ -1,9 +1,12 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+import os
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from App.controllers.base_user_account import get_user_by_email
 from App.models import db
 from datetime import date, datetime
+from werkzeug.utils import secure_filename
 from flask_jwt_extended import current_user, jwt_required
 
+from App.controllers.company_account import get_company_account, update_company_account
 from App.controllers.job_applications import get_job_applications_by_job_listing_id
 from App.controllers.job_listing import (
     add_job_listing,
@@ -28,6 +31,96 @@ company_views = Blueprint(
 ====== COMPANY ACCOUNT INFO ======
 """
 
+
+@company_views.route('/update_company/<id>', methods=['POST'])
+@jwt_required()
+def update_company(id):
+    if not isinstance(current_user, CompanyAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    user = get_user_by_email(current_user.login_email)
+    data = request.form
+    registered_name = data['registered_name']
+    phone_number = data['contact']
+    login_email = data['email']
+
+    current_password = data['current_password']
+    confirm_current_password = data['confirm_current_password']
+    new_password = data['new_password']
+    confirm_new_password = data['confirm_new_password']
+
+    if current_password != confirm_current_password:
+        flash('Current passwords do not match', 'unsuccessful')
+        return redirect(url_for('company_views.view_my_account_page', id=id, user=user))
+
+    if new_password != confirm_new_password:
+        flash('New passwords do not match', 'unsuccessful') 
+        return redirect(url_for('company_views.view_my_account_page', id=id, user=user))
+
+    update_status = update_company_account(
+        id,
+        registered_name,
+        phone_number,
+        login_email,
+        current_password,
+        new_password
+    )
+
+    if update_status:
+        flash("Company information updated successfully", 'success')
+        return redirect(url_for('company_views.view_my_account_page', id=id))
+    else:
+        flash("Update failed. Check your information and try again.", 'unsuccessful')
+        return redirect(url_for('company_views.view_my_account_page', id=id))
+
+
+@company_views.route('/update_company_profile_photo/<int:id>', methods=['POST'])
+@jwt_required()
+def update_profile_photo(id):
+    # Ensure the user is an companyAccount and matches the route ID
+    if not isinstance(current_user, CompanyAccount) or current_user.id != id:
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    if 'profile_pic' not in request.files:
+        flash('No file part in the form', 'unsuccessful')
+        return redirect(url_for('company_views.view_my_account_page', id=id))
+
+    file = request.files['profile_pic']
+
+    if file.filename == '':
+        flash('No file selected', 'unsuccessful')
+        return redirect(url_for('company_views.view_my_account_page', id=id))
+
+    if file:
+        try:
+            # Ensure secure filename
+            filename = secure_filename(file.filename)
+
+            # Build absolute path to save
+            save_folder = os.path.join(current_app.root_path, 'static', 'profile-images')
+            os.makedirs(save_folder, exist_ok=True)
+
+            # Save file
+            file_path = os.path.join(save_folder, filename)
+            file.save(file_path)
+
+            # Save relative path in DB (for use with url_for('static', filename=...))
+            relative_path = f"profile-images/{filename}"
+
+            # Update database
+            company = get_company_account(id)
+            company.profile_photo_file_path = relative_path
+            db.session.commit()
+
+            flash("Profile picture updated successfully!", "success")
+        except Exception as e:
+            flash(f"An error occurred while uploading the photo: {str(e)}", "unsuccessful")
+
+    return redirect(url_for('company_views.view_my_account_page', id=id))
+
+
 @company_views.route('/view_company_account/<id>', methods=["GET"])
 @jwt_required()
 def view_my_account_page(id):
@@ -36,7 +129,7 @@ def view_my_account_page(id):
         return render_template('my-account-company.html', user=user)
 
     except Exception:
-        flash('Error retreiving User')
+        flash('Error retreiving User', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
 """

@@ -35,12 +35,12 @@ def initialize():
 
     # add in the first admin
     print("Adding debug admin account: bob@mail")
-    add_admin_account('bob@mail', 'bobpass')
+    add_admin_account('bob@mail.com', 'bobpass')
 
     # add in alumnus
     print("Adding debug alumnus account: rob@mail")
     add_alumnus_account(
-        'rob@mail',
+        'rob@mail.com',
         'robpass',
         'robfname',
         'roblname',
@@ -50,7 +50,7 @@ def initialize():
     # add in companies
     print("Adding debug company account: company@mail")
     company1 = add_company_account(
-        'company@mail',
+        'company@mail.com',
         'compass',
         'company1',
         'mailing_address',
@@ -60,7 +60,7 @@ def initialize():
     )
     print("Adding debug company account: company@mail2")
     company2 = add_company_account(
-        'company@mail2',
+        'company@mail2.com',
         'compass',
         'company2',
         'mailing_address2',
