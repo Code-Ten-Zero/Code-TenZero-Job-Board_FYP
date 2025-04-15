@@ -85,45 +85,45 @@ def test_generate_hashed_password():
 
     def test_check_password(self):
         password = "mypass"
-        user = AdminAccount('bob@mail', password)
+        user = AdminAccount('bob@mail.com', password)
         assert user.check_password(password)
 
     # test the retrieval of an admin account
     def test_get_admin_by_email(self):
-        user = AdminAccount("bob@mail", "bobpass")
-        print(get_user_by_email("bob@mail"))
-        retreived_user = get_user_by_email("bob@mail")
+        user = AdminAccount("bob@mail.com", "bobpass")
+        print(get_user_by_email("bob@mail.com"))
+        retreived_user = get_user_by_email("bob@mail.com")
         assert retreived_user.login_email == user.login_email
 
     # test the retrieval of an alumnus account
     def test_get_almunus_by_email(self):
         alumnus = AlumnusAccount(
-            'rob@mail',
+            'rob@mail.com',
             'robpass',
             'robfname',
             'roblname',
             '1868-333-4444'
         )
-        retreived_alumnus = get_user_by_email("rob@mail")
-        assert retreived_alumnus.login_email == 'rob@mail'
+        retreived_alumnus = get_user_by_email("rob@mail.com")
+        assert retreived_alumnus.login_email == 'rob@mail.com'
 
     # test the retrieval of a company account
     def test_get_company_by_email(self):
         company = CompanyAccount(
-            'company@mail',
+            'company@mail.com',
             'compass',
             'company1',
             'mailing_address',
-            'public@email',
+            'public@email.com',
             'company_website.com',
             'phone_number'
         )
-        retreived_company = get_company_account_by_login_email("company@mail")
+        retreived_company = get_company_account_by_login_email("company@mail.com")
         assert retreived_company.login_email == company.login_email
 
     # test the behaviour of the retrieval fucntion of a user that does not exist
     def test_get_user_by_email_not_found(self):
-        retreived_user = get_user_by_email("unknown@mail")
+        retreived_user = get_user_by_email("unknown@mail.com")
         assert retreived_user is None
 
 
@@ -184,7 +184,7 @@ class UserIntegrationTests(unittest.TestCase):
 
     # cz at the beginning so that it runs after create company
     def test_czadd_listing(self):
-        company1 = get_user_by_email('company@mail.com')
+        company1 = get_user_by_email('company10@mail.com')
         listing = add_job_listing(
             company1.id,
             'listing1',
@@ -217,80 +217,37 @@ class UserIntegrationTests(unittest.TestCase):
         print(get_all_users_json())
         users_json = get_all_users_json()
         self.assertListEqual([
-            {
-                'id': 1,
-                'login_email': 'bob@mail.com',
-                'password_hash': '[HIDDEN]',
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                },
-            {
-                'id': 2,
-                 'login_email': 'bob2@mail.com', 
-                 'password_hash': '[HIDDEN]', 
-                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                 }, 
-            {
-                'id': 3, 
-                'login_email': 'bob3@mail.com', 
-                'password_hash': '[HIDDEN]', 
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                }, 
-            {
-                'id': 4, 
-                'login_email': 'rick2@mail.com', 
-                'password_hash': '[HIDDEN]', 
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                }, 
-            {
-                'id': 1, 
-                'login_email': 'rob@mail.com', 
-                'password_hash': '[HIDDEN]', 
-                'first_name': 'robfname', 
-                'last_name': 'roblname', 
-                'phone_number': '1868-333-4444', 
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                }, 
-            {
-                'id': 2, 
-                'login_email': 'robby2@mail.com', 
-                'password_hash': '[HIDDEN]', 
-                'first_name': 'robfname', 
-                'last_name': 'roblname', 
-                'phone_number': '1868-399-9944', 
-                'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                }, 
-                {
-                    'id': 1, 
-                    'Login Email': 'company@mail.com', 
-                    'password_hash': '[HIDDEN]', 
-                    'registered_name': 'company1', 
-                    'mailing_address': 'mailing_address', 
-                    'public_email': 'public@email', 
-                    'website_url': 'company_website.com', 
-                    'phone_number': 'phone_number', 
-                    'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                    },
-                 {'id': 2, 
-                 'Login Email': 'company@mail2.com', 
-                 'password_hash': '[HIDDEN]', 
-                 'registered_name': 'company2', 
-                 'mailing_address': 'mailing_address2', 
-                 'public_email': 'public2@email', 
-                 'website_url': 'company_website2.com', 
-                 'phone_number': 'phone_number2', 
-                 'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                 }, 
-                 {
-                    'id': 3, 
-                    'Login Email': 'company10@mail.com', 
-                    'password_hash': '[HIDDEN]', 
-                    'registered_name': 'company10', 
-                    'mailing_address': 'mailing_address', 
-                    'public_email': 'public10@email.com', 
-                    'website_url': 'company10_website.com', 
-                    'phone_number': 'phone10_number', 
-                    'profile_photo_file_path': 'profile-images/anonymous-profile.png'
-                    }
+            {'id': 1, 
+            'login_email': 'bob2@mail.com', 
+            'password_hash': '[HIDDEN]', 
+            'profile_photo_file_path': 'profile-images/anonymous-profile.png'},
+
+            {'id': 2, 
+            'login_email': 'bob3@mail.com', 
+            'password_hash': '[HIDDEN]', 
+            'profile_photo_file_path': 'profile-images/anonymous-profile.png'}, 
+            
+            {'id': 3, 
+            'login_email': 'rick2@mail.com', 
+            'password_hash': '[HIDDEN]', 
+            'profile_photo_file_path': 'profile-images/anonymous-profile.png'}, 
+
+            {'id': 1, 
+            'login_email': 'robby2@mail.com', 
+            'password_hash': '[HIDDEN]', 
+            'first_name': 'robfname', 
+            'last_name': 'roblname', 
+            'phone_number': '1868-399-9944', 
+            'profile_photo_file_path': 'profile-images/anonymous-profile.png'}, 
+
+            {'id': 1, 'Login Email': 'company10@mail.com', 
+            'password_hash': '[HIDDEN]', 
+            'registered_name': 'company10', 
+            'mailing_address': 'mailing_address', 
+            'public_email': 'public10@email.com', 
+            'website_url': 'company10_website.com', 
+            'phone_number': 'phone10_number', 
+            'profile_photo_file_path': 'profile-images/anonymous-profile.png'}
         ],
             users_json
         )
@@ -319,7 +276,7 @@ class UserIntegrationTests(unittest.TestCase):
     #     assert user.username == "ronnie"
 
     def test_initial_isapproved(self):
-        company2 = get_user_by_email('company@mail2.com')
+        company2 = get_user_by_email('company10@mail.com')
         job = add_job_listing(
             company2.id,
             'listing2',
@@ -332,7 +289,7 @@ class UserIntegrationTests(unittest.TestCase):
         assert job.admin_approval_status == "PENDING"
 
     def test_toggle_listing_approval(self):
-        company2 = get_user_by_email('company@mail2.com')
+        company2 = get_user_by_email('company10@mail.com')
         job = add_job_listing(
             company2.id,
             'listing4',
@@ -347,7 +304,7 @@ class UserIntegrationTests(unittest.TestCase):
         assert toggled_job.admin_approval_status == "APPROVED"
 
     def test_get_approved_listings(self):
-        company2 = get_user_by_email('company@mail2.com')
+        company2 = get_user_by_email('company10@mail.com')
         job = add_job_listing(
             company2.id,
             'listing5',
