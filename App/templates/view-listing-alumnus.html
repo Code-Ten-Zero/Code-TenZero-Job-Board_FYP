@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -557,9 +558,9 @@
         </div>
         <div class="job-details">
           <img
-            id="company_logo"
-            src="{{ url_for('static', filename='images/c_logo.jpg') }}"
-            alt="c_logo"
+          id="company_logo"
+          src="{{ url_for('static', filename=listing.company.profile_photo_file_path) }}"
+          alt="Company Image"
           />
           <h5>
             <i class="fa-solid fa-building"></i> {{

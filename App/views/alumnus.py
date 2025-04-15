@@ -355,5 +355,6 @@ def view_company_listings(id):
     user=current_user
     company=get_company_account(id)
     company_listings = get_job_listings_by_company_id(id)
+    approved_company_listings = [job for job in company_listings if job.admin_approval_status=="APPROVED"] 
     saved = get_saved_job_listings_by_alumnus_id(user.id)
-    return render_template('alumnus-company-listings.html', user=user, company_listings=company_listings, saved=saved, company=company)
+    return render_template('alumnus-company-listings.html', user=user, company_listings=approved_company_listings, saved=saved, company=company)
