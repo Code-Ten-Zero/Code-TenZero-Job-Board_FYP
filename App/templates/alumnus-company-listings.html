@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -688,9 +689,9 @@
       <div class="listings-container" id="jobs-container">
         <div class="company">
           <img
-            class="company_logo"
-            src="{{ url_for('static', filename='images/c_logo.jpg') }}"
-            alt="c_logo"
+          class="company_logo"
+          src="{{ url_for('static', filename=company.profile_photo_file_path) }}"
+          alt="Company Image"
           />
 		  <div class="company-header">
           <h1>{{company.registered_name}}</h1>
@@ -703,6 +704,7 @@
           </div>
         </div>
 		<div class="company-jobs">
+      {% if company_listings %}
         {% for listing in company_listings %}
         <div class="job_card">
           <div class="job-header">
@@ -734,6 +736,9 @@
           </div>
         </div>
         {% endfor %}
+        {% else %}
+        <p> <i class="fa-solid fa-info-circle"></i> This company has not published job listings as of yet!</p>
+      {% endif %}
       </div>
 	  </div>
 

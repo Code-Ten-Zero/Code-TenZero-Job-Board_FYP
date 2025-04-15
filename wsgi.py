@@ -56,7 +56,7 @@ def initialize():
         'mailing_address',
         'public@email',
         'company_website.com',
-        'phone_number'
+        'phone_number',
     )
     print("Adding debug company account: company@mail2")
     company2 = add_company_account(
