@@ -13,4 +13,4 @@ class AdminAccount(BaseUserAccount):
         "Notification", back_populates="admin", lazy="dynamic", cascade="all, delete-orphan")
 
     def __init__(self, login_email: str, password: str, profile_photo_file_path: str = None) -> None:
-        super().__init__(login_email, password, profile_photo_file_path)
+        super().__init__(login_email, password, profile_photo_file_path='profile-images/anonymous-profile.png' )

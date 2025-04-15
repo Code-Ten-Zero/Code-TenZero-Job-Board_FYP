@@ -64,6 +64,7 @@ class CompanyAccount(BaseUserAccount):
         self.public_email = public_email
         self.website_url = website_url
         self.phone_number = phone_number
+        self.profile_photo_file_path = 'profile-images/anonymous-profile.png'
 
     def __str__(self) -> str:
         """

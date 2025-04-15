@@ -229,7 +229,7 @@
           <img
             class="form-image"
             id="profile_pic"
-            src="C:\Users\psoon\Desktop\sky image.jpg"
+            src="{{ url_for('static', filename=user.profile_photo_file_path) }}"
             alt="Profile Image"
           />
           <!-- <form method="POST" action="/update_profile_photo/{{user.id}}">      -->

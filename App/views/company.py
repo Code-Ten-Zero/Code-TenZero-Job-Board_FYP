@@ -93,7 +93,7 @@ def request_delete_listing_action(job_id):
 
     if not listing:
         flash('Error sending request', 'unsuccessful')
-        return redirect(url_for('index_views.login_page'))
+        return redirect(url_for('index_views.index_page'))
     
     try:
         listing.admin_approval_status = "REQUESTED DELETION"

@@ -44,7 +44,7 @@ def initialize():
         'robpass',
         'robfname',
         'roblname',
-        phone_number='1868-333-4444'
+        phone_number='1868-333-4444',
     )
 
     # add in companies
