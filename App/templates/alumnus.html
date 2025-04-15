@@ -778,11 +778,7 @@
 						<div class="job-header">
 							<h3>{{ company.registered_name }}</h3>
 							<h5>{{ company.website_url }}</h5>
-							<input
-								type="button"
-								class="view-button"
-								value="View Company Listings"
-							/>
+							<a href="/view_company_listings/{{company.id}}" class="view-button">View Company Listings</a>
 						</div>
 					</div>
 					{% endfor%} {% else %}

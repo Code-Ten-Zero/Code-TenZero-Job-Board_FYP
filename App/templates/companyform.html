@@ -19,11 +19,6 @@
 				padding: 0;
 			}
 
-			nav a {
-				margin-left: 20px;
-				font-size: large;
-			}
-
 			.logout {
 				background-color: rgb(57, 97, 185);
 				color: #fff;
@@ -36,18 +31,6 @@
 
 			.logout:hover {
 				background-color: rgb(98, 127, 191);
-			}
-
-			a {
-				margin-right: 10px;
-				padding: 5px 10px;
-				color: #fff;
-				background-color: rgb(57, 97, 185);
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				text-decoration: none;
-				font-size: small;
 			}
 
 			body {
@@ -142,8 +125,9 @@
 			<h1><a href="/app">DCIT Job Board</a></h1>
 			<div class="topnav" id="mynav">
 				<a href="/logout" class="logout">Logout</a>
-				<a href="#">Notifications</a>
-				<a href="#">My Account</a>
+				<a href="/company_notifications">Notifications</a>
+				<a href="/view_company_account/{{user.id}}">My Account</a>
+				<a href="/add_listing"> Add Job</a>
 			</div>
 		</header>
 		<button onclick="goBack()" style="font-size: 24px">

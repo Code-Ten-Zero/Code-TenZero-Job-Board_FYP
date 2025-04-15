@@ -210,9 +210,10 @@
       <h1><a href="/app">DCIT Job Board</a></h1>
       <h1 class="header-title"> My Account</h1>
       <div class="topnav" id="mynav">
-        <a href="/logout"> Logout</a>
-        <a href="/alumnus_notifications"> Notifications</a>
-        <a href="/view_my_account/{{user.id}}"> My Account</a>
+        <a href="/logout">Logout</a>
+        <a href="/company_notifications">Notifications</a>
+        <a href="/view_company_account/{{user.id}}">My Account</a>
+        <a href="/add_listing"> Add Job</a>
       </div>
     </header>
     <br />
@@ -238,7 +239,7 @@
           >
           <!-- </form> -->
           <p class="image-text">{{user.first_name}} {{user.last_name}}</p>
-          <p class="image-text">Alumnus</p>
+          <p class="image-text">Company</p>
           <p class="image-text">{{user.login_email}}</p>
           <p class="image-text">{{user.phone_number}}</p>
         </div>

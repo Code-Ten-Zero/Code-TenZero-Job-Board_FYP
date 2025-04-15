@@ -11,15 +11,15 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
-
-    <title>DCIT Job Board-Listing</title>
+    <title>DCIT Job Board-Alumni</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         background-color: rgb(225, 227, 231);
-        max-height: 100%;
+        width: 100vw;
+        height: 100vh;
         overflow: hidden;
       }
 
@@ -28,8 +28,10 @@
         border-radius: 10px;
         padding-right: 5px;
         overflow-y: scroll;
-        height: 80vh;
+        height: 77vh;
         padding-top: 0;
+        width: 20vw;
+        margin-top: 4%;
       }
 
       .btn-group button {
@@ -42,6 +44,13 @@
         border-radius: 4px;
       }
 
+      button.disabled {
+        background-color: #d3d3d3;
+        color: #a9a9a9;
+        cursor: not-allowed;
+        border: 1px solid #ccc;
+      }
+
       .view-button {
         background-color: #062690;
         border: none;
@@ -50,7 +59,6 @@
         padding: 5px 15px;
         text-align: center;
         text-decoration: none;
-        display: inline-block;
         font-size: 16px;
         margin-left: 7vh;
         cursor: pointer;
@@ -88,11 +96,13 @@
         font-size: 70%;
       }
 
-      #company_logo {
-        height: 20vh;
-        width: 20vh;
-        float: right;
+      .company_logo {
+        height: 15vh;
+        width: 15vh;
+        float: left;
         margin-bottom: 10px;
+        margin-right: 5px;
+        border-radius: 5px;
       }
 
       .logout {
@@ -109,15 +119,13 @@
       }
 
       .subscribe {
-        position: absolute;
-        right: 210px;
         padding: 10px;
-        background-color: rgb(57, 97, 185);
-        color: #fff;
+        background-color: rgb(225, 227, 231);
+        color: black;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: xx-large;
       }
 
       .unsubscribe {
@@ -153,6 +161,62 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+      }
+
+      .save-listing {
+        background-color: #0022ff;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .remove-listing {
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #saved_listing_card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 2px;
+        transition: all 0.3s ease;
+        background-color: #ffffff;
+        height: 5vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      #saved_card_header {
+        font-weight: bold;
+        margin-bottom: 0;
+        width: auto;
+        flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .aside-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .remove-listing,
+      .view-button {
+        padding: 6px 10px;
+        border-radius: 4px;
+        border: 1px solid #000;
+        cursor: pointer;
       }
 
       .subscription input[type="email"],
@@ -194,38 +258,37 @@
       }
 
       .listings-container {
-        max-width: 100%;
-        height: 50%;
-        padding: 2%;
+        width: 70vw;
+        height: 85vh;
+        padding-left: 2%;
+        padding-right: 2%;
         background-color: #d4d4d8;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
         gap: 20px;
         border-radius: 5px;
         overflow-y: scroll;
         z-index: 1;
+        margin-top: 1%;
       }
 
       .body-container {
-        z-index: 1;
-        max-width: 100%;
-        padding: 2%;
-        background-color: white;
-        gap: 20px;
-        overflow: scroll;
-        height: 75vh;
+        width: 100vw;
+        background-color: transparent;
+        height: 100vh;
+        overflow: visible;
+        background-color: none;
+        display: grid;
+        grid-template-columns: 3fr 1fr;
       }
 
       .container {
         z-index: 1;
         max-width: 100%;
-        max-height: 90%;
         padding: 2%;
         background-color: none;
         display: grid;
         grid-template-columns: 3fr 1fr;
         gap: 0.5%;
-        overflow: none;
+        overflow: auto;
       }
 
       .form-group {
@@ -296,19 +359,6 @@
         cursor: pointer;
       }
 
-      .apply-button {
-        background-color: #062690;
-        border: none;
-        border-radius: 5px;
-        color: white;
-        padding: 10px;
-        text-align: center;
-        text-decoration: none;
-        font-size: 16px;
-        cursor: pointer;
-        float: left;
-      }
-
       .popup {
         display: none;
         position: fixed;
@@ -330,7 +380,6 @@
         overflow: auto;
         position: relative;
       }
-
       .popup-form {
         display: none;
         position: fixed;
@@ -344,6 +393,7 @@
         width: 100%;
         height: 100%;
       }
+
       .close-btn {
         color: black;
         border: none;
@@ -353,17 +403,18 @@
         right: 10px;
         position: absolute;
       }
-
       .hidden {
         display: none;
       }
+	  aside .job_card{
+		padding:10px;
+	  }
 
       .job_card {
         border: 1px solid #ddd;
         border-radius: 5px;
         padding: 20px;
         margin-bottom: 20px;
-        cursor: pointer;
         transition: all 0.3s ease;
         background-color: #ffffff;
       }
@@ -374,7 +425,6 @@
 
       .job-header {
         font-weight: bold;
-        cursor: pointer;
         margin-bottom: 5px;
       }
 
@@ -397,69 +447,153 @@
         font-weight: normal;
       }
 
-      .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 3px;
-        font-size: 14px;
-        opacity: 0.9;
-        transition: opacity 0.3s ease;
-        z-index: 2;
+      .no-listings {
+        text-align: center;
+        color: #d5d1d1;
+        font-style: italic;
+        margin-top: 20px;
       }
 
-      .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-        z-index: 2;
+      #resume-view {
+        height: 40px;
+        width: 20px;
       }
-
-      .alert-unsuccessful {
-        background-color: #f2f6ff;
-        color: #721c24;
-        border: 1px solid #fff8f9;
-        z-index: 2;
-      }
-
-      .file-upload-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: 20px;
-        background-color: #efefef;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        height: 20vh;
-      }
-
-      .file-upload-label {
+      .search-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        background-color: #2035a1;
-        color: white;
-        padding: 10px 20px;
+        margin-right: 33vw;
         border-radius: 30px;
-        cursor: pointer;
+        background-color: #eaf0f6;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 5px 10px;
+        width: 300px;
+      }
+
+      .searchInput {
+        width: 300px;
+        padding: 10px 20px;
+        border: 2px solid #ccc;
+        border-radius: 30px;
         font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .searchInput:focus {
+        border-color: #5e9ed6;
+        box-shadow: 0 0 8px rgba(94, 158, 214, 0.6);
+      }
+
+      .searchInput::placeholder {
+        color: #888;
+        font-style: italic;
+      }
+
+      .searchInput:hover {
+        border-color: #5e9ed6;
+      }
+
+      .search-button {
+        background-color: transparent;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
         transition: background-color 0.3s ease;
+        border-radius: 50%;
       }
 
-      .file-upload-label i {
-        margin-right: 8px;
+      .search-button i {
+        font-size: 18px;
+        color: #5e9ed6; /* Set the icon color */
       }
 
-      .file-upload-input {
-        display: none;
+      .search-button:hover {
+        background-color: #ffffff;
       }
 
-      .file-upload-label:hover {
-        background-color: #4a89c4;
+      .search-button:active i {
+        color: #3a8ac6; /* Change color when the button is pressed */
       }
 
-      .file-upload-label:active {
-        background-color: #3b75a3;
+      /* Styles the company checkbox subscription container to be scrollable */
+      .checkbox-container {
+        max-height: 10vh;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 10px;
+      }
+      .page-layout {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px; /* optional: space between content and aside */
+      }
+      /* Container for company details */
+      .company {
+        position: sticky;
+        top: 0;
+        margin: 0;
+        background-color: #eff0f5;
+        padding: 30px 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        border-bottom: 2px solid #ddd;
+        font-family: "Arial", sans-serif;
+        transition: background-color 0.3s ease;
+        display: grid;
+        grid-template-columns: 1fr 3fr 2fr;
+		gap:3%;
+      }
+      .company h1 {
+        font-size: 2rem; 
+        margin-bottom: 15px; 
+        margin-top: 0;
+      }
+	  .company h2 {
+        font-size: 1rem; 
+        margin-bottom: 15px; 
+        margin-top: 0;
+      }
+
+	  .company-jobs{
+		display: grid;
+		grid-template-columns: 2fr 2fr;
+		gap:5px;
+	  }
+      .company-details {
+        margin: 0;
+        width: 100%;
+        font-size: small;
+      }
+
+      /* Website link styling */
+      .company-website a {
+        font-size: 16px;
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 5px;
+        display: inline-block;
+        transition: color 0.3s ease;
+      }
+
+      .company-website a:hover {
+        color: #0056b3;
+      }
+
+      /* Change background color on scroll */
+      .company.sticky-active {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #notification-dot {
+        width: 10px;
+        height: 10px;
+        background-color: rgb(230, 151, 49);
+        border-radius: 50%;
+        position: absolute;
+        display: none; /* Hide by default */
+        z-index: 2000;
       }
 
       #flash-messages {
@@ -470,35 +604,55 @@
       }
 
       /* #working on mobile view */
+      /*need to do: turn top nav into collapseable menu, allow horizontal scrolling for listings*/
       @media (max-width: 768px) {
         body {
           overflow-y: auto;
-          height: auto;
+          height: 100vh;
+        }
+
+        header h1 {
+          font-size: medium;
+          margin-right: 0;
+        }
+
+        /* .topnav a:not(:first-child) {display: none;}  */
+
+        .top-content {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .search-container {
+          width: 55vw;
+          flex-direction: row;
+          float: right;
+        }
+
+        .searchInput {
+          width: 45vw;
+          box-sizing: border-box;
         }
 
         .container {
-          grid-template-columns: 1fr;
-          height: auto;
+          height: 100vh;
+          overflow: scroll;
         }
 
         .listings-container {
-          grid-template-columns: 1fr;
           height: auto;
-          padding: 1% 0;
-        }
-
-        .aside {
-          width: 100%;
-          margin-top: 0;
-          height: auto;
+          overflow: scroll;
         }
 
         .body-container {
-          overflow-y: auto;
+          z-index: 1;
+          width: 10vw;
+          max-height: 90%;
           padding: 2%;
-		  height:80vh;
+          background-color: none;
+          gap: 0.5%;
+          overflow: hidden;
         }
-
         .btn-group {
           display: flex;
           flex-direction: column;
@@ -520,7 +674,7 @@
         src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
         alt="uwi_logo"
       />
-      <h1><a href="/app">DCIT Job Board</a></h1>
+	  <h1><a href="/app">DCIT Job Board</a></h1>
       <div class="topnav" id="mynav">
         <a href="/logout" class="logout">Logout</a>
         <a href="/alumnus_notifications" id="notifications-link">
@@ -530,105 +684,68 @@
         <a href="/view_my_account/{{user.id}}">My Account</a>
       </div>
     </header>
-    <div id="flash-messages">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
-    </div>
-    <!-- <button onclick="goBack()" style="font-size: 24px; border: none">
-      <i class="fa fa-long-arrow-left"></i> Go Back
-    </button> -->
-
-    <div class="container">
-      <div class="body-container">
-        <div class="job-header">
-          <h3>{{ listing.title }}</h3>
-          <button
-            id="save-button"
-            class="save-listing"
-            data-job-id="{{ listing.id }}"
-          >
-            Save
-          </button>
-          <a href="/view_company_listings/{{listing.company.id}}">
-            <button>View Company Details</button>
-          </a>
-        </div>
-        <div class="job-details">
+    <div class="body-container">
+      <div class="listings-container" id="jobs-container">
+        <div class="company">
           <img
-            id="company_logo"
+            class="company_logo"
             src="{{ url_for('static', filename='images/c_logo.jpg') }}"
             alt="c_logo"
           />
-          <h5>
-            <i class="fa-solid fa-building"></i> {{
-            listing.company.registered_name}}
-          </h5>
-          <h5><i class="fa-solid fa-clock"></i> {{ listing.position_type}}</h5>
-          <h5>
-            <i class="fa-solid fa-location-crosshairs"></i> {{
-            listing.job_site_address}}
-          </h5>
-          <h5>{{ listing.description}}</h5>
-          <h5>{{ listing.monthly_salary_ttd}}</h5>
-          <h5>{{ listing.datetime_created}}</h5>
-          <h5>{{ listing.datetime_last_modified}}</h5>
-          <br />
-          <form
-            action="/apply_to_listing/{{ listing.id }}"
-            method="POST"
-            enctype="multipart/form-data"
-          >
-            <h2>To Apply fill out the section below:</h2>
-
-            <h5>Input Work Experience</h5>
-            <input
-              type="number"
-              name="work-experience"
-              placeholder="Years"
-              required
-            />
-
-            <h3>Attach your resume below.</h3>
-            <div class="file-upload-container">
-              <label for="file-upload" class="file-upload-label">
-                <i class="fa fa-plus"></i> Upload File
-                <input
-                  type="file"
-                  id="file-upload"
-                  name="resume"
-                  class="file-upload-input"
-                  required
-                  onchange="displayFileName()"
-                />
-              </label>
-            </div>
-
-            <div id="file-info" class="file-info"></div>
-
-            <br />
-            <input
-              type="hidden"
-              name="job_listing_id"
-              value="{{ listing.id }}"
-            />
-
-            <button type="submit" value="Upload" class="apply-button">
-              Apply
-            </button>
-          </form>
-          <!-- Form should be closed here! -->
+		  <div class="company-header">
+          <h1>{{company.registered_name}}</h1>
+		  <h2> <i class="fas fa-globe"></i> {{company.website_url}}<h2>
+		  </div>
+          <div class="company-details">
+            <p><i class="fas fa-building"></i> {{company.mailing_address}}</p>
+            <p><i class="fas fa-envelope"></i> {{company.public_email}}</p>
+            <p><i class="fas fa-phone-alt"></i> {{company.phone_number}}</p>
+          </div>
         </div>
+		<div class="company-jobs">
+        {% for listing in company_listings %}
+        <div class="job_card">
+          <div class="job-header">
+            <h3>{{ listing.title }}</h3>
+          </div>
+          <div class="job-details">
+            <h5>
+              <i class="fa-solid fa-building"></i> {{
+              listing.company.registered_name }}
+            </h5>
+            <h5>
+              <i class="fa-solid fa-clock"></i> {{ listing.position_type }}
+            </h5>
+            <h5>
+              <i class="fa-solid fa-location-crosshairs"></i> {{
+              listing.job_site_address }}
+            </h5>
+
+            <button
+              id="save-button"
+              class="save-listing"
+              data-job-id="{{ listing.id }}"
+            >
+              <i class="fa-regular fa-star"></i> Save
+            </button>
+            <a href="/view_listing_alumnus/{{ listing.id }}" class="view-button"
+              >View</a
+            >
+          </div>
+        </div>
+        {% endfor %}
       </div>
-      <!-- saved listings content -->
+	  </div>
+
+      <!-- Saved Listings content -->
       <aside>
         <div class="sticky">
           <h1>Saved Listings</h1>
+          {% if saved %}
         </div>
-        {% for listing in saved_listings %}
-        <div class="job_card" id="saved_listing_card">
-          <div class="job-header" id="saved_card_header">
+        {% for listing in saved %}
+        <div class="job_card">
+          <div class="job-header">
             <h3>{{ listing.job_listing.title }}</h3>
             <h5>{{ listing.job_listing.company.registered_name }}</h5>
           </div>
@@ -640,18 +757,17 @@
               Remove
             </button>
             <a
-              href="/view_listing_alumnus/{{listing.job_listing_id}}"
+              href="/view_listing_alumnus/{{ listing.job_listing_id }}"
               class="view-button"
-            >
-              View</a
+              >View</a
             >
           </div>
         </div>
-
-        {% endfor%}
+        {% endfor %} {% else %}
+        <p>No saved listings yet.</p>
+        {% endif %}
       </aside>
     </div>
-
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
         try {
@@ -727,24 +843,6 @@
           });
         });
       });
-
-      function goBack() {
-        window.history.back();
-      }
-      function displayFileName() {
-        const fileInput = document.getElementById("file-upload");
-        const fileNameSpan = document.getElementById("file-info");
-        const fileName = fileInput.files[0] ? fileInput.files[0].name : "";
-
-        if (fileName) {
-          // Remove the upload button and label
-          document.querySelector(".file-upload-container").style.display =
-            "none";
-
-          // Display the selected file's name
-          fileNameSpan.innerHTML = `Selected file: <strong>${fileName}</strong>`;
-        }
-      }
     </script>
   </body>
 </html>

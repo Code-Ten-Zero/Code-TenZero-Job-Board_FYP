@@ -19,9 +19,9 @@ from App.controllers.company_subscription import (
     add_company_subscription,
     get_company_subscription
 )
-from App.controllers.job_listing import get_job_listing
+from App.controllers.job_listing import get_job_listing, get_job_listings_by_company_id
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
-
+from App.controllers.company_account import get_company_account
 
 alumnus_views = Blueprint(
     'alumnus_views',
@@ -164,11 +164,12 @@ def subscribe_action():
 @alumnus_views.route('/view_listing_alumnus/<id>', methods=["GET"])
 @jwt_required()
 def view_listing_page(id):
+    user=current_user
     listing = get_job_listing(id)
-    saved_listings = get_saved_job_listings_by_alumnus_id(current_user.id)
+    saved_listings = get_saved_job_listings_by_alumnus_id(user.id)
 
     try:
-        return render_template('view-listing-alumnus.html', listing=listing, saved_listings=saved_listings)
+        return render_template('view-listing-alumnus.html', listing=listing, saved_listings=saved_listings, user=user)
 
     except Exception:
         flash('Error retreiving Listing')
@@ -303,3 +304,12 @@ def check_notifications():
     # Determine if there are new notifications
     has_new_notifications = len(unread_notifications) > 0
     return jsonify({'has_new_notifications': has_new_notifications})
+
+@alumnus_views.route('/view_company_listings/<id>', methods=['GET'])
+@jwt_required()
+def view_company_listings(id):
+    user=current_user
+    company=get_company_account(id)
+    company_listings = get_job_listings_by_company_id(id)
+    saved = get_saved_job_listings_by_alumnus_id(user.id)
+    return render_template('alumnus-company-listings.html', user=user, company_listings=company_listings, saved=saved, company=company)

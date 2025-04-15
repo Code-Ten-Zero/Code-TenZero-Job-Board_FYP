@@ -66,11 +66,12 @@ def index_page():
             'company-view.html',
             company_listings=company_listings,
             jobs=approved_jobs,
-            companies=companies
+            companies=companies,
+            user=user
         )
 
     if isinstance(user, AdminAccount):
-        return render_template('admin.html', jobs=jobs)
+        return render_template('admin.html', jobs=jobs, user=user)
 
     return redirect(url_for('auth_views.login'))
 

@@ -1,4 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
+from App.controllers.base_user_account import get_user_by_email
 from App.models import db
 from datetime import date, datetime
 from flask_jwt_extended import current_user, jwt_required
@@ -23,31 +24,29 @@ company_views = Blueprint(
     template_folder='../templates'
 )
 
+"""
+====== COMPANY ACCOUNT INFO ======
+"""
 
-@company_views.route('/view_applications/<int:id>', methods=['GET'])
+@company_views.route('/view_company_account/<id>', methods=["GET"])
 @jwt_required()
-def view_applications_page(id):
-
-    # get the listing
-    listing = get_job_listing(id)
-
-    print(listing)
-
+def view_my_account_page(id):
+    user = get_user_by_email(current_user.login_email)
     try:
-        applications = get_job_applications_by_job_listing_id(listing.id)
-        print(applications)
-        return render_template('viewapp-company.html', applications=applications)
+        return render_template('my-account-company.html', user=user)
 
     except Exception:
-        flash('Error receiving applicants', 'unsuccessful')
-        response = redirect(url_for('index_views.index_page'))
-        return response
+        flash('Error retreiving User')
+        return redirect(url_for('index_views.index_page'))
 
+"""
+====== COMPANY JOB LISTINGS ======
+"""
 
 @company_views.route('/add_listing', methods=['GET'])
 @jwt_required()
 def add_listing_page():
-    return render_template('companyform.html')
+    return render_template('companyform.html', user=current_user)
 
 
 @company_views.route('/add_listing', methods=['POST'])
@@ -127,6 +126,29 @@ def request_edit_listing_action(job_id):
     return redirect(url_for('index_views.index_page'))
         
 
+@company_views.route('/view_applications/<int:id>', methods=['GET'])
+@jwt_required()
+def view_applications_page(id):
+
+    # get the listing
+    listing = get_job_listing(id)
+
+    print(listing)
+
+    try:
+        applications = get_job_applications_by_job_listing_id(listing.id)
+        print(applications)
+        return render_template('viewapp-company.html', applications=applications)
+
+    except Exception:
+        flash('Error receiving applicants', 'unsuccessful')
+        response = redirect(url_for('index_views.index_page'))
+        return response
+
+
+"""
+====== COMPANY NOTIFICATIONS ======
+"""
 
 @company_views.route('/company_notifications', methods=['GET'])
 @jwt_required()

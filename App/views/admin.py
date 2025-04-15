@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_jwt_extended import current_user, jwt_required
 
+from App.controllers.base_user_account import get_user_by_email
 from App.controllers.job_listing import (
     approve_job_listing,
     unapprove_job_listing,
@@ -170,6 +171,21 @@ def delete_listing_action(job_id):
         flash('Job listing deleted!', 'success')
 
     return redirect(url_for(INDEX_PAGE_ROUTE))
+
+"""
+====== ADMIN ACCOUNT INFO ======
+"""
+
+@admin_views.route('/view_admin_account/<id>', methods=["GET"])
+@jwt_required()
+def view_my_account_page(id):
+    user = get_user_by_email(current_user.login_email)
+    try:
+        return render_template('my-account-admin.html', user=user)
+
+    except Exception:
+        flash('Error retreiving User')
+        return redirect(url_for('index_views.index_page'))
 
 
 """
