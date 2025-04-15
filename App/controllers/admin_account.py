@@ -142,12 +142,75 @@ def get_admin_accounts_by_profile_photo_file_path(
 ===== UPDATE =====
 """
 
+def update_admin_account(
+        id: int,
+        login_email: Optional[str] = None,
+        current_password: Optional[str] = None,
+        new_password: Optional[str] = None,
+        profile_photo_file_path: Optional[str]=None
+) -> AdminAccount:
+    """
+    Updates multiple fields of an admin's account in a single transaction.
+
+    Args:
+        id (int): The admin's ID.
+        login_email (Optional[str]): New login email.
+        current_password (Optional[str]): Current password for verification (if changing email or password).
+        new_password (Optional[str]): New password.
+        profile_photo_file_path (Optional[str]): New profile photo
+
+    Returns:
+        AdminAccount: The updated admin's account if successful.
+
+    Raises:
+        ValueError: If input is invalid or the admin was not found.
+        PermissionError: If password verification fails.
+        IntegrityError: If email is already taken.
+        SQLAlchemyError: For other database-related issues.
+    """
+    admin = get_admin_account(id)
+    if not admin:
+        raise ValueError(f"Admin with id {id} not found.")
+
+    try:
+        # Update profile Photo
+        if profile_photo_file_path:
+            admin.profile_photo_file_path = profile_photo_file_path
+            
+        # Update email (requires password verification)
+        if login_email:
+            if not current_password or not admin.check_password(current_password):
+                raise PermissionError(
+                    "Incorrect password. Cannot update email.")
+            if not validate_email(login_email):
+                raise ValueError(f"Invalid login email '{login_email}'.")
+            admin.login_email = login_email
+
+        # Update password (requires current password verification)
+        if new_password:
+            if not current_password or not admin.check_password(current_password):
+                raise PermissionError(
+                    "Incorrect password. Cannot update password.")
+            admin.set_password(new_password)
+
+        db.session.commit()
+        return admin
+        
+
+    except IntegrityError as e:
+        db.session.rollback()
+        raise IntegrityError(f"A database constraint was violated: {e}")
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        raise SQLAlchemyError(f"A database error has occurred: {e}")
+
 
 def update_admin_account_login_email(
         id: int, password: str, new_login_email: str
 ) -> AdminAccount:
     """
-    Securely updates the alumnus' login email after verifying their current password.
+    Securely updates the admins' login email after verifying their current password.
 
     Args:
         id (int): The admin's ID.
@@ -191,7 +254,7 @@ def update_admin_account_password(
         id: int, current_password: str, new_password: str
 ) -> AdminAccount:
     """
-    Securely updates the admin' password after verifying their current password.
+    Securely updates the admin's password after verifying their current password.
 
     Args:
         id (int): The admin's ID.

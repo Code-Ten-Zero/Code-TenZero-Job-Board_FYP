@@ -13,7 +13,7 @@ from App.models import (
     JobApplication
 )
 
-from App.controllers.alumnus_account import update_alumnus_account
+from App.controllers.alumnus_account import get_alumnus_account, update_alumnus_account
 from App.controllers.base_user_account import get_user_by_email
 from App.controllers.company_subscription import (
     add_company_subscription,
@@ -28,7 +28,6 @@ alumnus_views = Blueprint(
     __name__,
     template_folder='../templates'
 )
-
 
 @alumnus_views.route('/update_alumnus/<id>', methods=['POST'])
 @jwt_required()
@@ -50,12 +49,12 @@ def update_alumnus(id):
     confirm_new_password = data['confirm_new_password']
 
     if current_password != confirm_current_password:
-        flash("Current passwords do not match")
-        return render_template('my-account-alumnus.html', user=user)
+        flash('Current passwords do not match', 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
 
     if new_password != confirm_new_password:
-        flash("New passwords do not match")
-        return render_template('my-account-alumnus.html', user=user)
+        flash('New passwords do not match', 'unsuccessful') 
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
 
     update_status = update_alumnus_account(
         id,
@@ -68,12 +67,57 @@ def update_alumnus(id):
     )
 
     if update_status:
-        flash("Alumnus' information updated successfully")
+        flash("Alumnus' information updated successfully", 'success')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
     else:
-        flash("Update failed. Check your information and try again.")
+        flash("Update failed. Check your information and try again.", 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
 
-    return render_template('my-account-alumnus.html', user=user)
 
+@alumnus_views.route('/update_profile_photo/<int:id>', methods=['POST'])
+@jwt_required()
+def update_profile_photo(id):
+    # Ensure the user is an AlumnusAccount and matches the route ID
+    if not isinstance(current_user, AlumnusAccount) or current_user.id != id:
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    if 'profile_pic' not in request.files:
+        flash('No file part in the form', 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
+
+    file = request.files['profile_pic']
+
+    if file.filename == '':
+        flash('No file selected', 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
+
+    if file:
+        try:
+            # Ensure secure filename
+            filename = secure_filename(file.filename)
+
+            # Build absolute path to save
+            save_folder = os.path.join(current_app.root_path, 'static', 'profile-images')
+            os.makedirs(save_folder, exist_ok=True)
+
+            # Save file
+            file_path = os.path.join(save_folder, filename)
+            file.save(file_path)
+
+            # Save relative path in DB (for use with url_for('static', filename=...))
+            relative_path = f"profile-images/{filename}"
+
+            # Update database
+            alumnus = get_alumnus_account(id)
+            alumnus.profile_photo_file_path = relative_path
+            db.session.commit()
+
+            flash("Profile picture updated successfully!", "success")
+        except Exception as e:
+            flash(f"An error occurred while uploading the photo: {str(e)}", "unsuccessful")
+
+    return redirect(url_for('alumnus_views.view_my_account_page', id=id))
 
 @alumnus_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
@@ -83,7 +127,7 @@ def view_my_account_page(id):
         return render_template('my-account-alumnus.html', user=user)
 
     except Exception:
-        flash('Error retreiving User')
+        flash('Error retreiving User', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
 
@@ -100,7 +144,7 @@ def subscribe_action():
     selected_companies = request.form.getlist('company')
 
     if not selected_companies:
-        flash('No companies selected!', 'error')
+        flash('No companies selected!', 'unsuccessful')
     try:
         alumnus_id = current_user.id
 
@@ -110,11 +154,11 @@ def subscribe_action():
             CompanyAccount.registered_name.in_(selected_companies)).all()
 
         if not alumnus:
-            flash('Alumnus not found!', 'error')
+            flash('Alumnus not found!', 'unsuccessful')
             return redirect(url_for('index_views.index_page'))
 
         if not companies:
-            flash('No valid companies selected!', 'error')
+            flash('No valid companies selected!', 'unsuccessful')
             return redirect(url_for('index_views.index_page'))
 
         new_subscription_added = False
@@ -172,7 +216,7 @@ def view_listing_page(id):
         return render_template('view-listing-alumnus.html', listing=listing, saved_listings=saved_listings, user=user)
 
     except Exception:
-        flash('Error retreiving Listing')
+        flash('Error retreiving Listing', 'unsuccessful')
         response = redirect(url_for('index_views.index_page'))
 
     return response

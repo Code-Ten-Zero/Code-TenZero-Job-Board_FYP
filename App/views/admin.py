@@ -1,13 +1,16 @@
-from flask import Blueprint, flash, redirect, render_template, url_for
+import os
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_jwt_extended import current_user, jwt_required
+from App.models import db
+from werkzeug.utils import secure_filename
 
+from App.controllers.admin_account import get_admin_account, update_admin_account
 from App.controllers.base_user_account import get_user_by_email
 from App.controllers.job_listing import (
     approve_job_listing,
     unapprove_job_listing,
     delete_job_listing
 )
-
 
 from App.controllers.alumnus_account import get_alumnus_account
 from App.controllers.company_account import get_company_account
@@ -20,7 +23,6 @@ from App.controllers.notifications import (
     notify_company_account,
     notify_subscribed_alumni
 )
-
 
 from App.models import AdminAccount
 
@@ -41,7 +43,6 @@ INDEX_PAGE_ROUTE = 'index_views.index_page'
 """
 ====== JOB ACTION ROUTES ======
 """
-
 
 @admin_views.route('/publish_job/<int:job_id>', methods=['POST'])
 @jwt_required()
@@ -175,6 +176,91 @@ def delete_listing_action(job_id):
 """
 ====== ADMIN ACCOUNT INFO ======
 """
+
+@admin_views.route('/update_admin/<id>', methods=['POST'])
+@jwt_required()
+def update_alumnus(id):
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    user = get_user_by_email(current_user.login_email)
+    data = request.form
+    login_email = data['email']
+
+    current_password = data['current_password']
+    confirm_current_password = data['confirm_current_password']
+    new_password = data['new_password']
+    confirm_new_password = data['confirm_new_password']
+
+    if current_password != confirm_current_password:
+        flash('Current passwords do not match', 'unsuccessful')
+        return redirect(url_for('admin_views.view_my_account_page', id=id, user=user))
+
+    if new_password != confirm_new_password:
+        flash('New passwords do not match', 'unsuccessful') 
+        return redirect(url_for('admin_views.view_my_account_page', id=id, user=user))
+
+    update_status = update_admin_account(
+        id,
+        login_email,
+        current_password,
+        new_password
+    )
+
+    if update_status:
+        flash("Admin's information updated successfully", 'success')
+        return redirect(url_for('admin_views.view_my_account_page', id=id))
+    else:
+        flash("Update failed. Check your information and try again.", 'unsuccessful')
+        return redirect(url_for('admin_views.view_my_account_page', id=id))
+
+
+@admin_views.route('/update_admin_profile_photo/<int:id>', methods=['POST'])
+@jwt_required()
+def update_profile_photo(id):
+    # Ensure the user is an AlumnusAccount and matches the route ID
+    if not isinstance(current_user, AdminAccount) or current_user.id != id:
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    if 'profile_pic' not in request.files:
+        flash('No file part in the form', 'unsuccessful')
+        return redirect(url_for('admin_views.view_my_account_page', id=id))
+
+    file = request.files['profile_pic']
+
+    if file.filename == '':
+        flash('No file selected', 'unsuccessful')
+        return redirect(url_for('admin_views.view_my_account_page', id=id))
+
+    if file:
+        try:
+            # Ensure secure filename
+            filename = secure_filename(file.filename)
+
+            # Build absolute path to save
+            save_folder = os.path.join(current_app.root_path, 'static', 'profile-images')
+            os.makedirs(save_folder, exist_ok=True)
+
+            # Save file
+            file_path = os.path.join(save_folder, filename)
+            file.save(file_path)
+
+            # Save relative path in DB (for use with url_for('static', filename=...))
+            relative_path = f"profile-images/{filename}"
+
+            # Update database
+            admin = get_admin_account(id)
+            admin.profile_photo_file_path = relative_path
+            db.session.commit()
+
+            flash("Profile picture updated successfully!", "success")
+        except Exception as e:
+            flash(f"An error occurred while uploading the photo: {str(e)}", "unsuccessful")
+
+    return redirect(url_for('admin_views.view_my_account_page', id=id))
+
 
 @admin_views.route('/view_admin_account/<id>', methods=["GET"])
 @jwt_required()
