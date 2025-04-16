@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
 
 from App.controllers.company_account import get_company_account, update_company_account
-from App.controllers.job_applications import get_job_applications_by_job_listing_id
+from App.controllers.job_applications import get_job_application, get_job_applications_by_job_listing_id
 from App.controllers.job_listing import (
     add_job_listing,
     get_job_listing,
@@ -21,6 +21,8 @@ from App.controllers.notifications import (
 from App.models import (
     CompanyAccount
 )
+from App.models.job_application import JobApplication
+from App.models.notification import Notification
 
 company_views = Blueprint(
     'company_views',
@@ -300,3 +302,47 @@ def view_notifications_page():
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
+@company_views.route('/application_status_update/<int:id>', methods=['POST'])
+@jwt_required()   
+def update_status(id):
+    new_status = request.form.get('status')
+    
+    application = JobApplication.query.filter_by(id=id).first()
+    
+    if not application:
+        flash("Application not found.", "unsuccessful")
+        return redirect(url_for('index_views.index_page'))
+    
+    try:
+        application.company_approval_status = new_status
+        db.session.commit()
+
+        flash(
+            f"Status updated to '{new_status.capitalize()}' for "
+            f"{application.alumnus.first_name} {application.alumnus.last_name}.", 
+            "success"
+        )
+
+        # Create notification message
+        notification_message = (
+            f"Hello there {application.alumnus.first_name}, your application status for "
+            f"'{application.job_listing.title}' has changed to '{new_status.capitalize()}'."
+        )
+
+        new_notification = Notification(
+            alumnus_id=application.alumnus_id,
+            company_id=None,
+            admin_id=None,
+            message=notification_message
+        )
+
+        db.session.add(new_notification)
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        flash("Error updating status. Please try again.", "unsuccessful")
+
+    return redirect(url_for('company_views.view_applications_page', id=application.job_listing_id))
+
+

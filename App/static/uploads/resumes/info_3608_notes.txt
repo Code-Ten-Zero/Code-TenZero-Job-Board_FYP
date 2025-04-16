@@ -1,0 +1,9 @@
+The Job Board platform is primarily designed to facilitate the connection between DCIT (Department of Computer and Information Technology) Alumni and potential employers. This provides a central hub for alumni to discover local job opportunities within their field and for employers to easily advertise positions to a pool of qualified candidates. The platform seeks to bridge the gap between the DCIT alumni and the employers by ensuring that DCIT graduates have easy access to career opportunities that align with their expertise, while also providing employers with access to a tailored pool of skilled workers.
+
+The core audience of the Job Board platform consists of recent alumni graduates from the DCIT department. The platform aims to provide these alumni with career-building oopurtunities, whether they are actively seeking new job opportunities or passively exploring career growth.The second key audience includes companies/employers seeking to hire qualified candidates in fields related to computer science and information technology (DCIT related domains).The platform also includes an administrative role, whose responsibilities involve moderating job listings, user accounts, and ensuring the platform remains useful and trustworthy.
+
+
+Arguments For Profiling:
+2. Targeted Marketing Campaigns:
+
+For example, if a credit card company wants to introduce free access to airport lounges to their credit card holder, they must target people who travel frequently. Not all credit cardholders will be the right target audience for such credit cards. In such a scenario, customer profiling will help the company prepare its customers pool, who is the right choice for such credit card marketing.
