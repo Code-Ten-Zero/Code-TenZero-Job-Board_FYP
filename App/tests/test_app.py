@@ -24,7 +24,8 @@ from App.controllers import (
     add_company_subscription,
     get_company_subscriptions_by_alumnus_id,
     delete_company_subscription,
-    update_alumnus_account
+    update_alumnus_account,
+    delete_job_listing
 )
 
 
@@ -188,7 +189,7 @@ class UserIntegrationTests(unittest.TestCase):
         assert company.login_email == 'company10@mail.com' and company.public_email == 'public10@email.com'
 
     # cz at the beginning so that it runs after create company
-    def test_czadd_listing(self):
+    def test_cz_add_listing(self):
         company1 = get_user_by_email('company10@mail.com')
         listing = add_job_listing(
             company1.id,
@@ -336,18 +337,18 @@ class UserIntegrationTests(unittest.TestCase):
         assert get_company_subscriptions_by_alumnus_id (1,True) == [{'alumnus_id': {1}, 'company_id': {1}}]
 
     def test_sva_delete_subscription_invalid(self):
-        company2 = get_user_by_email('company10@mail.com')
-        user = get_user_by_email('robby2@mail.com')
+        company2ID = 9
+        userID = 9
         adminID = 9
-        delete_company_subscription( 9, 9, 9)
+        delete_company_subscription( userID, company2ID, adminID)
         print (get_company_subscriptions_by_alumnus_id (1,True))
         assert get_company_subscriptions_by_alumnus_id(1,True) == [{'alumnus_id': {1}, 'company_id': {1}}]
 
     def test_svb_delete_subscription(self):
         company2 = get_user_by_email('company10@mail.com')
         user = get_user_by_email('robby2@mail.com')
-        adminID = 1
-        delete_company_subscription( 1, 1, 1)
+        Admin= get_user_by_email('bob2@mail.com')
+        delete_company_subscription( user.id, company2.id , Admin.id)
         print (get_company_subscriptions_by_alumnus_id (1,True))
         assert get_company_subscriptions_by_alumnus_id(1,True) == []
 
@@ -357,27 +358,35 @@ class UserIntegrationTests(unittest.TestCase):
         updated_user = get_user_by_email('robby2@mail.com')
         assert updated_user.first_name == "robnewfname"
 
-#    def test_delete_job_listing(self):
+    def test_u_delete_job_listing(self):
+        company1 = get_user_by_email('company10@mail.com')
+        listing = add_job_listing(
+            company1.id,
+            'listing1',
+            'Part-time',
+            'job description1',
+            8000,
+            False,
+            'Curepe'
+        )
+        Admin= get_user_by_email('bob2@mail.com')
+        assert delete_job_listing(listing.id,Admin.id) == True
 
 
 
+    # def test_zz_apply(self):
+    #     company2 = get_user_by_email('company10@mail.com')
+    #     user = get_user_by_email('robby2@mail.com')
+    #     Admin= get_user_by_email('bob2@mail.com')
 
+    #     result = add_job_application(
+    #     alumnus_id=1,
+    #     job_listing_id=2,
+    #     resume_file_path="images\fig1.png", 
+    #     work_experience = 1
+    #     )
 
-    
+    #     assert result.alumnus_id == 1
+    #     assert result.job_listing_id == 2
+    #     assert result.resume_file_path == "images\fig1.png"
 
-
-
-
-
-
-# ctz removed till subscriptions and notifications fixed
-    # def test_notify_observers(self):
-    #     company = add_company_account('compaknee', 'compaknee', 'compassknee', 'compaknee@mail',  'compaknee_address', 'contactee', 'compaknee_website.com')
-    #     alumnus = add_alumnus('alutest4', 'alupass4', 'alu4@email.com', '9114', '1800-274-8255', 'alufname4', 'alulname4')
-    #     job2 = add_listing("Unapproved Job", "Unapproved Job Description", "compaknee", 7000, "Part-time", False, True, "not zach", "Unapproved Area")
-    #     apply_listing(alumnus.alumnus_id, job2.id)
-    #     company = get_company_by_email(job2.company.login_email)
-    #     # Check if the notification was created
-    #     notifications = company.notifications
-    #     assert len(notifications) == 1
-    #     assert notifications[0].message == f"Alumnus {alumnus.login_email} applied to your listing '{job2.title}'."
