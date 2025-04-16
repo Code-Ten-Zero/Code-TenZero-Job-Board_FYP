@@ -1,9 +1,9 @@
 import os
-from flask import Blueprint, current_app, flash,  jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash,  jsonify, make_response, redirect, render_template, request, url_for
 from App.models import db
 from werkzeug.utils import secure_filename
 
-from flask_jwt_extended import current_user, jwt_required
+from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
 
 from App.models import (
     AlumnusAccount,
@@ -19,9 +19,10 @@ from App.controllers.company_subscription import (
     add_company_subscription,
     get_company_subscription
 )
-from App.controllers.job_listing import get_job_listing, get_job_listings_by_company_id
+from App.controllers.job_listing import get_job_listing, get_job_listing_by_similar_description, get_job_listings_by_company_id, get_job_listings_by_exact_position_type, get_job_listings_by_salary_range, get_job_listings_by_similar_position_type, get_job_listings_by_similar_title
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
 from App.controllers.company_account import get_company_account
+from App.models.job_listing import JobListing
 
 alumnus_views = Blueprint(
     'alumnus_views',
@@ -36,7 +37,7 @@ def update_alumnus(id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
-    user = get_user_by_email(current_user.login_email)
+    user = get_alumnus_account(current_user.id)
     data = request.form
     first_name = data['fname']
     last_name = data['lname']
@@ -47,6 +48,10 @@ def update_alumnus(id):
     confirm_current_password = data['confirm_current_password']
     new_password = data['new_password']
     confirm_new_password = data['confirm_new_password']
+    
+    if not current_password or not confirm_current_password:
+        flash('Current password fields are required', 'unsuccessful')
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
 
     if current_password != confirm_current_password:
         flash('Current passwords do not match', 'unsuccessful')
@@ -55,7 +60,9 @@ def update_alumnus(id):
     if new_password != confirm_new_password:
         flash('New passwords do not match', 'unsuccessful') 
         return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
-
+    
+    original_email = current_user.login_email
+    
     update_status = update_alumnus_account(
         id,
         first_name,
@@ -65,10 +72,16 @@ def update_alumnus(id):
         current_password,
         new_password
     )
-
+       
     if update_status:
-        flash("Alumnus' information updated successfully", 'success')
-        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
+        if login_email != original_email or new_password:
+            flash("Email or password updated successfully. Please log in again.", 'success')
+            response = make_response(redirect(url_for('auth_views.login_page')))
+            unset_jwt_cookies(response)
+            return response
+        else:
+            flash("Alumnus' information updated successfully", 'success')
+            return redirect(url_for('alumnus_views.view_my_account_page'))
     else:
         flash("Update failed. Check your information and try again.", 'unsuccessful')
         return redirect(url_for('alumnus_views.view_my_account_page', id=id))
@@ -122,7 +135,7 @@ def update_profile_photo(id):
 @alumnus_views.route('/view_my_account/<id>', methods=["GET"])
 @jwt_required()
 def view_my_account_page(id):
-    user = get_user_by_email(current_user.login_email)
+    user = get_alumnus_account(current_user.id)
     try:
         return render_template('my-account-alumnus.html', user=user)
 
@@ -282,6 +295,14 @@ def apply(job_listing_id):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
 
+    existing_application = JobApplication.query.filter_by(
+    alumnus_id=current_user.id,
+    job_listing_id=job_listing_id).first()
+    
+    if existing_application:
+        flash("You have already applied to this job listing.", "unsuccessful")
+        return redirect(url_for('index_views.index_page'))
+   
     # Get form data
     work_experience = request.form.get("work-experience")
     resume = request.files["resume"]
@@ -358,3 +379,90 @@ def view_company_listings(id):
     approved_company_listings = [job for job in company_listings if job.admin_approval_status=="APPROVED"] 
     saved = get_saved_job_listings_by_alumnus_id(user.id)
     return render_template('alumnus-company-listings.html', user=user, company_listings=approved_company_listings, saved=saved, company=company)
+
+@alumnus_views.route('/search_listings', methods=['GET'])
+def search_jobs():
+    search_term = request.args.get('search','')
+    position_type = request.args.get('position')
+    job_site_address = request.args.get('location')
+    min_salary = request.args.get('min_salary', type=int)
+    max_salary = request.args.get('max_salary', type=int)
+
+    query = JobListing.query.filter_by(admin_approval_status='APPROVED')
+    
+    if search_term:
+        search_term = search_term.strip()
+        query = query.filter(
+            (JobListing.title.ilike(f"%{search_term}%")) |
+            (JobListing.company.has(CompanyAccount.registered_name.ilike(f"%{search_term}%")))
+        )
+
+    if position_type:
+        query = query.filter_by(position_type=position_type)
+
+    if job_site_address:
+        query = query.filter_by(job_site_address=job_site_address)
+
+    if min_salary is not None and max_salary is not None:
+        query = query.filter(
+            JobListing.monthly_salary_ttd >= min_salary,
+            JobListing.monthly_salary_ttd <= max_salary
+        )
+
+    jobs = query.all()
+
+    job_data = [ {
+        'id': job.id,
+        'title': job.title,
+        'position_type': job.position_type,
+        'job_site_address': job.job_site_address,
+        'company_name': job.company.registered_name,
+        'company_logo': url_for('static', filename=job.company.profile_photo_file_path)
+    } for job in jobs ]
+
+    return jsonify(job_data)  # Always return a list — even if it's empty, this is so user can get output messages when searches turn up empty
+
+@alumnus_views.route('/api/apply_to_listing/<int:job_listing_id>', methods=['POST'])
+@jwt_required()
+def api_apply(job_listing_id):
+   
+    # Get form data
+    work_experience = request.form.get("work-experience")
+    resume = request.files["resume"]
+
+    # Secure and save filename
+    filename = secure_filename(resume.filename)
+    static_folder = os.path.join(current_app.root_path, 'static')
+    resume_path = os.path.join(static_folder, 'uploads', 'resumes', filename)
+    file_path = os.path.join('uploads', 'resumes', filename)
+
+    # Save the file to the directory
+    resume.save(resume_path)  # This actually writes the file!
+    resume_path = resume_path.replace("\\", "/")
+    file_path = file_path.replace("\\", "/")
+    alumnus_id = current_user.id
+
+    # Create a new JobApplication record
+    new_application = JobApplication(
+        alumnus_id=alumnus_id,
+        job_listing_id=job_listing_id,
+        resume_file_path=file_path,
+        work_experience=work_experience,
+    )
+
+    # Save to the database
+    db.session.add(new_application)
+    db.session.commit()
+
+    return jsonify({"message": "Job application successful"}), 200
+
+
+@alumnus_views.route('/api/save_listing/<job_listing_id>', methods=['POST'])
+@jwt_required()
+def api_save_job_listing(job_listing_id):
+    alumnus_id = current_user.id
+    new_saved_job_listing = SavedJobListing(
+    alumnus_id=alumnus_id, job_listing_id=job_listing_id)
+    db.session.add(new_saved_job_listing)
+    db.session.commit()
+    return jsonify({"message": "Job saved successfully!", "status": "saved"}), 200

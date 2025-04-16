@@ -1,131 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="shortcut icon" href="/static/images/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link
-			rel="stylesheet"
-			href="{{ url_for('static', filename='style.css') }}"
-		/>
-		<title>Applications</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				margin: 0;
-				padding: 0;
-			}
 
-			.container {
-				max-width: 800px;
-				margin: 20px auto;
-				padding: 20px;
-				border: 1px solid #ccc;
-				border-radius: 5px;
-				background-color: #f9f9f9;
-			}
-			table {
-				width: 100%;
-				border-collapse: collapse;
-				margin-top: 20px;
-				border: 1px solid #333;
-			}
-			th,
-			td {
-				padding: 10px;
-				border-bottom: 1px solid #ddd;
-				text-align: left;
-				border-bottom: 1px solid #333;
-				border-right: 1px solid #333;
-			}
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" href="/static/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <title>Applications</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+    }
 
-			th,
-			tr {
-				background-color: #f2f2f2;
-			}
-			tr:hover {
-				background-color: #f5f5f5;
-			}
-			.logout {
-				position: absolute;
-				top: 20px;
-				right: 10px;
-				padding: 10px 20px;
-				background-color: rgb(57, 97, 185);
-				color: #fff;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				text-decoration: none;
-			}
+    .edit-icon {
+      float: right;
+    }
 
-			.button {
-				position: absolute;
-				top: 20px;
-				right: 100px;
-				padding: 10px 20px;
-				background-color: rgb(57, 97, 185);
-				color: #fff;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				text-decoration: none;
-			}
-			.button:hover,
-			.logout:hover {
-				background-color: rgb(98, 127, 191);
-			}
-		</style>
-	</head>
-	<header>
-		<img
-			id="uwi-logo"
-			src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
-			alt="uwi_logo"
-		/>
-		<h1><a href="/app">DCIT Job Board</a></h1>
-		<div class="topnav" id="mynav">
-			<a href="/logout">Logout</a>
-			<a href="#">My Account</a>
-			<a href="/app"> Job Listings</a>
-		</div>
-	</header>
-	<body>
-		<div class="container">
-			<h2>Applications</h2>
-			<table>
-				<thead>
-					<tr>
-						<th>First name</th>
-						<th>Last name</th>
-						<th>Contact</th>
-						<th>Resume</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for application in applications %}
-					<tr>
-						<td>{{ application.alumnus.first_name }}</td>
-						<td>{{ application.alumnus.last_name }}</td>
-						<td>{{ application.alumnus.phone_number }}</td>
-						<td>
-							<a
-								href="{{ url_for('static', filename=application.resume_file_path) }}"
-								download
-							>
-								Download {{ application.alumnus.first_name }}'s
-								Resume
-							</a>
-							<iframe
-								src="{{ url_for('static', filename=application.resume_file_path) }}"
-								width="100%"
-								height="600px"
-							></iframe>
-						</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</body>
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border: 1px solid #333;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      border-bottom: 1px solid #333;
+      border-right: 1px solid #333;
+    }
+
+    th,
+    tr {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #bdbcdb;
+    }
+
+    .logout {
+      position: absolute;
+      top: 20px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: rgb(57, 97, 185);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    #statusType {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .button {
+      position: absolute;
+      top: 20px;
+      right: 100px;
+      padding: 10px 20px;
+      background-color: rgb(57, 97, 185);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .button-group {
+      display: flex;
+      margin-left: 0;
+    }
+
+    .button:hover,
+    .logout:hover {
+      background-color: rgb(98, 127, 191);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 800px;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-button {
+      background-color: #062690;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      padding: 10px 15px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 10px;
+      margin-left: 2vh;
+      cursor: pointer;
+    }
+
+    .update {
+      float: right;
+    }
+
+    .page-button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .page-button:active {
+      transform: translateY(0);
+      background-color: #004494;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .form-image {
+      width: 10vh;
+      height: 10vh;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+  <h1><a href="/app">DCIT Job Board</a></h1>
+  <div class="topnav" id="mynav">
+    <a href="/logout">Logout</a>
+    <a href="#">My Account</a>
+    <a href="/app"> Job Listings</a>
+  </div>
+</header>
+<div id="flash-messages">
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %} {% endif %} {% endwith %}
+</div>
+
+  <div class="container">
+    <h2>Applications</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Profile Picture</th>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Contact</th>
+          <th>Status</th>
+          <th>Resume</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in applications %}
+        <tr>
+          <td>
+            <img class="form-image" id="profile_pic"
+              src="{{ url_for('static', filename=application.alumnus.profile_photo_file_path) }}" alt="Profile Image" />
+          </td>
+          <td>{{ application.alumnus.first_name }}</td>
+          <td>{{ application.alumnus.last_name }}</td>
+          <td>{{ application.alumnus.phone_number }}</td>
+          <!-- Status dropdown inside a form -->
+          <td>
+            <form method="POST" action="/application_status_update/{{application.id}}">
+              <select id="statusType" name="status" onchange="this.form.submit()">
+                <option value="PENDING" {% if application.company_approval_status=='PENDING' %}selected{% endif %}>
+                  PENDING</option>
+                <option value="APPROVED" {% if application.company_approval_status=='APPROVED' %}selected{% endif %}>
+                  APPROVED</option>
+                <option value="REJECTED" {% if application.company_approval_status=='REJECTED' %}selected{% endif %}>
+                  REJECTED</option>
+              </select>
+            </form>
+          </td>
+          <td>
+            <div class="button-group">
+              <a class="page-button" href="{{ url_for('static', filename=application.resume_file_path) }}" download>
+                Download Resume
+              </a>
+              <button class="page-button" onclick="openModal()">
+                View Resume
+              </button>
+            </div>
+            <!-- Modal -->
+            <div id="resumeModal" class="modal">
+              <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <iframe src="{{ url_for('static', filename=application.resume_file_path) }}" width="100%"
+                  height="600px"></iframe>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script>
+    function openModal() {
+      document.getElementById("resumeModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("resumeModal").style.display = "none";
+    }
+
+    // Optional: Close modal if user clicks outside the modal content
+    window.onclick = function (event) {
+      const modal = document.getElementById("resumeModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
+</body>
+
 </html>

@@ -32,6 +32,12 @@
         height: 80vh;
         padding-top: 0;
       }
+      button.disabled {
+				background-color: #d3d3d3;
+				color: #a9a9a9;
+				cursor: not-allowed;
+				border: 1px solid #ccc;
+			}
 
       .btn-group button {
         background-color: rgb(225, 227, 231);
@@ -43,6 +49,24 @@
         border-radius: 4px;
       }
 
+      .save-listing {
+				background-color: #0022ff;
+				border: none;
+				border-radius: 5px;
+				color: white;
+				padding: 5px;
+				text-align: center;
+				text-decoration: none;
+				display: inline-block;
+				font-size: 16px;
+				cursor: pointer;
+			}
+      .remove-listing {
+				padding: 5px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+			}
       .view-button {
         background-color: #062690;
         border: none;
@@ -553,7 +577,7 @@
             Save
           </button>
           <a href="/view_company_listings/{{listing.company.id}}">
-            <button>View Company Details</button>
+            <button class='view-button'>View Company Details</button>
           </a>
         </div>
         <div class="job-details">

@@ -1,8 +1,9 @@
 import os
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
-from flask_jwt_extended import current_user, jwt_required
-from App.models import db
+from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for, jsonify
+from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
+from App.models import db, JobListing
 from werkzeug.utils import secure_filename
+
 
 from App.controllers.admin_account import get_admin_account, update_admin_account
 from App.controllers.base_user_account import get_user_by_email
@@ -128,7 +129,7 @@ def unpublish_job(job_id):
     return redirect(url_for(INDEX_PAGE_ROUTE))
 
 
-@admin_views.route('/delete_listing/<int:job_id>', methods=['GET'])
+@admin_views.route('/delete_listing/<int:job_id>', methods=['POST'])
 @jwt_required()
 def delete_listing_action(job_id):
     """
@@ -193,6 +194,10 @@ def update_alumnus(id):
     new_password = data['new_password']
     confirm_new_password = data['confirm_new_password']
 
+    if not current_password or not confirm_current_password:
+        flash('Current password fields are required', 'unsuccessful')
+        return redirect(url_for('admin_views.view_my_account_page', id=id, user=user))
+    
     if current_password != confirm_current_password:
         flash('Current passwords do not match', 'unsuccessful')
         return redirect(url_for('admin_views.view_my_account_page', id=id, user=user))
@@ -200,7 +205,8 @@ def update_alumnus(id):
     if new_password != confirm_new_password:
         flash('New passwords do not match', 'unsuccessful') 
         return redirect(url_for('admin_views.view_my_account_page', id=id, user=user))
-
+    original_email = current_user.login_email
+    
     update_status = update_admin_account(
         id,
         login_email,
@@ -209,8 +215,11 @@ def update_alumnus(id):
     )
 
     if update_status:
-        flash("Admin's information updated successfully", 'success')
-        return redirect(url_for('admin_views.view_my_account_page', id=id))
+        if login_email != original_email or new_password:
+            flash("Email or password updated successfully. Please log in again.", 'success')
+            response = make_response(redirect(url_for('auth_views.login_page')))
+            unset_jwt_cookies(response)
+            return response
     else:
         flash("Update failed. Check your information and try again.", 'unsuccessful')
         return redirect(url_for('admin_views.view_my_account_page', id=id))
@@ -298,3 +307,24 @@ def view_notifications_page():
         print(f"[ERROR] Failed to retrieve admin notifications: {e}")
         flash('Error retrieving notifications.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
+
+
+"""
+====== API TESTING ======
+"""
+
+@admin_views.route('/api/delete_listing/<int:job_id>', methods=['DELETE'])
+@jwt_required()
+def api_delete_listing(job_id):
+    job = JobListing.query.get(job_id)
+
+    if not job:
+        return jsonify({'error': 'Job listing not found'}), 404
+    
+    try:
+        db.session.delete(job)
+        db.session.commit()
+        return jsonify({'message': f'Job listing {job_id} deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to delete job listing', 'details': str(e)}), 500

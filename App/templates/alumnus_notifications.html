@@ -1,127 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="shortcut icon" href="/static/images/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link
-			rel="stylesheet"
-			href="{{ url_for('static', filename='style.css') }}"
-		/>
-		<title>Notifications</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				margin: 0;
-				background-color: #f0f2f5;
-				color: #333;
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="shortcut icon" href="/static/images/favicon.ico" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+	<title>Notifications</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			background-color: #f0f2f5;
+			color: #333;
+		}
+
+		.header-title {
+			color: white;
+			font-size: 20px;
+			font-weight: bold;
+			margin: 0;
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.job-listings-button {
+			background-color: #ff9800;
+			/* A contrasting orange color */
+			color: white;
+			padding: 10px 15px;
+			font-size: 14px;
+			text-decoration: none;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.job-listings-button:hover {
+			background-color: #e68900;
+		}
+
+		.container {
+			max-width: 60vw;
+			max-height: 70vh;
+			margin: 20px auto;
+			background: white;
+			border-radius: 8px;
+			padding: 20px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			overflow: auto;
+		}
+		ul {
+				list-style: none;
+				padding: 0;
 			}
 
-			.header-title {
-				color: white;
-				font-size: 20px;
-				font-weight: bold;
-				margin: 0;
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
-			}
-
-			.job-listings-button {
-				background-color: #ff9800; /* A contrasting orange color */
-				color: white;
-				padding: 10px 15px;
-				font-size: 14px;
-				text-decoration: none;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
-			}
-
-			.job-listings-button:hover {
-				background-color: #e68900;
-			}
-
-			.container {
-				max-width: 60vw;
-				max-height: 70vh;
-				margin: 20px auto;
-				background: white;
+			li {
+				background: #f1f9ff;
+				margin: 10px 0;
+				padding: 15px;
+				border: 1px solid #d3e2f1;
 				border-radius: 8px;
-				padding: 20px;
-				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-				overflow: auto;
-			}
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-			li small {
-				display: block;
-				margin-top: 5px;
-				font-size: 12px;
-				color: #555;
-			}
-
-			.no-notifications {
-				text-align: center;
-				color: #777;
-				font-style: italic;
-				margin-top: 20px;
-			}
-
-			.back-button {
-				display: block;
-				width: fit-content;
-				margin: 20px auto 0;
-				padding: 10px 20px;
-				background-color: #0056b3;
-				color: white;
-				text-align: center;
 				font-size: 16px;
-				text-decoration: none;
-				border-radius: 5px;
-				border: none;
-				cursor: pointer;
-				transition: background-color 0.3s ease;
 			}
 
-			.back-button:hover {
-				background-color: #00449a;
-			}
-		</style>
-	</head>
-	<header>
-		<img
-			id="uwi-logo"
-			src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
-			alt="uwi_logo"
-		/>
-		<h1><a href="/app">DCIT Job Board</a></h1>
-		<h1 class="header-title">Notifications for {{alumnus.first_name}}</h1>
-		<div class="topnav" id="mynav">
-			<a href="/logout"> Logout</a>
-			<a href="/view_my_account/{{alumnus.id}}"> My Account</a>
-			<a href="/app"> View Listings</a>
-		</div>
-	</header>
-	<body>
-		<div class="container">
-			{% if notifications %}
-			<ul>
-				{% for notification in notifications %}
-				<li>
-					{{ notification.message }} <br />
-					<small>Created at: {{ notification.created_at }}</small>
-				</li>
-				{% endfor %}
-			</ul>
-			{% else %}
-			<div class="no-notifications">No notifications yet.</div>
-			{% endif %}
-		</div>
-	</body>
+
+		.no-notifications {
+			text-align: center;
+			color: #777;
+			font-style: italic;
+			margin-top: 20px;
+		}
+
+		.back-button {
+			display: block;
+			width: fit-content;
+			margin: 20px auto 0;
+			padding: 10px 20px;
+			background-color: #0056b3;
+			color: white;
+			text-align: center;
+			font-size: 16px;
+			text-decoration: none;
+			border-radius: 5px;
+			border: none;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		.back-button:hover {
+			background-color: #00449a;
+		}
+	</style>
+</head>
+<header>
+	<img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+	<h1><a href="/app">DCIT Job Board</a></h1>
+	<h1 class="header-title">Notifications for {{alumnus.first_name}}</h1>
+	<div class="topnav" id="mynav">
+		<a href="/logout"> Logout</a>
+		<a href="/view_my_account/{{alumnus.id}}"> My Account</a>
+		<a href="/app"> View Listings</a>
+	</div>
+</header>
+
+<body>
+	<div class="container">
+		{% if notifications %}
+		<ul>
+			{% for notification in notifications %}
+			<li>
+				{{ notification.message }} <br />
+				<small>Created at: {{ notification.created_at }}</small>
+			</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+		<div class="no-notifications">No notifications yet.</div>
+		{% endif %}
+	</div>
+</body>
+
 </html>
