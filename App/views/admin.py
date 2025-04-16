@@ -1,8 +1,9 @@
 import os
-from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for, jsonify
 from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
-from App.models import db
+from App.models import db, JobListing
 from werkzeug.utils import secure_filename
+
 
 from App.controllers.admin_account import get_admin_account, update_admin_account
 from App.controllers.base_user_account import get_user_by_email
@@ -306,3 +307,24 @@ def view_notifications_page():
         print(f"[ERROR] Failed to retrieve admin notifications: {e}")
         flash('Error retrieving notifications.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
+
+
+"""
+====== API TESTING ======
+"""
+
+@admin_views.route('/api/delete_listing/<int:job_id>', methods=['DELETE'])
+@jwt_required()
+def api_delete_listing(job_id):
+    job = JobListing.query.get(job_id)
+
+    if not job:
+        return jsonify({'error': 'Job listing not found'}), 404
+    
+    try:
+        db.session.delete(job)
+        db.session.commit()
+        return jsonify({'message': f'Job listing {job_id} deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to delete job listing', 'details': str(e)}), 500

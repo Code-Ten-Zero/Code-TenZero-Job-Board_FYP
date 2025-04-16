@@ -176,3 +176,8 @@ def logout_api():
     response = jsonify(message="Logged Out!")
     unset_jwt_cookies(response)
     return response
+     
+#edit listing
+
+#send application 
+#notifications?

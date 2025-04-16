@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for, jsonify
 from App.controllers.base_user_account import get_user_by_email
 from App.models import db
 from datetime import date, datetime
@@ -300,3 +300,50 @@ def view_notifications_page():
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
+
+
+@company_views.route('/api/add_listing', methods=['POST'])
+@jwt_required()
+def api_add_listing_action():
+    data = request.json
+    print("Incoming JSON PUT data:", data)
+    response = None
+
+    try:
+        is_remote = data.get('is_remote')
+        if is_remote == "True" :
+            is_remote = True
+        else:
+            is_remote = False
+        job_site_address = data.get('job_site_address')
+        add_job_listing(
+            current_user.id,
+            data['title'],
+            data['position_type'],
+            data['description'],
+            data['monthly_salary_ttd'],
+            is_remote,
+            job_site_address
+        )
+        return jsonify({"message": "Job listing added successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+
+@company_views.route('/api/request_delete_listing/<int:job_id>', methods=['GET'])
+@jwt_required()
+def api_request_delete_listing_action(job_id):
+
+    listing = get_job_listing(job_id)
+    
+    try:
+        listing.admin_approval_status = "REQUESTED DELETION"
+        db.session.commit()
+        notify_admins(
+            f"{listing.company.registered_name} requested {listing.title} to be deleted"
+        )
+        return jsonify({"message": "Job listing requested for deletion"}), 200
+    
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
