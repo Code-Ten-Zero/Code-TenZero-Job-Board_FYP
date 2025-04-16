@@ -302,6 +302,12 @@ def view_notifications_page():
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
+
+"""
+====== COMPANY APPLICATION HANDLING ======
+"""
+ 
+    
 @company_views.route('/application_status_update/<int:id>', methods=['POST'])
 @jwt_required()   
 def update_status(id):
