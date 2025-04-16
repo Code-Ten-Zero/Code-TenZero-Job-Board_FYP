@@ -399,7 +399,6 @@ def get_job_listing_by_similar_job_site_address(
 ===== READ/GET (MULTIPLE RECORDS) - RANGE =====
 """
 
-
 def get_job_listings_by_salary_range(
     min_monthly_salary_ttd: float, max_monthly_salary_ttd: float, jsonify_results: bool = False
 ) -> Union[List[JobListing], List[dict]]:
