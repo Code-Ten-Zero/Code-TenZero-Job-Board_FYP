@@ -421,3 +421,48 @@ def search_jobs():
     } for job in jobs ]
 
     return jsonify(job_data)  # Always return a list — even if it's empty, this is so user can get output messages when searches turn up empty
+
+@alumnus_views.route('/api/apply_to_listing/<int:job_listing_id>', methods=['POST'])
+@jwt_required()
+def api_apply(job_listing_id):
+   
+    # Get form data
+    work_experience = request.form.get("work-experience")
+    resume = request.files["resume"]
+
+    # Secure and save filename
+    filename = secure_filename(resume.filename)
+    static_folder = os.path.join(current_app.root_path, 'static')
+    resume_path = os.path.join(static_folder, 'uploads', 'resumes', filename)
+    file_path = os.path.join('uploads', 'resumes', filename)
+
+    # Save the file to the directory
+    resume.save(resume_path)  # This actually writes the file!
+    resume_path = resume_path.replace("\\", "/")
+    file_path = file_path.replace("\\", "/")
+    alumnus_id = current_user.id
+
+    # Create a new JobApplication record
+    new_application = JobApplication(
+        alumnus_id=alumnus_id,
+        job_listing_id=job_listing_id,
+        resume_file_path=file_path,
+        work_experience=work_experience,
+    )
+
+    # Save to the database
+    db.session.add(new_application)
+    db.session.commit()
+
+    return jsonify({"message": "Job application successful"}), 200
+
+
+@alumnus_views.route('/api/save_listing/<job_listing_id>', methods=['POST'])
+@jwt_required()
+def api_save_job_listing(job_listing_id):
+    alumnus_id = current_user.id
+    new_saved_job_listing = SavedJobListing(
+    alumnus_id=alumnus_id, job_listing_id=job_listing_id)
+    db.session.add(new_saved_job_listing)
+    db.session.commit()
+    return jsonify({"message": "Job saved successfully!", "status": "saved"}), 200
