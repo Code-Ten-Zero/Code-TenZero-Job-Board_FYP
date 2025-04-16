@@ -19,9 +19,10 @@ from App.controllers.company_subscription import (
     add_company_subscription,
     get_company_subscription
 )
-from App.controllers.job_listing import get_job_listing, get_job_listings_by_company_id
+from App.controllers.job_listing import get_job_listing, get_job_listing_by_similar_description, get_job_listings_by_company_id, get_job_listings_by_exact_position_type, get_job_listings_by_salary_range, get_job_listings_by_similar_position_type, get_job_listings_by_similar_title
 from App.controllers.saved_job_listing import get_saved_job_listings_by_alumnus_id
 from App.controllers.company_account import get_company_account
+from App.models.job_listing import JobListing
 
 alumnus_views = Blueprint(
     'alumnus_views',
@@ -378,3 +379,45 @@ def view_company_listings(id):
     approved_company_listings = [job for job in company_listings if job.admin_approval_status=="APPROVED"] 
     saved = get_saved_job_listings_by_alumnus_id(user.id)
     return render_template('alumnus-company-listings.html', user=user, company_listings=approved_company_listings, saved=saved, company=company)
+
+@alumnus_views.route('/search_listings', methods=['GET'])
+def search_jobs():
+    search_term = request.args.get('search','')
+    position_type = request.args.get('position')
+    job_site_address = request.args.get('location')
+    min_salary = request.args.get('min_salary', type=int)
+    max_salary = request.args.get('max_salary', type=int)
+
+    query = JobListing.query.filter_by(admin_approval_status='APPROVED')
+    
+    if search_term:
+        search_term = search_term.strip()
+        query = query.filter(
+            (JobListing.title.ilike(f"%{search_term}%")) |
+            (JobListing.company.has(CompanyAccount.registered_name.ilike(f"%{search_term}%")))
+        )
+
+    if position_type:
+        query = query.filter_by(position_type=position_type)
+
+    if job_site_address:
+        query = query.filter_by(job_site_address=job_site_address)
+
+    if min_salary is not None and max_salary is not None:
+        query = query.filter(
+            JobListing.monthly_salary_ttd >= min_salary,
+            JobListing.monthly_salary_ttd <= max_salary
+        )
+
+    jobs = query.all()
+
+    job_data = [ {
+        'id': job.id,
+        'title': job.title,
+        'position_type': job.position_type,
+        'job_site_address': job.job_site_address,
+        'company_name': job.company.registered_name,
+        'company_logo': url_for('static', filename=job.company.profile_photo_file_path)
+    } for job in jobs ]
+
+    return jsonify(job_data)  # Always return a list — even if it's empty, this is so user can get output messages when searches turn up empty
