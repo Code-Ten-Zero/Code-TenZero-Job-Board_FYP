@@ -229,7 +229,7 @@ def send_job_deleted_email(
 
         job_url = url_for(
             LISTING_PAGE_ROUTE,
-            listing_id=listing.id,
+            id=listing.id,
             _external=True
         )
 

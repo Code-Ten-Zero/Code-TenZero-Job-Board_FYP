@@ -45,7 +45,10 @@ These values would be imported and added to the app in load_config() function in
 ```python
 # must be updated to inlude addtional secrets/ api keys & use a gitignored custom-config file instad
 def load_config():
-    config = {'ENV': os.environ.get('ENV', 'DEVELOPMENT')}
+    config = {'ENV': os.environ.get('ENV', 'DEVELOPMENT'),
+        'GMAIL_SENDER_ADDRESS': os.environ.get('GMAIL_SENDER_ADDRESS'),
+        'GMAIL_APPLICATION_PASSWORD': os.environ.get('GMAIL_APPLICATION_PASSWORD')}
+        
     delta = 7
     if config['ENV'] == "DEVELOPMENT":
         from .default_config import JWT_ACCESS_TOKEN_EXPIRES, SQLALCHEMY_DATABASE_URI, SECRET_KEY
