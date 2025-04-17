@@ -87,3 +87,14 @@ header h1 a {
 	color: #856404;
 	border: 1px solid #ffeeba;
 }
+
+#notification-dot {
+	width: 10px;
+	height: 10px;
+	background-color: rgb(230, 151, 49);
+	border-radius: 50%;
+	position: absolute;
+	display: none;
+	/* Hide by default */
+	z-index: 2000;
+  }

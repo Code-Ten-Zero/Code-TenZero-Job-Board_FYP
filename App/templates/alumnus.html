@@ -91,7 +91,7 @@
       font-size: 70%;
     }
 
-    #company_logo {
+    .company_logo {
       height: 20vh;
       width: 20vh;
       float: right;
@@ -761,7 +761,7 @@
             <h3>{{ job.title }}</h3>
           </div>
           <div class="job-details">
-            <img id="company_logo" src="{{ url_for('static', filename=job.company.profile_photo_file_path) }}"
+            <img class="company_logo" src="{{ url_for('static', filename=job.company.profile_photo_file_path) }}"
               alt="Company Image" />
             <h5>
               <i class="fa-solid fa-building"></i> {{
@@ -856,7 +856,7 @@
       const notificationDot = document.getElementById("notification-dot");
 
       // Fetch the new notifications status from the server
-      fetch("/check_unread_notifications")
+      fetch("/check_alumnus_unread_notifications")
         .then((response) => response.json())
         .then((data) => {
           if (data.has_new_notifications) {
@@ -868,7 +868,6 @@
           console.error("Error fetching notification status:", error);
         });
     });
-
 
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -1121,7 +1120,7 @@
           <h3>${job.title}</h3>
         </div>
         <div class="job-details">
-          <img id="company_logo" src="${job.company_logo}" alt="Company Logo" />
+          <img class="company_logo" src="${job.company_logo}" alt="Company Logo" />
           <h5><i class="fa-solid fa-building"></i> ${job.company_name}</h5>
           <h5><i class="fa-solid fa-clock"></i> ${job.position_type}</h5>
           <h5><i class="fa-solid fa-location-crosshairs"></i> ${job.job_site_address}</h5>

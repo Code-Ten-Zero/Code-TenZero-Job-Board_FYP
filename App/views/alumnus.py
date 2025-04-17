@@ -1,5 +1,6 @@
 import os
 from flask import Blueprint, current_app, flash,  jsonify, make_response, redirect, render_template, request, url_for
+from App.controllers.notifications import mark_notification_as_reviewed
 from App.models import db
 from werkzeug.utils import secure_filename
 
@@ -81,10 +82,10 @@ def update_alumnus(id):
             return response
         else:
             flash("Alumnus' information updated successfully", 'success')
-            return redirect(url_for('alumnus_views.view_my_account_page'))
+            return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
     else:
         flash("Update failed. Check your information and try again.", 'unsuccessful')
-        return redirect(url_for('alumnus_views.view_my_account_page', id=id))
+        return redirect(url_for('alumnus_views.view_my_account_page', id=id, user=user))
 
 
 @alumnus_views.route('/update_profile_photo/<int:id>', methods=['POST'])
@@ -346,7 +347,7 @@ def view_notifications_page():
 
     try:
         # Fetch notifications for the alumnus
-        notifications = current_user.notifications.all()
+        notifications = current_user.notifications.filter_by(reviewed_by_user=False).all()
         return render_template('alumnus_notifications.html', notifications=notifications, alumnus=current_user)
 
     except Exception as e:
@@ -354,8 +355,18 @@ def view_notifications_page():
         print(f'Error retrieving notifications: {e}')
         return redirect(url_for('index_views.index_page'))
 
+@alumnus_views.route('/update/alumnus/notification_status/<int:notification_id>', methods=['POST'])
+@jwt_required()
+def notification_status(notification_id):
+    notification = Notification.query.get(notification_id)
+    
+    if notification:
+        mark_notification_as_reviewed(notification_id)
+        return jsonify({'success': True}), 200
 
-@alumnus_views.route('/check_unread_notifications', methods=['GET'])
+    return jsonify({'success': False, 'message': 'Notification not found'}), 404
+
+@alumnus_views.route('/check_alumnus_unread_notifications', methods=['GET'])
 @jwt_required()
 def check_notifications():
     if not isinstance(current_user, AlumnusAccount):
@@ -364,7 +375,7 @@ def check_notifications():
 
     # Fetch unread notifications for the current user
     unread_notifications = Notification.query.filter_by(
-        alumnus_id=current_user.id, reviewed_by_user=False).all()
+    alumnus_id=current_user.id, reviewed_by_user=False).all()
 
     # Determine if there are new notifications
     has_new_notifications = len(unread_notifications) > 0

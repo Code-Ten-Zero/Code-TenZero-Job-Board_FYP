@@ -57,3 +57,11 @@ def notify_admins(message):
             db.session.add(new_notification)
         db.session.commit()
     return message
+
+def mark_notification_as_reviewed(notification_id):
+    notification = Notification.query.get(notification_id)
+    if not notification:
+        return False
+    notification.reviewed_by_user = True
+    db.session.commit()
+    return True

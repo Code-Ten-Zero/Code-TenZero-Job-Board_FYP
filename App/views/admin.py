@@ -21,12 +21,14 @@ from App.controllers.job_listing import (
     delete_job_listing
 )
 from App.controllers.notifications import (
+    mark_notification_as_reviewed,
     notify_company_account,
     notify_subscribed_alumni
 )
 
 from App.models import AdminAccount
 
+from App.models.notification import Notification
 from App.utils.email import (
     send_job_published_email,
     send_job_unpublished_email,
@@ -300,7 +302,7 @@ def view_notifications_page():
 
     try:
         # Fetch notifications for the alumnus
-        notifications = current_user.notifications.all()
+        notifications = current_user.notifications.filter_by(reviewed_by_user=False).all()
         return render_template('admin_notifications.html', notifications=notifications, admin=current_user)
 
     except Exception as e:
@@ -308,6 +310,31 @@ def view_notifications_page():
         flash('Error retrieving notifications.', 'unsuccessful')
         return redirect(url_for(INDEX_PAGE_ROUTE))
 
+@admin_views.route('/update/admin/notification_status/<int:notification_id>', methods=['POST'])
+@jwt_required()
+def notification_status(notification_id):
+    notification = Notification.query.get(notification_id)
+    
+    if notification:
+        mark_notification_as_reviewed(notification_id)
+        return jsonify({'success': True}), 200
+
+    return jsonify({'success': False, 'message': 'Notification not found'}), 404
+
+@admin_views.route('/check_admin_unread_notifications', methods=['GET'])
+@jwt_required()
+def check_notifications():
+    if not isinstance(current_user, AdminAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    # Fetch unread notifications for the current user
+    unread_notifications = Notification.query.filter_by(
+    admin_id=current_user.id, reviewed_by_user=False).all()
+
+    # Determine if there are new notifications
+    has_new_notifications = len(unread_notifications) > 0
+    return jsonify({'has_new_notifications': has_new_notifications})
 
 """
 ====== API TESTING ======

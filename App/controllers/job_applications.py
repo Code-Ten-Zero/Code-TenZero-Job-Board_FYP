@@ -152,7 +152,7 @@ def get_job_applications_by_job_listing_id(
             - Returns an empty list if no job applications are found.
     """
     return get_records_by_filter(
-        lambda: JobApplication.query.filter_by(alumnus_id=job_listing_id),
+        lambda: JobApplication.query.filter_by(job_listing_id=job_listing_id),
         jsonify_results
     )
 

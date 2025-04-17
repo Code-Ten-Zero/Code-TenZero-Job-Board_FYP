@@ -14,6 +14,7 @@ from App.controllers.job_listing import (
     update_job_listing,
 )
 from App.controllers.notifications import (
+    mark_notification_as_reviewed,
     notify_admins,
     notify_company_account,
     notify_subscribed_alumni
@@ -295,13 +296,39 @@ def view_notifications_page():
 
     try:
         # Fetch notifications for the company
-        # Assuming the Company model has a notifications relationship
-        notifications = current_user.notifications
+        notifications = current_user.notifications.filter_by(reviewed_by_user=False).all()
         return render_template('company_notifications.html', notifications=notifications, company=current_user)
 
     except Exception as e:
         flash('Error retrieving notifications', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
+    
+@company_views.route('/update/company/notification_status/<int:notification_id>', methods=['POST'])
+@jwt_required()
+def notification_status(notification_id):
+    notification = Notification.query.get(notification_id)
+    
+    if notification:
+        mark_notification_as_reviewed(notification_id)
+        return jsonify({'success': True}), 200
+
+    return jsonify({'success': False, 'message': 'Notification not found'}), 404
+
+
+@company_views.route('/check_company_unread_notifications', methods=['GET'])
+@jwt_required()
+def check_notifications():
+    if not isinstance(current_user, CompanyAccount):
+        flash('Unauthorized access', 'unsuccessful')
+        return redirect(url_for('index_views.index_page'))
+
+    # Fetch unread notifications for the current user
+    unread_notifications = Notification.query.filter_by(
+    company_id=current_user.id, reviewed_by_user=False).all()
+
+    # Determine if there are new notifications
+    has_new_notifications = len(unread_notifications) > 0
+    return jsonify({'has_new_notifications': has_new_notifications})
 
 """
 ====== COMPANY APPLICATION HANDLING ======
