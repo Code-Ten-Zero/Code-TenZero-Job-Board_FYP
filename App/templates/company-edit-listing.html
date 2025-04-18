@@ -1,226 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="shortcut icon" href="/static/images/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link
-			rel="stylesheet"
-			href="{{ url_for('static', filename='style.css') }}"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-		/>
-		<title>Edit Job Listing Form</title>
-		<style>
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="shortcut icon" href="/static/images/favicon.ico" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+	<title>Edit Job Listing Form</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		.logout {
+			background-color: rgb(57, 97, 185);
+			color: #fff;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			font-size: large;
+			cursor: pointer;
+		}
+
+		.logout:hover {
+			background-color: rgb(98, 127, 191);
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: gainsboro;
+		}
+
+		.cancel-button {
+			background-color: #ff0808;
+			/* Red color */
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			font-size: 16px;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background 0.3s ease;
+			margin-left: 75vh;
+			display: inline-block;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 30px;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			width: 90vw;
+			height: 80vh;
+			margin: 20px auto;
+			overflow-y: scroll;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group label {
+			font-weight: bold;
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		.form-group input[type="text"],
+		.form-group input[type="email"],
+		.form-group textarea {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-sizing: border-box;
+		}
+
+		.form-group textarea {
+			resize: vertical;
+		}
+
+		.form-group input[type="checkbox"] {
+			margin-right: 5px;
+		}
+
+		.form-group input[type="submit"] {
+			background-color: #333;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.form-group input[type="submit"]:hover {
+			background-color: #555;
+		}
+
+		#submit-button {
+			margin-bottom: 0;
+			display: inline-block;
+		}
+
+		#job_site_container {
+			margin-bottom: 10vh;
+		}
+
+		.topnav .icon {
+			display: none;
+			color: white;
+			padding: 14px 20px;
+			font-size: 20px;
+			cursor: pointer;
+			float: right;
+		}
+
+		@media (max-width: 600px) {
+			.topnav a:not(.icon) {
+				display: none;
 			}
 
-			.logout {
-				background-color: rgb(57, 97, 185);
-				color: #fff;
-				padding: 10px 20px;
-				border: none;
-				border-radius: 5px;
-				font-size: large;
-				cursor: pointer;
-			}
-
-			.logout:hover {
-				background-color: rgb(98, 127, 191);
-			}
-
-			body {
-				font-family: Arial, sans-serif;
-				margin: 0;
-				padding: 0;
-				background-color: gainsboro;
-			}
-
-			.cancel-button {
-				background-color: #ff0808; /* Red color */
-				color: white;
-				border: none;
-				padding: 10px 20px;
-				font-size: 16px;
-				border-radius: 5px;
-				cursor: pointer;
-				transition: background 0.3s ease;
-				margin-left: 75vh;
-				display: inline-block;
-			}
-
-			.container {
-				background-color: #fff;
-				padding: 30px;
-				border-radius: 5px;
-				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-				width: 60vw;
-				height: 80vh;
-				margin: 20px auto;
-				overflow-y: scroll;
-			}
-
-			.form-group {
-				margin-bottom: 20px;
-			}
-
-			.form-group label {
-				font-weight: bold;
+			.topnav .icon {
 				display: block;
-				margin-bottom: 5px;
 			}
 
-			.form-group input[type="text"],
-			.form-group input[type="email"],
-			.form-group textarea {
-				width: 100%;
-				padding: 10px;
-				border: 1px solid #ccc;
-				border-radius: 5px;
-				box-sizing: border-box;
+			.mobile-menu.show {
+				display: flex;
+				margin-right: 0;
 			}
+		}
+	</style>
+</head>
 
-			.form-group textarea {
-				resize: vertical;
-			}
-
-			.form-group input[type="checkbox"] {
-				margin-right: 5px;
-			}
-
-			.form-group input[type="submit"] {
-				background-color: #333;
-				color: #fff;
-				border: none;
-				padding: 10px 20px;
-				border-radius: 5px;
-				cursor: pointer;
-				transition: background-color 0.3s;
-			}
-
-			.form-group input[type="submit"]:hover {
-				background-color: #555;
-			}
-
-			#submit-button {
-				margin-bottom: 0;
-				display: inline-block;
-			}
-			#job_site_container {
-				margin-bottom: 10vh;
-			}
-		</style>
-	</head>
-	<body>
-		<header>
-			<img
-				id="uwi-logo"
-				src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
-				alt="uwi_logo"
-			/>
-			<h1><a href="/app">DCIT Job Board</a></h1>
-			<div class="topnav" id="mynav">
-				<a href="/logout" class="logout">Logout</a>
-				<a href="/company_notifications">Notifications</a>
-				<a href="/view_company_account/{{user.id}}">My Account</a>
-				<a href="/add_listing"> Add Job</a>
-			</div>
-		</header>
-		<div class="container">
-			<h2>Edit Job Listing</h2>
-			<form action="/request_edit_listing/{{listing.id}}" method="POST">
-				<h3>Job Position Details</h3></br>
-				<div class="form-group">
-					<label for="title">Title:</label>
-					<input type="text" id="title" name="title" value="{{ listing.title }}"required />
-				</div>
-				<div class="form-group">
-					<label for="position_type">Position Type:</label>
-					<select id="position_type" name="position_type" required>
-						<option value="">Select Position Type</option>
-						<option value="Full-time" {% if listing.position_type == 'Full-time' %}selected{% endif %}>Full-time</option>
-						<option value="Part-time" {% if listing.position_type == 'Part-time' %}selected{% endif %}>Part-time</option>
-						<option value="Contract" {% if listing.position_type == 'Contract' %}selected{% endif %}>Contract</option>
-						<option value="Internship" {% if listing.position_type == 'Internship' %}selected{% endif %}>Internship</option>
-						<option value="Freelance" {% if listing.position_type == 'Freelance' %}selected{% endif %}>Freelance</option>
-					  </select>
-				</div>
-				<div class="form-group">
-					<label for="description">Description:</label>
-					<textarea
-						id="description"
-						name="description"
-						rows="5"
-						required
-					>{{listing.description}}</textarea>
-				</div>
-				<div class="form-group">
-					<label for="monthly_salary_ttd">Salary:</label>
-					<input
-						type="number"
-						id="monthly_salary_ttd"
-						name="monthly_salary_ttd"
-						value="{{ listing.monthly_salary_ttd }}"
-						required
-					/>
-				</div>
-				<div class="form-group">
-					<label>Remote Options:</label>
-					<input
-						type="checkbox"
-						id="is_remote"
-						name="is_remote"
-						value="Yes"
-						{% if listing.is_remote == True %}checked{% endif %}
-						onclick="hideAddressField()"
-					/>
-					<label for="is_remote">Yes</label>
-				</div>
-				<div class="form-group" id="job_site_container">
-					<label for="job_site_address">Job Area:</label>
-					<input
-						type="text"
-						id="job_site_address"
-						name="job_site_address"
-						value="{{ listing.job_site_address }}"
-						required
-					/>
-				</div>
-				<div class="form-group" id="submit-button">
-					<input type="submit" value="Update Job Listing" />
-					<button class="cancel-button" onclick="goBack()">
-						Cancel
-					</button>
-				</div>
-			</form>
+<body>
+	<header>
+		<img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+		<h1><a href="/app">DCIT Job Board</a></h1>
+		<div class="topnav" id="mynav">
+			<a href="/logout" class="logout">Logout</a>
+			<a href="/company_notifications">Notifications</a>
+			<a href="/view_company_account/{{user.id}}">My Account</a>
+			<a href="/add_listing"> Add Job</a>
+			<a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
 		</div>
-		<script>
-			function goBack() {
-				window.history.back();
+
+		<!-- Collapsible mobile menu -->
+		<div class="mobile-menu" id="mobileMenu">
+			<a href="/logout">Logout</a>
+			<a href="/company_notifications">Notifications</a>
+			<a href="/view_company_account/{{user.id}}">My Account</a>
+			<a href="/add_listing"> Add Job</a>
+	</header>
+	<div class="container">
+		<h2>Edit Job Listing</h2>
+		<form action="/request_edit_listing/{{listing.id}}" method="POST">
+			<h3>Job Position Details</h3></br>
+			<div class="form-group">
+				<label for="title">Title:</label>
+				<input type="text" id="title" name="title" value="{{ listing.title }}" required />
+			</div>
+			<div class="form-group">
+				<label for="position_type">Position Type:</label>
+				<select id="position_type" name="position_type" required>
+					<option value="">Select Position Type</option>
+					<option value="Full-time" {% if listing.position_type=='Full-time' %}selected{% endif %}>Full-time
+					</option>
+					<option value="Part-time" {% if listing.position_type=='Part-time' %}selected{% endif %}>Part-time
+					</option>
+					<option value="Contract" {% if listing.position_type=='Contract' %}selected{% endif %}>Contract
+					</option>
+					<option value="Internship" {% if listing.position_type=='Internship' %}selected{% endif %}>
+						Internship</option>
+					<option value="Freelance" {% if listing.position_type=='Freelance' %}selected{% endif %}>Freelance
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="description">Description:</label>
+				<textarea id="description" name="description" rows="5" required>{{listing.description}}</textarea>
+			</div>
+			<div class="form-group">
+				<label for="monthly_salary_ttd">Salary:</label>
+				<input type="number" id="monthly_salary_ttd" name="monthly_salary_ttd"
+					value="{{ listing.monthly_salary_ttd }}" required />
+			</div>
+			<div class="form-group">
+				<label>Remote Options:</label>
+				<input type="checkbox" id="is_remote" name="is_remote" value="Yes" {% if listing.is_remote==True
+					%}checked{% endif %} onclick="hideAddressField()" />
+				<label for="is_remote">Yes</label>
+			</div>
+			<div class="form-group" id="job_site_container">
+				<label for="job_site_address">Job Area:</label>
+				<input type="text" id="job_site_address" name="job_site_address" value="{{ listing.job_site_address }}"
+					required />
+			</div>
+			<div class="form-group" id="submit-button">
+				<input type="submit" value="Update Job Listing" />
+				<button class="cancel-button" onclick="goBack()">
+					Cancel
+				</button>
+			</div>
+		</form>
+	</div>
+	<script>
+		function goBack() {
+			window.history.back();
+		}
+		function hideAddressField() {
+			const remoteCheckbox = document.getElementById("is_remote");
+			const jobSiteContainer = document.getElementById("job_site_container");
+			const jobSiteAddress = document.getElementById("job_site_address");
+
+			if (remoteCheckbox.checked) {
+				jobSiteContainer.style.display = "none"; // Hide job site field
+				jobSiteAddress.removeAttribute("required"); // Remove the "required" attribute
+			} else {
+				jobSiteContainer.style.display = "block"; // Show job site field
+				jobSiteAddress.setAttribute("required", "required"); // Re-add the "required" attribute
 			}
-			function hideAddressField() {
-    const remoteCheckbox = document.getElementById("is_remote");
-    const jobSiteContainer = document.getElementById("job_site_container");
-    const jobSiteAddress = document.getElementById("job_site_address");
+		}
 
-    if (remoteCheckbox.checked) {
-        jobSiteContainer.style.display = "none"; // Hide job site field
-        jobSiteAddress.removeAttribute("required"); // Remove the "required" attribute
-    } else {
-        jobSiteContainer.style.display = "block"; // Show job site field
-        jobSiteAddress.setAttribute("required", "required"); // Re-add the "required" attribute
-    }
-}
+		// Run on page load to ensure the field is hidden if the job is remote
+		document.addEventListener("DOMContentLoaded", function () {
+			hideAddressField();
+		});
 
-// Run on page load to ensure the field is hidden if the job is remote
-document.addEventListener("DOMContentLoaded", function () {
-    hideAddressField();
-});
-		</script>
-	</body>
+
+		// Open the menu if a link is clicked (good UX)
+		function toggleNav() {
+			const menu = document.getElementById("mobileMenu");
+			menu.classList.toggle("show");
+		}
+
+		// Close the menu if a link is clicked 
+		document.addEventListener('click', function (e) {
+			const menu = document.getElementById("mobileMenu");
+			const icon = document.querySelector(".topnav .icon");
+
+			// If clicking outside the menu and not the icon
+			if (!menu.contains(e.target) && !icon.contains(e.target)) {
+				menu.classList.remove("show");
+			}
+		});
+
+	</script>
+</body>
+
 </html>

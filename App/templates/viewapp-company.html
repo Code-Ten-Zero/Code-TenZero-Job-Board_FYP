@@ -67,7 +67,7 @@
       cursor: pointer;
       text-decoration: none;
     }
-    
+
     #statusType {
       padding: 6px 12px;
       border: 1px solid #ccc;
@@ -173,24 +173,59 @@
       border: 2px solid #ccc;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
+
+    .topnav .icon {
+      display: none;
+      color: white;
+      padding: 14px 20px;
+      font-size: 20px;
+      cursor: pointer;
+      float: right;
+    }
+
+    @media (max-width: 600px) {
+      .topnav a:not(.icon) {
+        display: none;
+      }
+
+      .topnav .icon {
+        display: block;
+      }
+
+      .mobile-menu.show {
+        display: flex;
+        margin-right: 0;
+      }
+    }
   </style>
 </head>
+
 <body>
-<header>
-  <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
-  <h1><a href="/app">DCIT Job Board</a></h1>
-  <div class="topnav" id="mynav">
-    <a href="/logout">Logout</a>
-    <a href="#">My Account</a>
-    <a href="/app"> Job Listings</a>
+  <header>
+    <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+    <h1><a href="/app">DCIT Job Board</a></h1>
+    <div class="topnav" id="mynav">
+      <a href="/logout">Logout</a>
+      <a href="/company_notifications">Notifications</a>
+      <a href="/view_company_account/{{user.id}}">My Account</a>
+      <a href="/add_listing"> Add Job</a>
+      <a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+    </div>
+
+    <!-- Collapsible mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/logout">Logout</a>
+      <a href="/company_notifications">Notifications</a>
+      <a href="/view_company_account/{{user.id}}">My Account</a>
+      <a href="/add_listing"> Add Job</a>
+    </div>
+  </header>
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
   </div>
-</header>
-<div id="flash-messages">
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %} {% for category, message in messages %}
-  <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %} {% endif %} {% endwith %}
-</div>
 
   <div class="container">
     <h2>Applications</h2>
@@ -267,6 +302,23 @@
         modal.style.display = "none";
       }
     };
+
+    // Open the menu if a link is clicked (good UX)
+    function toggleNav() {
+      const menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("show");
+    }
+
+    // Close the menu if a link is clicked 
+    document.addEventListener('click', function (e) {
+      const menu = document.getElementById("mobileMenu");
+      const icon = document.querySelector(".topnav .icon");
+
+      // If clicking outside the menu and not the icon
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
   </script>
 </body>
 

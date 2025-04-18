@@ -1,371 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="shortcut icon" href="/static/images/favicon.ico" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DCIT Job Board- Admin</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: gainsboro;
-        width: 100vw;
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" href="/static/images/favicon.ico" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCIT Job Board- Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: gainsboro;
+      width: 100vw;
+    }
+
+    .logout {
+      background-color: rgb(57, 97, 185);
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: large;
+      cursor: pointer;
+    }
+
+    .logout:hover {
+      background-color: rgb(98, 127, 191);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 35px;
+      margin: 10px;
+    }
+
+    .button {
+      padding: 8px 16px;
+      border: none;
+      background-color: rgb(57, 97, 185);
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-left: 10px;
+    }
+
+    .button:hover {
+      background-color: rgb(98, 127, 191);
+    }
+
+    .container {
+      width: 90%;
+      margin: 20px auto;
+    }
+
+    .table-container {
+      width: 90vw;
+      max-height: 60vh;
+      margin: 20px auto;
+      background-color: white;
+      overflow: auto;
+    }
+
+    .topnav .icon {
+      display: none;
+      color: white;
+      padding: 14px 20px;
+      font-size: 20px;
+      cursor: pointer;
+      float: right;
+    }
+
+    pre {
+      max-width: 40vw;
+    }
+
+    h2 {
+      font-size: xx-large;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 100;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #333;
+    }
+
+    th,
+    td {
+      padding: 18px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      border-bottom: 1px solid #333;
+      border-right: 1px solid #333;
+    }
+
+    thead {
+      background-color: rgb(74, 74, 192);
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #ced4ea;
+    }
+
+    .actions button {
+      margin-right: 10px;
+      padding: 5px 10px;
+      color: #fff;
+      background-color: rgb(57, 97, 185);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: small;
+    }
+
+    a.delete {
+      margin-right: 10px;
+      padding: 5px 10px;
+      color: #fff;
+      background-color: red;
+      text-decoration: none;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: small;
+    }
+
+    .actions button:hover,
+    a:hover {
+      background-color: rgb(98, 127, 191);
+    }
+
+    #flash-messages {
+      position: absolute;
+      width: 100%;
+      display: block;
+      z-index: 100;
+      /*ensures flash message is displayed over content */
+    }
+
+    /* Container for the description and button */
+    .description-container {
+      position: relative;
+      /* Keep the button inside this container */
+    }
+
+    @media (max-width: 600px) {
+      .topnav a:not(.icon) {
+        display: none;
       }
 
-      .logout {
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: large;
-        cursor: pointer;
-      }
-
-      .logout:hover {
-        background-color: rgb(98, 127, 191);
-      }
-
-      .button-container {
-        display: flex;
-        justify-content: flex-end;
-        gap: 35px;
-        margin: 10px;
-      }
-
-      .button {
-        padding: 8px 16px;
-        border: none;
-        background-color: rgb(57, 97, 185);
-        color: white;
-        cursor: pointer;
-        border-radius: 4px;
-        margin-left: 10px;
-      }
-
-      .button:hover {
-        background-color: rgb(98, 127, 191);
-      }
-
-      .container {
-        width: 90%;
-        margin: 20px auto;
-      }
-
-      .table-container {
-        width: 90vw;
-        max-height: 60vh;
-        margin: 20px auto;
-        background-color: white;
-        overflow: auto;
-      }
-
-      h2 {
-        font-size: xx-large;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: 100;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        border: 1px solid #333;
-      }
-
-      th,
-      td {
-        padding: 18px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-        border-bottom: 1px solid #333;
-        border-right: 1px solid #333;
-      }
-
-      thead {
-        background-color: rgb(74, 74, 192);
-        color: white;
-      }
-
-      tr:hover {
-        background-color: #ced4ea;
-      }
-
-      .actions button {
-        margin-right: 10px;
-        padding: 5px 10px;
-        color: #fff;
-        background-color: rgb(57, 97, 185);
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: small;
-      }
-      a.delete {
-        margin-right: 10px;
-        padding: 5px 10px;
-        color: #fff;
-        background-color: red;
-        text-decoration: none;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: small;
-      }
-
-      .actions button:hover,
-      a:hover {
-        background-color: rgb(98, 127, 191);
-      }
-
-      #flash-messages {
-        position: absolute;
-        width: 100%;
+      .topnav .icon {
         display: block;
-        z-index: 100; /*ensures flash message is displayed over content */
       }
-    </style>
-  </head>
-  <body>
-    <header>
-      <img
-        id="uwi-logo"
-        src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
-        alt="uwi_logo"
-      />
-      <h1><a href="/app">DCIT Job Board</a></h1>
-      <div class="topnav" id="mynav">
-        <a href="/logout">Logout</a>
-        <a href="/admin_notifications"  id="notifications-link">Notifications <span id="notification-dot"></span></a>
-        <a href="/view_admin_account/{{user.id}}">My Account</a>
-      </div>
-    </header>
-    <div id="flash-messages">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
-    </div>
-    <div class="container">
-      <h2 id="jobHeader">Welcome Admin!</h2>
-      <div class="button-container">
-        <button class="button" onclick="filterByStatus('ALL')">View All</button>
-        <button class="button" onclick="filterByStatus('APPROVED')">
-          Published
-        </button>
-        <button class="button" onclick="filterByStatus('PENDING')">
-          Unpublished
-        </button>
-      </div>
-    </div>
-    <div class="table-container">
-      <table id="jobTable">
-        <thead>
-          <tr>
-            <th>Company</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Listing Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for job in jobs %}
 
-          <tr
-		  id="job-{{ job.id }}" data-status="{{ 'APPROVED' if job.admin_approval_status == 'APPROVED' else 'PENDING' }}"
-          >
-            <td>{{ job.company.registered_name }}</td>
-            <td>{{ job.title }}</td>
-            <td>{{ job.description }}</td>
-            <td id="listing-status-{{job.id}}">
-              {{ job.admin_approval_status }}
-            </td>
-            <td class="actions">
-              <a href="#" onclick="confirmDelete('{{ job.id }}', '{{ job.title }}', '{{ job.company.registered_name }}')" class="delete"
-                >Delete</a
-              >
-              {% if job.admin_approval_status != 'APPROVED' %}
-              <button
-                class="publish-button"
-                data-job-id="{{ job.id }}"
-                onclick="publishJob(event, this)"
-              >
-                Publish
-              </button>
-              {% else %}
-              <button
-                class="publish-button"
-                data-job-id="{{ job.id }}"
-                onclick="unpublishJob(event, this)"
-              >
-                Unpublish
-              </button>
-              {% endif %}
-            </td>
-          </tr>
-        </tbody>
-        {% endfor %}
-      </table>
-    </div>
-    <script>
- function confirmDelete(jobId, jobTitle, companyName) {
-    // Show confirmation dialog
-    const confirmAction = confirm(
-      `Are you sure you want to delete ${jobTitle} posted by ${companyName}? This action cannot be undone.`
-    );
+      .mobile-menu.show {
+        display: flex;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
 
-    if (confirmAction) {
+<body>
+  <header>
+    <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+    <h1><a href="/app">DCIT Job Board</a></h1>
+    <!-- Desktop menu -->
+    <div class="topnav" id="mynav">
+      <a href="/logout">Logout</a>
+      <a href="/admin_notifications">Notifications</a>
+      <a href="/view_admin_account/{{user.id}}">My Account</a>
+      <a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+    </div>
+
+    <!-- Collapsible mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/logout">Logout</a>
+      <a href="/admin_notifications">Notifications</a>
+      <a href="/view_admin_account/{{user.id}}">My Account</a>
+    </div>
+  </header>
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+  </div>
+  <div class="container">
+    <h2 id="jobHeader">Welcome Admin!</h2>
+    <div class="button-container">
+      <button class="button" onclick="filterByStatus('ALL')">View All</button>
+      <button class="button" onclick="filterByStatus('APPROVED')">
+        Published
+      </button>
+      <button class="button" onclick="filterByStatus('PENDING')">
+        Unpublished
+      </button>
+    </div>
+  </div>
+  <div class="table-container">
+    <table id="jobTable">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Listing Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+
+        <tr id="job-{{ job.id }}"
+          data-status="{{ 'APPROVED' if job.admin_approval_status == 'APPROVED' else 'PENDING' }}">
+          <td>{{ job.company.registered_name }}</td>
+          <td>{{ job.title }}</td>
+          <td>
+            <div class="description-container">
+              <button class="toggle-icon" id="toggle-{{ job.id }}" onclick="toggleDescription('{{ job.id }}')"
+                style="display:none;">▼</button>
+              <pre class="job-description" id="job-description-{{ job.id }}"
+                data-description-id="{{ job.id }}">{{ job.description }}</pre>
+            </div>
+          </td>
+          <td id="listing-status-{{job.id}}">
+            {{ job.admin_approval_status }}
+          </td>
+          <td class="actions">
+            <a href="#" onclick="confirmDelete('{{ job.id }}', '{{ job.title }}', '{{ job.company.registered_name }}')"
+              class="delete">Delete</a>
+            {% if job.admin_approval_status != 'APPROVED' %}
+            <button class="publish-button" data-job-id="{{ job.id }}" onclick="publishJob(event, this)">
+              Publish
+            </button>
+            {% else %}
+            <button class="publish-button" data-job-id="{{ job.id }}" onclick="unpublishJob(event, this)">
+              Unpublish
+            </button>
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+  <script>
+    function confirmDelete(jobId, jobTitle, companyName) {
+      // Show confirmation dialog
+      const confirmAction = confirm(
+        `Are you sure you want to delete ${jobTitle} posted by ${companyName}? This action cannot be undone.`
+      );
+
+      if (confirmAction) {
         // Perform the AJAX request to delete the listing on the server
         fetch(`/delete_listing/${jobId}`, {
-            method: "POST", 
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}", // Make sure you're passing CSRF token
-            }
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}", // Make sure you're passing CSRF token
+          }
         })
-        .then((response) => {
+          .then((response) => {
             if (response.ok) {
-                alert("Job listing deleted successfully!");
+              alert("Job listing deleted successfully!");
 
-                // Optionally, remove the row immediately from the DOM
-                const jobRow = document.getElementById(`job-${jobId}`);
-                if (jobRow) {
-                    jobRow.remove(); // Remove the row from the table
-                }
+              // Optionally, remove the row immediately from the DOM
+              const jobRow = document.getElementById(`job-${jobId}`);
+              if (jobRow) {
+                jobRow.remove(); // Remove the row from the table
+              }
             } else {
-                alert('Error removing the job listing row. Please refresh the page to see changes.');
+              alert('Error removing the job listing row. Please refresh the page to see changes.');
             }
-        })
-        .catch((error) => {
+          })
+          .catch((error) => {
             console.error("Error:", error);
             alert("An error occurred while deleting the job listing. Please try again later.");
+          });
+      }
+    }
+
+    function publishJob(event, button) {
+      event.preventDefault(); // Prevent page reload
+
+      const header = document.getElementById("jobHeader");
+      const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
+      const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
+
+      fetch(`/publish_job/${jobId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Move job to published section (UI only)
+            const row = button.closest("tr");
+            row.setAttribute("data-status", "APPROVED");
+            statusCell.textContent = "APPROVED";
+            button.textContent = "Unpublish";
+            button.setAttribute("onclick", `unpublishJob(event, this)`);
+
+            // Apply filter to show the job in the "Unpublished" section
+            if (header.textContent.includes("Unpublished")) {
+              filterByStatus("PENDING");
+            }
+
+            alert("Job published successfully!");
+          } else {
+            alert("Failed to publish the job."); // <-- This will now only run if response is NOT OK
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while publishing the job.");
         });
     }
-}
 
-      function publishJob(event, button) {
-        event.preventDefault(); // Prevent page reload
+    function unpublishJob(event, button) {
+      event.preventDefault(); // Prevent page reload
 
-        const header = document.getElementById("jobHeader");
-        const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
-        const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
+      const header = document.getElementById("jobHeader");
+      const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
+      const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
 
-        fetch(`/publish_job/${jobId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              // Move job to published section (UI only)
-              const row = button.closest("tr");
-              row.setAttribute("data-status", "APPROVED");
-              statusCell.textContent = "APPROVED";
-              button.textContent = "Unpublish";
-              button.setAttribute("onclick", `unpublishJob(event, this)`);
+      fetch(`/unpublish_job/${jobId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Move job to unpublished section (UI only)
+            const row = button.closest("tr");
+            row.setAttribute("data-status", "PENDING");
+            statusCell.textContent = "PENDING";
+            button.textContent = "Publish";
+            button.setAttribute("onclick", `publishJob(event, this)`);
 
-              // Apply filter to show the job in the "Unpublished" section
-              if (header.textContent.includes("Unpublished")) {
-                filterByStatus("PENDING");
-              }
-
-              alert("Job published successfully!");
-            } else {
-              alert("Failed to publish the job."); // <-- This will now only run if response is NOT OK
+            // Apply filter to show the job in the "Published" section
+            if (header.textContent.includes("Published")) {
+              filterByStatus("APPROVED");
             }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("An error occurred while publishing the job.");
-          });
-      }
 
-      function unpublishJob(event, button) {
-        event.preventDefault(); // Prevent page reload
-
-        const header = document.getElementById("jobHeader");
-        const jobId = button.getAttribute("data-job-id"); // Get job ID from data attribute
-        const statusCell = document.getElementById(`listing-status-${jobId}`); // Select the status cell by its ID
-
-        fetch(`/unpublish_job/${jobId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              // Move job to unpublished section (UI only)
-              const row = button.closest("tr");
-              row.setAttribute("data-status", "PENDING");
-              statusCell.textContent = "PENDING";
-              button.textContent = "Publish";
-              button.setAttribute("onclick", `publishJob(event, this)`);
-
-              // Apply filter to show the job in the "Published" section
-              if (header.textContent.includes("Published")) {
-                filterByStatus("APPROVED");
-              }
-
-              alert("Job unpublished successfully!");
-            } else {
-              alert("Failed to unpublish the job."); // <-- This will now only run if response is NOT OK
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("An error occurred while unpublishing the job.");
-          });
-      }
-
-      function filterByStatus(status) {
-        const rows = document.querySelectorAll("#jobTable tbody tr");
-        const header = document.getElementById("jobHeader");
-
-        // Update header text
-        if (status === "APPROVED") {
-          header.textContent = "Currently Displaying Published Jobs";
-        } else if (status === "PENDING") {
-          header.textContent = "Currently Displaying Unpublished Jobs";
-        } else if (status === "ALL") {
-          header.textContent = "Currently Displaying All Jobs";
-        }
-
-        // Show/Hide rows based on status
-        rows.forEach((row) => {
-          const jobStatus = row.getAttribute("data-status");
-          if (status === "ALL" || jobStatus === status) {
-            row.style.display = ""; // Show row
+            alert("Job unpublished successfully!");
           } else {
-            row.style.display = "none"; // Hide row
+            alert("Failed to unpublish the job."); // <-- This will now only run if response is NOT OK
           }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred while unpublishing the job.");
         });
+    }
+
+    function filterByStatus(status) {
+      const rows = document.querySelectorAll("#jobTable tbody tr");
+      const header = document.getElementById("jobHeader");
+
+      // Update header text
+      if (status === "APPROVED") {
+        header.textContent = "Currently Displaying Published Jobs";
+      } else if (status === "PENDING") {
+        header.textContent = "Currently Displaying Unpublished Jobs";
+      } else if (status === "ALL") {
+        header.textContent = "Currently Displaying All Jobs";
       }
 
-      function editListing(rowIndex) {
-        // Placeholder for edit functionality
-        alert(
-          `Edit functionality invoked for row index: ${rowIndex}. Implement modal or detail view.`
-        );
-      }
-
-      // Hide flash messages after 3 seconds
-      setTimeout(() => {
-        const flashMessages = document.getElementById("flash-messages");
-        if (flashMessages) {
-          flashMessages.style.display = "none";
+      // Show/Hide rows based on status
+      rows.forEach((row) => {
+        const jobStatus = row.getAttribute("data-status");
+        if (status === "ALL" || jobStatus === status) {
+          row.style.display = ""; // Show row
+        } else {
+          row.style.display = "none"; // Hide row
         }
-      }, 3000); // 3000 milliseconds = 5 seconds
+      });
+    }
 
-      
-      document.addEventListener("DOMContentLoaded", function () {
+    function editListing(rowIndex) {
+      // Placeholder for edit functionality
+      alert(
+        `Edit functionality invoked for row index: ${rowIndex}. Implement modal or detail view.`
+      );
+    }
+
+    // Hide flash messages after 3 seconds
+    setTimeout(() => {
+      const flashMessages = document.getElementById("flash-messages");
+      if (flashMessages) {
+        flashMessages.style.display = "none";
+      }
+    }, 3000); // 3000 milliseconds = 5 seconds
+
+
+    document.addEventListener("DOMContentLoaded", function () {
       const notificationDot = document.getElementById("notification-dot");
 
       // Fetch the new notifications status from the server
@@ -381,6 +418,62 @@
           console.error("Error fetching notification status:", error);
         });
     });
-    </script>
-  </body>
+
+    // This function checks if the content is overflowing and shows the button if needed
+    function checkOverflow() {
+      // Get all the description elements
+      const descriptions = document.querySelectorAll('.job-description');
+
+      descriptions.forEach(description => {
+        const button = description.previousElementSibling; // The button next to the description
+
+        // Check if the content overflows
+        if (description.scrollHeight > description.clientHeight) {
+          button.style.display = 'inline'; // Show the button if overflow exists
+        } else {
+          button.style.display = 'none'; // Hide the button if no overflow
+        }
+      });
+    }
+
+    // Call the function when the page loads to check for overflow
+    window.onload = checkOverflow;
+
+    // Call the function whenever window is resized, to handle responsiveness
+    window.onresize = checkOverflow;
+    function toggleDescription(listingId) {
+      // Get the description element using the data-description-id attribute
+      const description = document.querySelector('.job-description[data-description-id="' + listingId + '"]');
+
+      // Toggle the expanded class to adjust height/visibility
+      description.classList.toggle("expanded");
+
+      // Find the button to toggle its text based on the description's state
+      const button = description.previousElementSibling;
+      if (description.classList.contains("expanded")) {
+        button.textContent = "▲"; // Change icon to collapse
+      } else {
+        button.textContent = "▼"; // Change icon to expand
+      }
+    }
+
+    // Open the menu if a link is clicked (good UX)
+    function toggleNav() {
+      const menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("show");
+    }
+
+    // Close the menu if a link is clicked 
+    document.addEventListener('click', function (e) {
+      const menu = document.getElementById("mobileMenu");
+      const icon = document.querySelector(".topnav .icon");
+
+      // If clicking outside the menu and not the icon
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+
 </html>

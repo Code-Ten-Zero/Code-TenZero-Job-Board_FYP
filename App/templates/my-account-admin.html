@@ -76,7 +76,6 @@
       background-color: #dcdcdc;
     }
 
-
     .topnav .icon {
       display: none;
       color: white;
@@ -170,23 +169,55 @@
       background-color: rgb(57, 97, 185);
     }
 
+    /* Mobile menu overlay styles */
+    .mobile-menu {
+      display: none;
+      position: absolute; 
+      border-radius: 0;
+      margin-top: 6vh;
+      top: 50px;
+      /* height of header */
+      right: 0; /* instead of right: 0 */
+      width: 50vw;
+      flex-direction: column;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 999;
+      overflow: hidden;
+    }
+
+    .mobile-menu a {
+      display: block;
+      width: 100%;               /* Fill width */
+      color: white;
+      text-align: left;
+      height: 3vh;
+      font-size: 2vh;
+      border-radius: 0;
+    }
+
+    .mobile-menu a:hover {
+      background-color: #444;
+    }
+
     /* Responsive Styles */
     @media (max-width: 600px) {
 
-      h1{
+      h1 {
         width: 10vw;
         font-size: 5px;
       }
 
-      h1 a{
-        display: inline-block; 
+      h1 a {
+        display: inline-block;
         width: 30vw;
         font-size: 10px;
       }
-      .header-title{
+
+      .header-title {
         font-size: 15px;
         width: 5vw;
       }
+
       /* Stack columns on smaller screens */
       .form-row {
         flex-direction: column;
@@ -246,18 +277,17 @@
         border: 1px solid #ccc;
       }
 
-      .topnav a {
+      .topnav a:not(.icon) {
         display: none;
-        width: 100%;
-        text-align: center;
       }
 
       .topnav .icon {
         display: block;
       }
 
-      .topnav.responsive a {
-        display: block;
+      .mobile-menu.show {
+        display: flex;
+        margin-right: 0;
       }
     }
   </style>
@@ -268,8 +298,16 @@
     <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
     <h1><a href="/app">DCIT Job Board</a></h1>
     <h1 class="header-title"> My Account</h1>
+     <!-- Desktop menu -->
     <div class="topnav" id="mynav">
+      <a href="/logout">Logout</a>
+      <a href="/admin_notifications">Notifications</a>
+      <a href="/view_admin_account/{{user.id}}">My Account</a>
       <a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+    </div>
+
+    <!-- Collapsible mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
       <a href="/logout">Logout</a>
       <a href="/admin_notifications">Notifications</a>
       <a href="/view_admin_account/{{user.id}}">My Account</a>
@@ -360,10 +398,22 @@
       document.getElementById('profile_photo_form').submit();
     }
 
+    // Open the menu if a link is clicked (good UX)
     function toggleNav() {
-      var x = document.getElementById("mynav");
-      x.classList.toggle("responsive");
+      const menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("show");
     }
+
+    // Close the menu if a link is clicked 
+    document.addEventListener('click', function (e) {
+      const menu = document.getElementById("mobileMenu");
+      const icon = document.querySelector(".topnav .icon");
+
+      // If clicking outside the menu and not the icon
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
   </script>
 </body>
 

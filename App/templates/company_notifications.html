@@ -113,6 +113,30 @@
 		.close-btn:hover {
 			color: #ff0000;
 		}
+
+		.topnav .icon {
+			display: none;
+			color: white;
+			padding: 14px 20px;
+			font-size: 20px;
+			cursor: pointer;
+			float: right;
+		}
+
+		@media (max-width: 600px) {
+			.topnav a:not(.icon) {
+				display: none;
+			}
+
+			.topnav .icon {
+				display: block;
+			}
+
+			.mobile-menu.show {
+				display: flex;
+				margin-right: 0;
+			}
+		}
 	</style>
 </head>
 <header>
@@ -126,7 +150,17 @@
 		<a href="/company_notifications">Notifications</a>
 		<a href="/view_company_account/{{company.id}}">My Account</a>
 		<a href="/add_listing"> Add Job</a>
+		<a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
 	</div>
+
+	<!-- Collapsible mobile menu -->
+	<div class="mobile-menu" id="mobileMenu">
+		<a href="/logout">Logout</a>
+		<a href="/company_notifications">Notifications</a>
+		<a href="/view_company_account/{{company.id}}">My Account</a>
+		<a href="/add_listing"> Add Job</a>
+	</div>
+
 </header>
 
 <body>
@@ -163,6 +197,23 @@
 				}
 			});
 	}
+	
+	// Open the menu if a link is clicked (good UX)
+	function toggleNav() {
+		const menu = document.getElementById("mobileMenu");
+		menu.classList.toggle("show");
+	}
+
+	// Close the menu if a link is clicked 
+	document.addEventListener('click', function (e) {
+		const menu = document.getElementById("mobileMenu");
+		const icon = document.querySelector(".topnav .icon");
+
+		// If clicking outside the menu and not the icon
+		if (!menu.contains(e.target) && !icon.contains(e.target)) {
+			menu.classList.remove("show");
+		}
+	});
 </script>
 
 </html>

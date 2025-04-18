@@ -25,6 +25,15 @@
 			transform: translateX(-50%);
 		}
 
+		.topnav .icon {
+			display: none;
+			color: white;
+			padding: 14px 20px;
+			font-size: 20px;
+			cursor: pointer;
+			float: right;
+		}
+
 		.job-listings-button {
 			background-color: #ff9800;
 			/* A contrasting orange color */
@@ -113,6 +122,21 @@
 		.close-btn:hover {
 			color: #ff0000;
 		}
+
+		@media (max-width: 600px) {
+			.topnav a:not(.icon) {
+				display: none;
+			}
+
+			.topnav .icon {
+				display: block;
+			}
+
+			.mobile-menu.show {
+				display: flex;
+				margin-right: 0;
+			}
+		}
 	</style>
 </head>
 <header>
@@ -122,7 +146,15 @@
 	<div class="topnav" id="mynav">
 		<a href="/logout">Logout</a>
 		<a href="/admin_notifications">Notifications</a>
-		<a href="#">My Account</a>
+		<a href="/view_admin_account/{{admin.id}}">My Account</a>
+		<a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+	</div>
+
+	<!-- Collapsible mobile menu -->
+	<div class="mobile-menu" id="mobileMenu">
+		<a href="/logout">Logout</a>
+		<a href="/admin_notifications">Notifications</a>
+		<a href="/view_admin_account/{{admin.id}}">My Account</a>
 	</div>
 </header>
 
@@ -159,6 +191,23 @@
 					}
 				});
 		}
+
+		// Open the menu if a link is clicked (good UX)
+		function toggleNav() {
+			const menu = document.getElementById("mobileMenu");
+			menu.classList.toggle("show");
+		}
+
+		// Close the menu if a link is clicked 
+		document.addEventListener('click', function (e) {
+			const menu = document.getElementById("mobileMenu");
+			const icon = document.querySelector(".topnav .icon");
+
+			// If clicking outside the menu and not the icon
+			if (!menu.contains(e.target) && !icon.contains(e.target)) {
+				menu.classList.remove("show");
+			}
+		});
 	</script>
 </body>
 

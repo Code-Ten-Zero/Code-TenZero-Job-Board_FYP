@@ -274,7 +274,7 @@ def view_applications_page(id):
     try:
         applications = get_job_applications_by_job_listing_id(listing.id)
         print(applications)
-        return render_template('viewapp-company.html', applications=applications)
+        return render_template('viewapp-company.html', applications=applications, user=current_user)
 
     except Exception:
         flash('Error receiving applicants', 'unsuccessful')

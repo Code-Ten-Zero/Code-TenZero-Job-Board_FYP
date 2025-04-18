@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, current_app, flash, make_response, redirect, render_template, request, url_for, jsonify
 from flask_jwt_extended import current_user, jwt_required, unset_jwt_cookies
-from App.models import db, JobListing
+from App.models import db, JobListing, AdminAccount
 from werkzeug.utils import secure_filename
 
 
@@ -25,8 +25,6 @@ from App.controllers.notifications import (
     notify_company_account,
     notify_subscribed_alumni
 )
-
-from App.models import AdminAccount
 
 from App.models.notification import Notification
 from App.utils.email import (
@@ -276,6 +274,7 @@ def update_profile_photo(id):
 @admin_views.route('/view_admin_account/<id>', methods=["GET"])
 @jwt_required()
 def view_my_account_page(id):
+    #Retrieve the current user and display the admin page
     user = get_user_by_email(current_user.login_email)
     try:
         return render_template('my-account-admin.html', user=user)
@@ -314,7 +313,7 @@ def view_notifications_page():
 @jwt_required()
 def notification_status(notification_id):
     notification = Notification.query.get(notification_id)
-    
+    #Once notification is found, mark as read
     if notification:
         mark_notification_as_reviewed(notification_id)
         return jsonify({'success': True}), 200

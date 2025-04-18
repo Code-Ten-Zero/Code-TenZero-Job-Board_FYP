@@ -107,6 +107,30 @@
 		.close-btn:hover {
 			color: #ff0000;
 		}
+
+		.topnav .icon {
+			display: none;
+			color: white;
+			padding: 14px 20px;
+			font-size: 20px;
+			cursor: pointer;
+			float: right;
+		}
+
+		@media (max-width: 600px) {
+			.topnav a:not(.icon) {
+				display: none;
+			}
+
+			.topnav .icon {
+				display: block;
+			}
+
+			.mobile-menu.show {
+				display: flex;
+				margin-right: 0;
+			}
+		}
 	</style>
 </head>
 <header>
@@ -116,17 +140,29 @@
 	<div class="topnav" id="mynav">
 		<a href="/logout" class="logout">Logout</a>
 		<a href="/alumnus_notifications" id="notifications-link">
-		  Notifications
-		  <span id="notification-dot"></span>
+			Notifications
+			<span id="notification-dot"></span>
+		</a>
+		<a href="/view_my_account/{{alumnus.id}}">My Account</a>
+		<a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+	</div>
+
+	<!-- Collapsible mobile menu -->
+	<div class="mobile-menu" id="mobileMenu">
+		<a href="/logout" class="logout">Logout</a>
+		<a href="/alumnus_notifications" id="notifications-link">
+			Notifications
+			<span id="notification-dot"></span>
 		</a>
 		<a href="/view_my_account/{{alumnus.id}}">My Account</a>
 	</div>
 </header>
+
 <body>
 	<div class="container">
 		{% if notifications %}
 		<ul>
-			{% for notification in notifications if not notification.reviewed_by_user  %}
+			{% for notification in notifications if not notification.reviewed_by_user %}
 			<li id="notification-{{ notification.id }}">
 				<button class="close-btn" onclick="markAsReviewed('{{ notification.id }}')">x</button>
 				{{ notification.message }} <br />
@@ -155,6 +191,23 @@
 					}
 				});
 		}
+
+		// Open the menu if a link is clicked (good UX)
+		function toggleNav() {
+			const menu = document.getElementById("mobileMenu");
+			menu.classList.toggle("show");
+		}
+
+		// Close the menu if a link is clicked 
+		document.addEventListener('click', function (e) {
+			const menu = document.getElementById("mobileMenu");
+			const icon = document.querySelector(".topnav .icon");
+
+			// If clicking outside the menu and not the icon
+			if (!menu.contains(e.target) && !icon.contains(e.target)) {
+				menu.classList.remove("show");
+			}
+		});
 	</script>
 </body>
 

@@ -276,7 +276,7 @@ def remove_listing(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-
+    #Get saved job, and delete it from the db 
     already_saved_job = SavedJobListing.query.filter_by(
         alumnus_id=current_user.id, job_listing_id=job_listing_id).first()
 
@@ -295,12 +295,14 @@ def apply(job_listing_id):
     if not isinstance(current_user, AlumnusAccount):
         flash('Unauthorized access', 'unsuccessful')
         return redirect(url_for('index_views.index_page'))
-
+    #Check for any applications submitted to this listing already by this alumnus
     existing_application = JobApplication.query.filter_by(
+    #Get current user -> alumnus id as function input
     alumnus_id=current_user.id,
+    #Get current listing -> listing id as function input
     job_listing_id=job_listing_id).first()
     
-    if existing_application:
+    if existing_application: #error handling 
         flash("You have already applied to this job listing.", "unsuccessful")
         return redirect(url_for('index_views.index_page'))
    
@@ -346,7 +348,7 @@ def view_notifications_page():
         return redirect(url_for('index_views.index_page'))
 
     try:
-        # Fetch notifications for the alumnus
+        # Fetch unread notifications for the alumnus
         notifications = current_user.notifications.filter_by(reviewed_by_user=False).all()
         return render_template('alumnus_notifications.html', notifications=notifications, alumnus=current_user)
 
@@ -358,8 +360,10 @@ def view_notifications_page():
 @alumnus_views.route('/update/alumnus/notification_status/<int:notification_id>', methods=['POST'])
 @jwt_required()
 def notification_status(notification_id):
+    #Get the chosen/clicked notification associated, passed in from route
     notification = Notification.query.get(notification_id)
     
+    #When found, mark as read by the user
     if notification:
         mark_notification_as_reviewed(notification_id)
         return jsonify({'success': True}), 200
@@ -386,28 +390,39 @@ def check_notifications():
 def view_company_listings(id):
     user=current_user
     company=get_company_account(id)
+    #Retrieve all listings of a company regardless of status
     company_listings = get_job_listings_by_company_id(id)
+    #Used to filter only approved/published listings to the alumnus to render to the front end
     approved_company_listings = [job for job in company_listings if job.admin_approval_status=="APPROVED"] 
+    #Retrieves the job listings saved by an alumnus, for rendering to front end
     saved = get_saved_job_listings_by_alumnus_id(user.id)
     return render_template('alumnus-company-listings.html', user=user, company_listings=approved_company_listings, saved=saved, company=company)
 
 @alumnus_views.route('/search_listings', methods=['GET'])
 def search_jobs():
+    #input by the user in search bar
     search_term = request.args.get('search','')
+    #chosen postion type
     position_type = request.args.get('position')
+    #chosen address
     job_site_address = request.args.get('location')
+    #Salary range
     min_salary = request.args.get('min_salary', type=int)
     max_salary = request.args.get('max_salary', type=int)
 
+    #Ensure it only searches approved/published listings
     query = JobListing.query.filter_by(admin_approval_status='APPROVED')
     
+    #Once term is retrieved from input, see if it matches any company names or job titles 
     if search_term:
         search_term = search_term.strip()
+        like_pattern = f"%{search_term}%"
         query = query.filter(
-            (JobListing.title.ilike(f"%{search_term}%")) |
-            (JobListing.company.has(CompanyAccount.registered_name.ilike(f"%{search_term}%")))
+            (JobListing.title.ilike(like_pattern)) |
+            (JobListing.company.has(CompanyAccount.registered_name.ilike(like_pattern))) 
         )
 
+    #Once filter is retrieved from input, see if it matches postion type, job address or salary
     if position_type:
         query = query.filter_by(position_type=position_type)
 
@@ -422,6 +437,7 @@ def search_jobs():
 
     jobs = query.all()
 
+    #return a list for front end use to render job info
     job_data = [ {
         'id': job.id,
         'title': job.title,

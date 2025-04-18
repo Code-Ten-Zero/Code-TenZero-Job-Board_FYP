@@ -1,357 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="shortcut icon" href="/static/images/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Account</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    />
-    <style>
-      .card {
-        /* Add shadows to create the "card" effect */
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        transition: 0.3s;
-        border-radius: 5px;
-        background-color: white;
-        width:70vw;
-        height:auto;
-        margin: 20px auto;
-      }
 
-      .logout {
-        position: relative;
-        margin-left: auto;
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 2.5vw;
-        cursor: pointer;
-        text-decoration: none;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" href="/static/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <style>
+    .card {
+      /* Add shadows to create the "card" effect */
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      border-radius: 5px;
+      background-color: white;
+      width: 70vw;
+      height: auto;
+      margin: 20px auto;
+    }
 
-      a {
-        position: relative;
-        margin-left: auto;
-        background-color: rgb(57, 97, 185);
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 2.5vw;
-        cursor: pointer;
-        text-decoration: none;
-      }
+    .logout {
+      position: relative;
+      margin-left: auto;
+      background-color: rgb(57, 97, 185);
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 2.5vw;
+      cursor: pointer;
+      text-decoration: none;
+    }
 
-      .logout:hover {
-        background-color: rgb(98, 127, 191);
-      }
+    a {
+      position: relative;
+      margin-left: auto;
+      background-color: rgb(57, 97, 185);
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 2.5vw;
+      cursor: pointer;
+      text-decoration: none;
+    }
 
-      /* Container for image and form */
-      .image-form-container {
-        display: flex;
-        align-items: flex-start;
-        gap: 30px;
-        max-width: 800px;
-        min-width: 5%;
-        margin: 0 auto;
-        flex-wrap: wrap;
-      }
+    .logout:hover {
+      background-color: rgb(98, 127, 191);
+    }
 
-      /* Image Container */
-      .image-container {
-        position: relative;
-        flex-shrink: 0;
-      }
+    /* Container for image and form */
+    .image-form-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 30px;
+      max-width: 800px;
+      min-width: 5%;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
 
-      input {
-        border-radius: 5px;
-        padding: 10px;
-        border: 2px solid #ccc;
-        width: 250px;
-        background-color: #dcdcdc;
-      }
+    /* Image Container */
+    .image-container {
+      position: relative;
+      flex-shrink: 0;
+    }
 
-      /* Profile Image Styling */
-      .form-image {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        object-fit: cover;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        transition: opacity 0.3s;
-      }
+    input {
+      border-radius: 5px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      width: 250px;
+      background-color: #dcdcdc;
+    }
 
-      .form-image:hover {
-        opacity: 0.8;
-      }
+    /* Profile Image Styling */
+    .form-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
 
-      .header-title {
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        margin: 0;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-      }
+    .form-image:hover {
+      opacity: 0.8;
+    }
 
-      /* Hidden File Input */
-      #profile_pic_input {
-        display: none;
-      }
+    .header-title {
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-      /* Label as Upload Button */
-      .upload-label {
-        display: block;
-        color: rgb(57, 97, 185);
-        cursor: pointer;
-        margin-top: 5px;
-      }
+    /* Hidden File Input */
+    #profile_pic_input {
+      display: none;
+    }
 
-      /* Form container styling */
-      form {
-        flex: 1;
-        min-width: 250px;
-      }
+    /* Label as Upload Button */
+    .upload-label {
+      display: block;
+      color: rgb(57, 97, 185);
+      cursor: pointer;
+      margin-top: 5px;
+    }
 
-      /* General layout for two-column pairs */
+    /* Form container styling */
+    form {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    /* General layout for two-column pairs */
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .form-row .col {
+      flex: 1;
+    }
+
+    .form-row .col label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-row .col input {
+      width: 100%;
+      padding: 5px;
+    }
+
+    .image-text {
+      line-height: 0.8;
+    }
+
+    /* submit button */
+    .form-group.full-width {
+      text-align: center;
+    }
+
+    .form-group.full-width input[type="submit"] {
+      background-color: rgb(57, 97, 185);
+      color: white;
+    }
+
+    .form-group.full-width input[type="submit"]:hover {
+      background-color: rgb(57, 97, 185);
+    }
+
+    .topnav .icon {
+      display: none;
+      color: white;
+      padding: 14px 20px;
+      font-size: 20px;
+      cursor: pointer;
+      float: right;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+
+      /* Stack columns on smaller screens */
       .form-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 15px;
+        flex-direction: column;
       }
 
-      .form-row .col {
-        flex: 1;
+      .image-form-container {
+        flex-direction: column;
+        align-items: center;
       }
 
-      .form-row .col label {
-        display: block;
-        margin-bottom: 5px;
+      /* Resize profile picture */
+      .form-image {
+        width: 100px;
+        height: 100px;
       }
 
+      /* Adjust spacing */
       .form-row .col input {
-        width: 100%;
-        padding: 5px;
+        padding: 10px;
       }
 
-      .image-text {
-        line-height: 0.8;
-      }
-
-      /* submit button */
-      .form-group.full-width {
-        text-align: center;
-      }
       .form-group.full-width input[type="submit"] {
         background-color: rgb(57, 97, 185);
-        color: white;
       }
 
       .form-group.full-width input[type="submit"]:hover {
         background-color: rgb(57, 97, 185);
       }
 
-      /* Responsive Styles */
-      @media (max-width: 600px) {
-        /* Stack columns on smaller screens */
-        .form-row {
-          flex-direction: column;
-        }
-
-        .image-form-container {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        /* Resize profile picture */
-        .form-image {
-          width: 100px;
-          height: 100px;
-        }
-
-        /* Adjust spacing */
-        .form-row .col input {
-          padding: 10px;
-        }
-
-        .form-group.full-width input[type="submit"] {
-          background-color: rgb(57, 97, 185);
-        }
-
-        .form-group.full-width input[type="submit"]:hover {
-          background-color: rgb(57, 97, 185);
-        }
-
-        .image-text {
-          line-height: 0.8;
-        }
+      .image-text {
+        line-height: 0.8;
       }
-    </style>
-  </head>
-  <body>
-    <header>
-      <img
-        id="uwi-logo"
-        src="{{ url_for('static', filename='images/uwi_logo.jpg') }}"
-        alt="uwi_logo"
-      />
-      <h1><a href="/app">DCIT Job Board</a></h1>
-      <h1 class="header-title"> My Account</h1>
-      <div class="topnav" id="mynav">
-        <a href="/logout">Logout</a>
-        <a href="/company_notifications">Notifications</a>
-        <a href="/view_company_account/{{user.id}}">My Account</a>
-        <a href="/add_listing"> Add Job</a>
+
+      .card {
+        /* Add shadows to create the "card" effect */
+        text-align: center;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        border-radius: 5px;
+        background-color: white;
+        width: 90vw;
+        max-height: 70vh;
+        margin: 5vw auto;
+        overflow: auto;
+      }
+
+      .card input[type="text"],
+      .card input[type="password"],
+      .card input[type="submit"] {
+        width: 70vw;
+        /* adjust as needed */
+        margin: 10px auto;
+        display: block;
+        text-align: center;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+
+      .topnav a:not(.icon) {
+        display: none;
+      }
+
+      .topnav .icon {
+        display: block;
+      }
+
+      .mobile-menu.show {
+        display: flex;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img id="uwi-logo" src="{{ url_for('static', filename='images/uwi_logo.jpg') }}" alt="uwi_logo" />
+    <h1><a href="/app">DCIT Job Board</a></h1>
+    <h1 class="header-title"> My Account</h1>
+    <div class="topnav" id="mynav">
+      <a href="/logout">Logout</a>
+      <a href="/company_notifications">Notifications</a>
+      <a href="/view_company_account/{{user.id}}">My Account</a>
+      <a href="/add_listing"> Add Job</a>
+      <a href="javascript:void(0);" class="icon" onclick="toggleNav()">☰</a>
+    </div>
+    <!-- Collapsible mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/logout">Logout</a>
+      <a href="/company_notifications">Notifications</a>
+      <a href="/view_company_account/{{user.id}}">My Account</a>
+      <a href="/add_listing"> Add Job</a>
+    </div>
+  </header>
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %} {%
+    if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+  </div>
+  </button>
+  <div class="card">
+    <p style="text-align: center; padding: 15px;">
+      If you change your Email or Password you will be directly logged out.
+    </p>
+    <br />
+    <div class="image-form-container">
+      <!-- Profile Picture -->
+      <div class="image-container">
+        <img class="form-image" id="profile_pic" src="{{ url_for('static', filename=user.profile_photo_file_path) }}"
+          alt="Profile Image" />
+        <form id="profile_photo_form" method="POST" action="/update_company_profile_photo/{{ user.id }}"
+          enctype="multipart/form-data">
+          <!-- Hidden file input field to upload photo -->
+          <input type="file" name="profile_pic" id="profile_pic_input" accept="image/*" style="display: none;"
+            onchange="autoSubmitForm()" />
+          <!-- Label triggers file input -->
+          <label class="upload-label" for="profile_pic_input"> Change Photo</label>
+        </form>
+        <p class="image-text">{{user.registered_name}}</p>
+        <p class="image-text">Company</p>
+        <p class="image-text">{{user.login_email}}</p>
+        <p class="image-text">{{user.phone_number}}</p>
       </div>
-    </header>
-    <div id="flash-messages">
-			{% with messages = get_flashed_messages(with_categories=true) %} {%
-			if messages %} {% for category, message in messages %}
-			<div class="alert alert-{{ category }}">{{ message }}</div>
-			{% endfor %} {% endif %} {% endwith %}
-		</div>
-    </button>
-    <div class="card">
-      <p style="text-align: center; padding: 15px;">
-        If you change your Email or Password you will be directly logged out.
-      </p>
-      <br />
-      <div class="image-form-container">
-        <!-- Profile Picture -->
-        <div class="image-container">
-          <img
-            class="form-image"
-            id="profile_pic"
-            src="{{ url_for('static', filename=user.profile_photo_file_path) }}"
-            alt="Profile Image"
-          />
-          <form id="profile_photo_form" method="POST" action="/update_company_profile_photo/{{ user.id }}" enctype="multipart/form-data">
-            <!-- Hidden file input field to upload photo -->
-            <input type="file" name="profile_pic" id="profile_pic_input" accept="image/*" style="display: none;" onchange="autoSubmitForm()" />
-            <!-- Label triggers file input -->
-            <label class="upload-label" for="profile_pic_input"> Change Photo</label>
-          </form>
-          <p class="image-text">{{user.registered_name}}</p>
-          <p class="image-text">Company</p>
-          <p class="image-text">{{user.login_email}}</p>
-          <p class="image-text">{{user.phone_number}}</p>
+
+      <!-- Form -->
+      <form method="POST" action="/update_company/{{user.id}}">
+        <!-- First Name and Last Name row -->
+        <div class="form-row">
+          <div class="col">
+            <label for="registered_name">Registered Name:</label>
+            <input type="text" id="registered_name" name="registered_name" value="{{user.registered_name}}" />
+          </div>
         </div>
 
-        <!-- Form -->
-        <form method="POST" action="/update_company/{{user.id}}">
-          <!-- First Name and Last Name row -->
-          <div class="form-row">
-            <div class="col">
-              <label for="registered_name">Registered Name:</label>
-              <input
-                type="text"
-                id="registered_name"
-                name="registered_name"
-                value="{{user.registered_name}}"
-              />
-            </div>
+        <!-- Email and Contact-->
+        <div class="form-row">
+          <div class="col">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" value="{{user.login_email}}" />
           </div>
+          <div class="col">
+            <label for="contact">Contact:</label>
+            <input type="text" id="contact" name="contact" value="{{user.phone_number}}" />
+          </div>
+        </div>
+        <br />
+        <br />
 
-          <!-- Email and Contact-->
-          <div class="form-row">
-            <div class="col">
-              <label for="email">Email:</label>
-              <input
-                type="text"
-                id="email"
-                name="email"
-                value="{{user.login_email}}"
-              />
-            </div>
-            <div class="col">
-              <label for="contact">Contact:</label>
-              <input
-                type="text"
-                id="contact"
-                name="contact"
-                value="{{user.phone_number}}"
-              />
-            </div>
+        <!-- Current Password and Confirm Current Password row -->
+        <div class="form-row">
+          <div class="col">
+            <label for="current_password">Current Password:</label>
+            <input type="password" id="current_password" name="current_password" placeholder="Current Password" />
           </div>
-          <br />
-          <br />
+          <div class="col">
+            <label for="confirm_current_password">Confirm Current Password:</label>
+            <input type="password" id="confirm_current_password" name="confirm_current_password"
+              placeholder="Confirm Current Password" />
+          </div>
+        </div>
 
-          <!-- Current Password and Confirm Current Password row -->
-          <div class="form-row">
-            <div class="col">
-              <label for="current_password">Current Password:</label>
-              <input
-                type="password"
-                id="current_password"
-                name="current_password"
-                placeholder="Current Password"
-              />
-            </div>
-            <div class="col">
-              <label for="confirm_current_password"
-                >Confirm Current Password:</label
-              >
-              <input
-                type="password"
-                id="confirm_current_password"
-                name="confirm_current_password"
-                placeholder="Confirm Current Password"
-              />
-            </div>
+        <!-- New Password and Confirm New Password row -->
+        <div class="form-row">
+          <div class="col">
+            <label for="new_password">New Password:</label>
+            <input type="password" id="new_password" name="new_password" placeholder="New Password" />
           </div>
+          <div class="col">
+            <label for="confirm_new_password">Confirm New Password:</label>
+            <input type="password" id="confirm_new_password" name="confirm_new_password"
+              placeholder="Confirm New Password" />
+          </div>
+        </div>
 
-          <!-- New Password and Confirm New Password row -->
-          <div class="form-row">
-            <div class="col">
-              <label for="new_password">New Password:</label>
-              <input
-                type="password"
-                id="new_password"
-                name="new_password"
-                placeholder="New Password"
-              />
-            </div>
-            <div class="col">
-              <label for="confirm_new_password">Confirm New Password:</label>
-              <input
-                type="password"
-                id="confirm_new_password"
-                name="confirm_new_password"
-                placeholder="Confirm New Password"
-              />
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="form-group full-width">
-            <input type="submit" value="Save Changes" />
-          </div>
-        </form>
-      </div>
-      <br />
-      <br />
+        <!-- Submit Button -->
+        <div class="form-group full-width">
+          <input type="submit" value="Save Changes" />
+        </div>
+      </form>
     </div>
-    <script>
+    <br />
+    <br />
+  </div>
+  <script>
     function goBack() {
       window.history.back();
-      }
+    }
     // Automatically submit the form when a file is selected
     function autoSubmitForm() {
-    // Trigger the form submission as soon as a file is selected
-    document.getElementById('profile_photo_form').submit();
-  }
-    </script>
-  </body>
+      // Trigger the form submission as soon as a file is selected
+      document.getElementById('profile_photo_form').submit();
+    }
+
+    // Open the menu if a link is clicked (good UX)
+    function toggleNav() {
+      const menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("show");
+    }
+
+    // Close the menu if a link is clicked 
+    document.addEventListener('click', function (e) {
+      const menu = document.getElementById("mobileMenu");
+      const icon = document.querySelector(".topnav .icon");
+
+      // If clicking outside the menu and not the icon
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+
 </html>
