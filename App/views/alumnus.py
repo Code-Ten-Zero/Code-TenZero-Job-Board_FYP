@@ -493,3 +493,55 @@ def api_save_job_listing(job_listing_id):
     db.session.add(new_saved_job_listing)
     db.session.commit()
     return jsonify({"message": "Job saved successfully!", "status": "saved"}), 200
+
+@alumnus_views.route('/api/search_listings', methods=['GET'])
+def api_search_jobs():
+    #input by the user in search bar
+    search_term = request.args.get('search','')
+    #chosen postion type
+    position_type = request.args.get('position')
+    #chosen address
+    job_site_address = request.args.get('location')
+    #Salary range
+    min_salary = request.args.get('min_salary', type=int)
+    max_salary = request.args.get('max_salary', type=int)
+
+    #Ensure it only searches approved/published listings
+    query = JobListing.query.filter_by(admin_approval_status='APPROVED')
+    
+    #Once term is retrieved from input, see if it matches any company names or job titles 
+    if search_term:
+        search_term = search_term.strip()
+        like_pattern = f"%{search_term}%"
+        query = query.filter(
+            (JobListing.title.ilike(like_pattern)) |
+            (JobListing.company.has(CompanyAccount.registered_name.ilike(like_pattern))) 
+        )
+
+    #Once filter is retrieved from input, see if it matches postion type, job address or salary
+    if position_type:
+        query = query.filter_by(position_type=position_type)
+
+    if job_site_address:
+        query = query.filter_by(job_site_address=job_site_address)
+
+    if min_salary is not None and max_salary is not None:
+        query = query.filter(
+            JobListing.monthly_salary_ttd >= min_salary,
+            JobListing.monthly_salary_ttd <= max_salary
+        )
+
+    jobs = query.all()
+
+    #return a list for front end use to render job info
+    job_data = [ {
+        'id': job.id,
+        'title': job.title,
+        'position_type': job.position_type,
+        'job_site_address': job.job_site_address,
+        'company_name': job.company.registered_name,
+        'company_logo': url_for('static', filename=job.company.profile_photo_file_path)
+    } for job in jobs ]
+
+    return jsonify(job_data),200  # Always return a list — even if it's empty, this is so user can get output messages when searches turn up empty
+
