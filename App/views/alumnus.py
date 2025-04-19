@@ -399,6 +399,7 @@ def view_company_listings(id):
     return render_template('alumnus-company-listings.html', user=user, company_listings=approved_company_listings, saved=saved, company=company)
 
 @alumnus_views.route('/search_listings', methods=['GET'])
+@jwt_required()
 def search_jobs():
     #input by the user in search bar
     search_term = request.args.get('search','')
