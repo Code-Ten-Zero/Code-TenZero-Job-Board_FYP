@@ -426,3 +426,42 @@ def api_request_delete_listing_action(job_id):
     
     except Exception as e:
         return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+
+
+@company_views.route('/api/application_status_update/<int:id>', methods=['POST'])
+@jwt_required()   
+def api_update_status(id):
+    new_status = request.form.get('status')
+    print("Incoming JSON POST data:", new_status)
+    application = JobApplication.query.filter_by(id=id).first()
+    
+    if not application:
+        return jsonify({"error": "No Application"}), 400
+    
+    try:
+        application.company_approval_status = new_status
+        db.session.commit()
+
+        # Create notification message
+        notification_message = (
+            f"Hello there {application.alumnus.first_name}, your application status for "
+            f"'{application.job_listing.title}' has changed to '{new_status.capitalize()}'."
+        )
+
+        new_notification = Notification(
+            alumnus_id=application.alumnus_id,
+            company_id=None,
+            admin_id=None,
+            message=notification_message
+        )
+
+        db.session.add(new_notification)
+        db.session.commit()
+        return jsonify({"message": "Application status updated", "status": new_status}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "could not update or make notification"}), 500
+
+    return jsonify({"message": "Application status updated", "status": new_status}), 200
